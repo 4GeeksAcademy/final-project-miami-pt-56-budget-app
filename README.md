@@ -14,3 +14,6 @@ Create an account to:
 ### Contributors
 
 This is a budget tracking webapp built by Jessica Jean, Christa Kelly, Benjamin Ly, and Valeria Vargas as part of the 4Geeks Full Stack Development course.
+
+[Developer best practices](docs/README.md)
+[Boilerplate user guidelines](docs/HELP.md)
