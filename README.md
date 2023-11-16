@@ -1,3 +1,7 @@
+# Budget WebApp
+
+This is a budget tracking webapp built by Jessica Jean, Christa Kelly, Benjamin Ly, and Valeria Vargas as part of the 4Geeks Full Stack Development course.
+
 # WebApp boilerplate with React JS and Flask API
 
 Build web applications using React.js for the front end and python/flask for your backend API.
