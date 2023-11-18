@@ -1,6 +1,7 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
+			requestBodyEmail: {},
 			message: null,
 			demo: [
 				{
@@ -17,19 +18,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
+			handleInputChange: (e) => {
+				const store = getStore();
+				console.log('handle input change funct start');
+				console.log('handle input change e and e.target.value', e);
+				// setStore({ requestBodyEmail: { ...store.requestBodyEmail, [e.target.id]: e.target.value } });
+				// console.log('handle input change funct end requestbody', store.requestBody);
+			},
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
 			},
 
 			getMessage: async () => {
-				try{
+				try {
 					// fetching data from the backend
 					const resp = await fetch(process.env.BACKEND_URL + "/api/hello")
 					const data = await resp.json()
 					setStore({ message: data.message })
 					// don't forget to return something, that is how the async resolves
 					return data;
-				}catch(error){
+				} catch (error) {
 					console.log("Error loading message from backend", error)
 				}
 			},
