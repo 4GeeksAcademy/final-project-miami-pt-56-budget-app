@@ -12,6 +12,7 @@ user_group = db.Table(
     "user_group",
     db.Column("user_id", db.ForeignKey("user.id")),
     db.Column("group_id", db.ForeignKey("group.id")),
+    db.Column("friend_id", db.ForeignKey("friend.id"))
 )
 
 class User(db.Model):
@@ -41,14 +42,16 @@ class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=True, nullable=False)
 
+    members = db.relationship('Friend', secondary=user_group)
+
     def __repr__(self):
         return f'<Group {self.name}>'
 
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name
-            # do not serialize the password, it's a security breach
+            "name": self.name,
+            "members": [friend.serialize() for friend in self.members],
         }
 
 class Friend(db.Model):
@@ -62,6 +65,6 @@ class Friend(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name
+            "name": self.name,
             # do not serialize the password, it's a security breach
         }
