@@ -40,6 +40,7 @@ class Group(db.Model):
     __tablename__ = 'group'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=True, nullable=False)
+    members = db.relationship('Friend', secondary=user_group)
 
     def __repr__(self):
         return f'<Group {self.name}>'
@@ -47,7 +48,8 @@ class Group(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name
+            "name": self.name,
+            "members": self.members,
             # do not serialize the password, it's a security breach
         }
 
