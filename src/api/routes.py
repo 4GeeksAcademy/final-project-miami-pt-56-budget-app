@@ -12,12 +12,6 @@ api = Blueprint('api', __name__)
 # Allow CORS requests to this API
 CORS(api)
 
-# authenication function
-# def handle_authentication():
-#     current_user_id = get_jwt_identity()
-#     user = User.query.get(current_user_id)
-#     return jsonify({"user_id": user.id, "email":user.email}), 200
-
 # Routes
 @api.route('/hello', methods=['POST', 'GET'])
 def handle_hello():
@@ -31,11 +25,11 @@ def handle_hello():
 @api.route('/signup', methods= ['POST'])
 def handle_signup():
     email = request.json.get('email', None)
-    firstname = request.json.get('firstname', None)
-    lastname = request.json.get('lastname', None)
+    first_name = request.json.get('firstname', None)
+    last_name = request.json.get('lastname', None)
     password = request.json.get('password', None)
     verifypassword = request.json.get('verifypassword', None)
-    newUser = User(email = email, password = password, firstname = firstname, lastname = lastname)
+    newUser = User(email = email, password = password, first_name = first_name, last_name = last_name)
     if password != verifypassword:
         return jsonify('Passwords do not match'), 400
     if User.query.filter_by(email = email).first() == None:
@@ -52,7 +46,8 @@ def handle_login():
     user = User.query.filter_by(email = email, password=password).first()
     if user is None:
         return jsonify({"msg" : "Bad username or password"}), 401
-    access_token = create_access_token(identity=user.id)
+    else:
+        access_token = create_access_token(identity=user.id)
     return jsonify({"token": access_token, "user_id": user.id}), 200
 
 @api.route('/home', methods=['GET'])
@@ -60,7 +55,10 @@ def handle_login():
 def handle_home():
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
-    return jsonify({"user_id": user.id, "email":user.email}), 200
+    if user is not None:
+        return jsonify({"user": user.serialize(), "status":"ok"}), 200
+    else:
+        return jsonify({'msg': 'You must be logged in'}), 400
 
 # @api.route('/groups', methods=['GET'])
 # @jwt_required()
