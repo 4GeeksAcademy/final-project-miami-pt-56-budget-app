@@ -60,60 +60,77 @@ def handle_home():
     else:
         return jsonify({'msg': 'You must be logged in'}), 400
 
-# @api.route('/groups', methods=['GET'])
-# @jwt_required()
-# def handle_get_groups():
-#     current_user_id = get_jwt_identity()
-#     user = User.query.get(current_user_id)
+@api.route('/groups', methods=['GET'])
+@jwt_required()
+def handle_get_groups():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if user is not None:
+        return jsonify(user.serialize()['groups']), 200
+    else:
+        return jsonify({'msg': 'You must be logged in'}), 400
 
-# @api.route('/groups', methods=['POST'])
-# @jwt_required()
-# def handle_add_group():
-#     current_user_id = get_jwt_identity()
-#     user = User.query.get(current_user_id)
-#     return jsonify({"email":user.email, 'groups': groups}), 200
+@api.route('/groups', methods=['POST'])
+@jwt_required()
+def handle_add_group():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    return jsonify({"email":user.email, 'groups': groups}), 200
 
 @api.route('/groups', methods=['DELETE'])
 @jwt_required()
 def handle_delete_group():
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
-
-    groupList = Group.query.all()
-    toDelete = None
-    for item in groupList:
-        if item.serialize()['name'] == name:
-            toDelete = item
-    if toDelete == None:
-        return jsonify("invalid group id"), 400
+    if user is not None:
+        groupList = Group.query.all()
+        toDelete = None
+        for item in groupList:
+            if item.serialize()['name'] == name:
+                toDelete = item
+        if toDelete == None:
+            return jsonify("invalid group id"), 400
+        else:
+            db.session.delete(toDelete)
+            db.session.commit()
+            return jsonify("group deleted"), 200
     else:
-        db.session.delete(toDelete)
-        db.session.commit()
-        return jsonify("group deleted"), 200
-    
+        return jsonify({'msg': 'You must be logged in'}), 400    
 
-# @api.route('/friends', methods=['GET'])
-# @jwt_required()
-# def handle_get_friends():
-#     current_user_id = get_jwt_identity()
-#     user = User.query.get(current_user_id)
+@api.route('/friends', methods=['GET'])
+@jwt_required()
+def handle_get_friends():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if user is not None:
+        return jsonify(user.serialize()['friends']), 200
+    else:
+        return jsonify({'msg': 'You must be logged in'}), 400
 
-#     userFriends = []
-#     friends = Friend.query.all()
-#     for i in friends:
-#         userFriends.append(i.serialize)
-#     return jsonify(userFriends), 200
+@api.route('/friends', methods=['POST'])
+@jwt_required()
+def handle_add_friend():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    return jsonify({"email":user.email, 'groups': groups}), 200
 
-# @api.route('/friends', methods=['POST'])
-# @jwt_required()
-# def handle_add_friend():
-#     current_user_id = get_jwt_identity()
-#     user = User.query.get(current_user_id)
-#     return jsonify({"email":user.email, 'groups': groups}), 200
+@api.route('/friends', methods=['DELETE'])
+@jwt_required()
+def handle_delete_friend():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if user is not None:
+        friendList = Friend.query.all()
+        toDelete = None
+        for item in friendList:
+            if item.serialize()['name'] == name:
+                toDelete = item
+        if toDelete == None:
+            return jsonify("invalid friend id"), 400
+        else:
+            db.session.delete(toDelete)
+            db.session.commit()
+            return jsonify("friend deleted"), 200
+    else:
+        return jsonify({'msg': 'You must be logged in'}), 400  
 
-# @api.route('/friends', methods=['DELETE'])
-# @jwt_required()
-# def handle_delete_friend():
-#     current_user_id = get_jwt_identity()
-#     user = User.query.get(current_user_id)
-#     return jsonify({"email":user.email, 'groups': groups}), 200
