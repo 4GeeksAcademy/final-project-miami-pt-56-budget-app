@@ -4,6 +4,7 @@ import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
 import SignIn from "./pages/SignIn"
+import SignUp from "./pages/SignUp";
 import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
@@ -20,7 +21,7 @@ const Layout = () => {
     const [showNavbar, setShowNavbar] = useState(true);
 
     useEffect(() => {
-        setShowNavbar(window.location.pathname !== '/signin')
+        setShowNavbar(window.location.pathname !== '/signin' && location.pathname !== '/signup')
     }, [location])
 
     if (!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL />;
@@ -33,6 +34,7 @@ const Layout = () => {
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<SignIn />} path="/signin" />
+                        <Route element={<SignUp />} path="/signup" />
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />

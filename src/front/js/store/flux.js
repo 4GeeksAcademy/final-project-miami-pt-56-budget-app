@@ -1,3 +1,5 @@
+import { AlertLink } from "react-bootstrap";
+
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -31,7 +33,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					})
 				}
 				try {
-					const resp = await fetch(`${process.env.BACKEND_URL}/api/token`)
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/login`)
 					const data = await resp.json();
 
 					if (resp.status === 200) {
@@ -42,6 +44,42 @@ const getState = ({ getStore, getActions, setStore }) => {
 						//user not found
 					} else if (resp.status === 401) {
 						alert('Incorrect email or password');
+						return false;
+					} else {
+						console.error(`Unexpected error: ${data.message}`)
+					}
+				} catch (error) {
+					console.error(`There was a problem with the fetch operation ${error}`)
+				}
+			},
+			handleSingUp: async (firstName, lastName, email, password, verifyPassword) => {
+				const opts = {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						"firstname": firstName,
+						"lastname": lastName,
+						"email": email,
+						"password": password,
+						"verifypassword": verifyPassword
+					})
+				}
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/signup`)
+					const data = await resp.json();
+
+					if (resp.status === 200) {
+						alert("User Created! Redirecting to signin page");
+						window.location.pathname !== '/signin'
+						return true;
+					} else if (resp.status === 406) {
+						alert(`Passwords don't match`);
+						return false;
+					} else if (resp.status === 412) {
+						alert('Incorrect email or password');
+						return false;
 					} else {
 						console.error(`Unexpected error: ${data.message}`)
 					}
