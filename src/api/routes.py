@@ -50,25 +50,33 @@ def handle_login():
         access_token = create_access_token(identity=user.id)
     return jsonify({"token": access_token, "user_id": user.id}), 200
 
-# @api.route('/home', methods=['GET'])
-# @jwt_required()
-# def handle_home():
-#     current_user_id = get_jwt_identity()
-#     user = User.query.get(current_user_id)
-#     if user is not None:
-#         return jsonify({"user": user.serialize(), "status":"ok"}), 200
-#     else:
-#         return jsonify({'msg': 'You must be logged in'}), 400
+@api.route('/home', methods=['GET'])
+@jwt_required()
+def handle_home():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    serialized_group = []
+    for item in user.groups:
+        serialized_group.append(item.serialize())
+    return jsonify(serialized_group), 200
+    
+    # if user is not None:
+    #     return jsonify({"user_id": user.id, 
+    #                     "user_name": user.first_name,
+    #                     "status":"ok"}), 200
+    # else:
+    #     return jsonify({'msg': 'You must be logged in'}), 401
 
-# @api.route('/groups', methods=['GET'])
-# @jwt_required()
-# def handle_get_groups():
-#     current_user_id = get_jwt_identity()
-#     user = User.query.get(current_user_id)
-#     if user is not None:
-#         return jsonify(user.serialize()['groups']), 200
-#     else:
-#         return jsonify({'msg': 'You must be logged in'}), 400
+@api.route('/groups', methods=['GET'])
+@jwt_required()
+def handle_get_groups():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    groups = user.serialize()['groups']
+    if user is not None:
+        return jsonify(groups), 200
+    else:
+        return jsonify({'msg': 'You must be logged in'}), 400
 
 # @api.route('/groups', methods=['POST'])
 # @jwt_required()
@@ -145,7 +153,7 @@ def handle_add_friends(user_id):
         try:
             if user.friends is None:
                 user.friends = []
-            new_friend = User.query.filter_by(body["new_friend_id"]).first()
+            new_friend = User.query.filter_by(id = body["new_friend_id"]).first()
             user.friends.append(new_friend)
         
         except Exception as e:
@@ -161,7 +169,7 @@ def handle_add_friends(user_id):
 
         payload = {
             'msg': "Successfully added friend",
-            'user': user.serialize()
+            # 'user': user.serialize()
         }
         return jsonify(payload), 200
 
