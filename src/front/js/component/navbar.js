@@ -5,40 +5,36 @@ import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { Link } from "react-router-dom";
 import logo from "../../img/BetterBudget-logo.jpg";
-import '../../styles/index.css'
+import '../../styles/navbar.css'
 
-export const AppNavbar = () => {
+export const NavBar = () => {
   return (
-    <Navbar
-      style={{ backgroundColor: "#F2EEE4", color: "#5065A8" }}
-      expand="md"
-    >
+    <Navbar expand="md">
       <Container>
-        <Navbar.Brand href="/">
+        <Navbar.Brand href="/" className="navbar-brand">
           <img
             src={logo}
-            style={{ maxWidth: "120px", maxHeight: "120px" }}
-            className="d-inline-block align-top"
+            className="navbar-brand-img d-inline-block align-top"
             alt="React Bootstrap logo"
           />
         </Navbar.Brand>
 
         {/* For Splash page */}
-        <Nav className="ml-auto">
+        {/* <Nav className="ml-auto">
           <Nav.Link href="/signin">Login</Nav.Link>
           <Nav.Link href="/signup">Sign up</Nav.Link>
-        </Nav>
+        </Nav> */}
 
         {/* User Homepage */}
-        {/* <NavDropdown 
+        <NavDropdown 
         title={
         <span className="text-body my-auto">Welcome Benjamin Ly!</span>
         }
         className="custom-dropdown"
         id="navbarScrollingDropdown">
-          <NavDropdown.Item href="#action3">Account Settings</NavDropdown.Item>
+          <NavDropdown.Item href="/account">Account Settings</NavDropdown.Item>
           <NavDropdown.Item href="#action4" style={{ color: 'red' }}>Logout</NavDropdown.Item>
-        </NavDropdown> */}
+        </NavDropdown>
       </Container>
     </Navbar>
   );
