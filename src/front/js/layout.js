@@ -19,10 +19,14 @@ const Layout = () => {
     // you can set the basename on the .env file located at the root of this project, E.g: BASENAME=/react-hello-webapp/
     const basename = process.env.BASENAME || "";
     const [showNavbar, setShowNavbar] = useState(true);
+    const [currentURL, setCurrentURL] = useState(true);
 
     useEffect(() => {
-        setShowNavbar(window.location.pathname !== '/signin' && location.pathname !== '/signup')
-    }, [location])
+        if(currentURL == '/signin' || currentURL == '/signup'){
+            setShowNavbar(false)
+        }
+        else{setShowNavbar(true)}
+    }, [currentURL])
 
     if (!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL />;
 
@@ -32,9 +36,9 @@ const Layout = () => {
                 <ScrollToTop>
                     {showNavbar && <Navbar />}
                     <Routes>
-                        <Route element={<Home />} path="/" />
-                        <Route element={<SignIn />} path="/signin" />
-                        <Route element={<SignUp />} path="/signup" />
+                        <Route element={<Home setCurrentURL={setCurrentURL} />} path="/" />
+                        <Route element={<SignIn setCurrentURL={setCurrentURL} />} path="/signin" />
+                        <Route element={<SignUp setCurrentURL={setCurrentURL} />} path="/signup" />
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />

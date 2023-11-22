@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext"
 import { Container } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
@@ -7,8 +7,12 @@ import { Link } from "react-router-dom";
 
 import '../../styles/signin.css'
 
-const SignUp = () => {
+const SignUp = (props) => {
 
+    useEffect(() => {
+        props.setCurrentURL("/signup")
+    }, [])
+    
     const { store, actions } = useContext(Context);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
