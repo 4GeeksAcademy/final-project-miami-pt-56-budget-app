@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
+import Splashpage from "./pages/Splashpage";
 import SignIn from "./pages/SignIn"
 import SignUp from "./pages/SignUp";
 import { Home } from "./pages/home";
@@ -38,10 +39,12 @@ const Layout = () => {
                     {showNavbar && <NavBar />}
                     <Routes>
 
+                        <Route element={<Splashpage />} path="/splashpage" />
                         <Route element={<Home setCurrentURL={setCurrentURL} />} path="/" />
                         <Route element={<SignIn setCurrentURL={setCurrentURL} />} path="/signin" />
                         <Route element={<SignUp setCurrentURL={setCurrentURL} />} path="/signup" />
                         <Route element={<EditAccount />} path="/account" />
+
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
