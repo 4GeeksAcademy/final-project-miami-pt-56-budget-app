@@ -18,13 +18,20 @@ class User(db.Model):
     last_name = db.Column(db.String(120), nullable=False)
     password = db.Column(db.String(80), nullable=False)
     friends = db.relationship("User", secondary=user_friend, 
-                              primaryjoin=id == user_friend.c.user_1,
+                              primaryjoin=id == user_friend.c.user_1 ,
                               secondaryjoin=id == user_friend.c.user_2, 
                               back_populates="friends")
+                      
     groups = db.relationship("Group", secondary=group_member, back_populates="members")
 
     def __repr__(self):
         return f'<User {self.email}>'
+    
+    def add_friend(self, friend):
+        if friend not in self.friends:
+            self.friends.append(friend)
+            friend.friends.append(self)
+            db.session.commit()
 
     def serialize(self):
         return {
@@ -32,8 +39,7 @@ class User(db.Model):
             "email": self.email,
             "first_name": self.first_name,
             "last_name": self.last_name,
-            "friends": list(map(lambda x: x.serialize(), self.friends)),
-            "groups": list(map(lambda x: x.serialize(), self.groups))
+            # "groups": list(map(lambda x: x.serialize(), self.groups))
             # do not serialize the password, it's a security breach
         }
 
@@ -52,5 +58,3 @@ class Group(db.Model):
             "name": self.name,
             "members": list(map(lambda x: x.serialize(), self.members))
         }
-    
-
