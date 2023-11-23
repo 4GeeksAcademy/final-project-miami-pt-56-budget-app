@@ -5,6 +5,7 @@ import { BackendURL } from "./component/backendURL";
 
 import SignIn from "./pages/SignIn"
 import SignUp from "./pages/SignUp";
+import { SideBar } from "./component/sidebar";
 import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
@@ -36,8 +37,8 @@ const Layout = () => {
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
                     {showNavbar && <NavBar />}
+                    <SideBar />
                     <Routes>
-
                         <Route element={<Home setCurrentURL={setCurrentURL} />} path="/" />
                         <Route element={<SignIn setCurrentURL={setCurrentURL} />} path="/signin" />
                         <Route element={<SignUp setCurrentURL={setCurrentURL} />} path="/signup" />
