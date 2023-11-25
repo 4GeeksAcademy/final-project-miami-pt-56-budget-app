@@ -5,7 +5,7 @@ import { BackendURL } from "./component/backendURL";
 
 import SignIn from "./pages/SignIn"
 import SignUp from "./pages/SignUp";
-import { Home } from "./pages/home";
+import { UserHome } from "./pages/UserHome";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
@@ -38,7 +38,7 @@ const Layout = () => {
                     {showNavbar && <NavBar />}
                     <Routes>
 
-                        <Route element={<Home setCurrentURL={setCurrentURL} />} path="/" />
+                        <Route element={<UserHome setCurrentURL={setCurrentURL} />} path="/" />
                         <Route element={<SignIn setCurrentURL={setCurrentURL} />} path="/signin" />
                         <Route element={<SignUp setCurrentURL={setCurrentURL} />} path="/signup" />
                         <Route element={<EditAccount />} path="/account" />
