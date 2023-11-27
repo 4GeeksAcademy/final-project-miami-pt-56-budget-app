@@ -37,7 +37,6 @@ const Layout = () => {
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
                     {showNavbar && <NavBar />}
-                    <SideBar />
                     <Routes>
                         <Route element={<Home setCurrentURL={setCurrentURL} />} path="/" />
                         <Route element={<SignIn setCurrentURL={setCurrentURL} />} path="/signin" />

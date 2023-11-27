@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import rigoImageUrl from "../../img/rigo-baby.jpg";
 import "../../styles/home.css";
+import { SideBar } from "../component/sidebar";
 
 export const Home = (props) => {
 	const { store, actions } = useContext(Context);
@@ -11,6 +12,9 @@ export const Home = (props) => {
 	}, [])
 
 	return (
+		<>
+		<SideBar />
+		<main>
 		<div className="text-center mt-5">
 			<h1>Hello Rigo!!</h1>
 			<p>
@@ -25,6 +29,9 @@ export const Home = (props) => {
 					Read documentation
 				</a>
 			</p>
+			
 		</div>
+		</main>
+		</>
 	);
 };
