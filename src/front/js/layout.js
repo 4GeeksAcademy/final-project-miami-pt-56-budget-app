@@ -30,7 +30,7 @@ const Layout = () => {
         else{setShowNavbar(true)}
     }, [currentURL])
 
-    if (!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL />;
+   
 
     return (
         <div>
