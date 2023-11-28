@@ -52,7 +52,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			handleSingUp: async (firstName, lastName, email, password, verifyPassword) => {
+			handleSingUp: async (firstName, lastName, email, password) => {
 				const opts = {
 					method: 'POST',
 					headers: {
@@ -63,16 +63,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"last_name": lastName,
 						"email": email,
 						"password": password,
-						"verifypassword": verifyPassword
 					})
 				}
 				try {
-					const resp = await fetch(`${process.env.BACKEND_URL}/api/signup`, opts)
+					const resp = await fetch("https://didactic-space-rotary-phone-ggq4wq9rjxwfw65q-3001.app.github.dev/api/signup", opts)
 					const data = await resp.json();
 
 					if (resp.status === 200) {
 						alert("User Created! Redirecting to signin page");
-						window.location.pathname !== '/signin'
+						window.location.href = '/signin';
 						return true;
 					} else if (resp.status === 406) {
 						alert(`Passwords don't match`);
