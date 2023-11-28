@@ -1,7 +1,78 @@
-/*
-    home.css: This website contains selectors only used in home.css
+.homeComponentContainer{
+    width: 70%;
+    margin-left: 300px;
+}
+.homeComponentBorder{
+    border: 1px solid black;
+    border-radius: 17px;
+    background-color: #709176;
+}
+.homeusertag{
+    font-weight: 500;
+    color: white;
+    letter-spacing: 1px;
 
-    All pages share the styles on index.css but you should create 
-    one more css for each page that will contain the selected used 
-    on that page only (the ones not reused in other pages).
-*/
+}
+.body{
+    background: linear-gradient(to top, #DFE9F3 0%, white 100%);
+}
+
+
+
+.userhomebtn {
+  align-items: center;
+  background-color: #f2d0dd;
+  border: 2px solid #111;
+  border-radius: 8px;
+  box-sizing: border-box;
+  color: #111;
+  cursor: pointer;
+  display: flex;
+  font-family: Inter,sans-serif;
+  font-size: 16px;
+  height: 48px;
+  justify-content: center;
+  line-height: 24px;
+  max-width: 100%;
+  padding: 0 25px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.userhomebtn:after {
+  background-color: #111;
+  border-radius: 8px;
+  content: "";
+  display: block;
+  height: 48px;
+  left: 0;
+  width: 100%;
+  position: absolute;
+  top: -2px;
+  transform: translate(8px, 8px);
+  transition: transform .2s ease-out;
+  z-index: -1;
+}
+
+.userhomebtn:hover:after {
+  transform: translate(0, 0);
+}
+
+.userhomebtn:active {
+  background-color: #f2d0dd;
+  outline: 0;
+}
+
+.userhomebtn:hover {
+  outline: 0;
+}
+
+@media (min-width: 768px) {
+  .userhomebtn {
+    padding: 0 40px;
+  }
+}
