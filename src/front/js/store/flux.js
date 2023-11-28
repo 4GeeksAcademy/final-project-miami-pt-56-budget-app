@@ -59,15 +59,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify({
-						"firstname": firstName,
-						"lastname": lastName,
+						"first_name": firstName,
+						"last_name": lastName,
 						"email": email,
 						"password": password,
 						"verifypassword": verifyPassword
 					})
 				}
 				try {
-					const resp = await fetch(`${process.env.BACKEND_URL}/api/signup`)
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/signup`, opts)
 					const data = await resp.json();
 
 					if (resp.status === 200) {

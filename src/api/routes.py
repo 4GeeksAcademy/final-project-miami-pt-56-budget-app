@@ -36,6 +36,7 @@ def handle_hello():
 
 @api.route('/signup', methods = ['POST'])
 def handle_signup():
+    print(request.json)
     email = request.json.get('email', None)
     first_name = request.json.get('first_name', None)
     last_name = request.json.get('last_name', None)

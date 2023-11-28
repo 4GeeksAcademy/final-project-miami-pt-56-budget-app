@@ -20,13 +20,13 @@ export const NavBar = () => {
         </Navbar.Brand>
 
         {/* For Splash page */}
-        {/* <Nav className="ml-auto">
+        <Nav className="ml-auto">
           <Nav.Link href="/signin">Login</Nav.Link>
           <Nav.Link href="/signup">Sign up</Nav.Link>
-        </Nav> */}
+        </Nav>
 
         {/* User Homepage */}
-        <NavDropdown 
+        {/* <NavDropdown 
         title={
         <span className="text-body my-auto">Welcome Benjamin Ly!</span>
         }
@@ -34,7 +34,7 @@ export const NavBar = () => {
         id="navbarScrollingDropdown">
           <NavDropdown.Item href="/account">Account Settings</NavDropdown.Item>
           <NavDropdown.Item href="#action4" style={{ color: 'red' }}>Logout</NavDropdown.Item>
-        </NavDropdown>
+        </NavDropdown> */}
       </Container>
     </Navbar>
   );

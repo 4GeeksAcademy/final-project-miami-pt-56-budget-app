@@ -21,7 +21,7 @@ const SignUp = (props) => {
     const [verifyPassword, setVerifyPassword] = useState('');
 
     const handleClick = () => {
-        actions.handleLogin(firstName, lastName, email, password, verifyPassword);
+        actions.handleSingUp(firstName, lastName, email, password, verifyPassword);
     }
 
     return (
