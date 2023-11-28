@@ -41,10 +41,7 @@ def handle_signup():
     first_name = request.json.get('first_name', None)
     last_name = request.json.get('last_name', None)
     password = request.json.get('password', None)
-    verifypassword = request.json.get('verifypassword', None)
     newUser = User(email = email, password = password, first_name = first_name, last_name = last_name)
-    if password != verifypassword:
-        return jsonify('Passwords do not match'), 406
     if User.query.filter_by(email = email).first() == None:
         db.session.add(newUser)
         db.session.commit()

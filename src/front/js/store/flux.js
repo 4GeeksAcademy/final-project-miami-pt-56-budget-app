@@ -52,7 +52,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			handleSingUp: async (firstName, lastName, email, password, verifyPassword) => {
+			handleSingUp: async (firstName, lastName, email, password) => {
 				const opts = {
 					method: 'POST',
 					headers: {
@@ -63,7 +63,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"last_name": lastName,
 						"email": email,
 						"password": password,
-						"verifypassword": verifyPassword
 					})
 				}
 				try {

@@ -14,9 +14,9 @@ class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    first_name = db.Column(db.String(120), nullable=False)
-    last_name = db.Column(db.String(120), nullable=False)
-    password = db.Column(db.String(80), nullable=False)
+    first_name = db.Column(db.String(120), nullable=False, unique=False)
+    last_name = db.Column(db.String(120), nullable=False, unique=False)
+    password = db.Column(db.String(80), nullable=False, unique=False)
     friends = db.relationship("User", secondary=user_friend, 
                               primaryjoin=id == user_friend.c.user_1 ,
                               secondaryjoin=id == user_friend.c.user_2, 
