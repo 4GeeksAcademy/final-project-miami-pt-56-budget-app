@@ -17,3 +17,5 @@ This is a budget tracking webapp built by Jessica Jean, Christa Kelly, Benjamin 
 
 [Developer best practices](docs/README.md)
 [Boilerplate user guidelines](docs/HELP.md)
+
+
