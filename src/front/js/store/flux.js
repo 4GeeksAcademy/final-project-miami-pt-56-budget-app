@@ -66,12 +66,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 					})
 				}
 				try {
-					const resp = await fetch(process.env.BACKEND_URL+"/api/signup", opts)
+					const resp = await fetch("https://didactic-space-rotary-phone-ggq4wq9rjxwfw65q-3001.app.github.dev/api/signup", opts)
 					const data = await resp.json();
 
 					if (resp.status === 200) {
 						alert("User Created! Redirecting to signin page");
-						window.location.pathname !== '/signin'
+						window.location.href = '/signin';
 						return true;
 					} else if (resp.status === 406) {
 						alert(`Passwords don't match`);
