@@ -1,0 +1,16 @@
+/* 
+    General Styles used on every website (Don't Repeat Yourself)
+*/
+.custom-dropdown{
+    color: black;
+}
+
+.navbar {
+    background-color: #F2EEE4;
+    color: #5065A8;
+}
+
+.navbar-brand-img {
+    max-width: 120px;
+    max-height: 120px;
+  }

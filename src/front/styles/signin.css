@@ -1,0 +1,23 @@
+body {
+  background-color: #f2d0dd;
+}
+
+.singin-container {
+  background-color: #fff;
+  border-radius: 1px;
+  /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); */
+  box-shadow: 10px 10px;
+  overflow: hidden;
+  width: 300px;
+  margin-top: 50px;
+}
+
+.form-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}

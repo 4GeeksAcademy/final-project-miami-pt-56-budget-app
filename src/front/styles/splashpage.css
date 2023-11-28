@@ -1,0 +1,41 @@
+.splash-banner{
+    width: 100%;
+    margin: 1.5rem;
+    border: 1px solid #ebebe4;
+    border-radius: 0.356rem;
+    padding: 0.7rem;
+    color: #dd6031;
+
+}
+.splash-panels{
+    padding: 0.7rem;
+
+}
+.panels-top{
+    display:flex;
+    gap: 2rem;
+    justify-content: space-around;
+    color: #709176;
+    
+
+}
+.panels-bottom{
+    display:flex;
+    gap: 2rem;
+    justify-content: space-around;
+    margin-top: 2rem;
+    color: #709176;
+    
+}
+.panel{
+    width: 400px;
+    text-align: center;
+
+}
+.background{
+    color: #333333;
+}
+.footer{
+    display: flex;
+    flex-direction: column;
+}
