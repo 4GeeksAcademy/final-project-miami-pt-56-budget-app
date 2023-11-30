@@ -13,6 +13,9 @@ api = Blueprint('api', __name__)
 CORS(api, origins='*')
 
 # Routes
+
+# Get a list of all users
+# For Development use only, delete later
 @api.route('/users', methods = ['GET'])
 def handle_hello():
     users=User.query.all()
@@ -34,21 +37,23 @@ def handle_hello():
     }
     return jsonify(response_body), 200
 
-@api.route('/signup', methods = ['POST','OPTIONS'])
+#Route for signing up for BetterBudget
+@api.route('/signup', methods = ['POST'])
 def handle_signup():
     print(request.json)
     email = request.json.get('email', None)
     first_name = request.json.get('first_name', None)
     last_name = request.json.get('last_name', None)
     password = request.json.get('password', None)
-    newUser = User(email = email, password = password, first_name = first_name, last_name = last_name)
+    new_user = User(email = email, password = password, first_name = first_name, last_name = last_name)
     if User.query.filter_by(email = email).first() == None:
-        db.session.add(newUser)
+        db.session.add(new_user)
         db.session.commit()
         return jsonify('Added User'), 200
     else:
         return jsonify('That email is already in use'), 412    
-    
+
+#Route to signin to BetterBudget account 
 @api.route('/signin', methods = ['POST'])
 def handle_signin():
     email = request.json.get("email", None)
@@ -60,6 +65,7 @@ def handle_signin():
         access_token = create_access_token(identity=user.id)
     return jsonify({"token": access_token, "user_id": user.id}), 200
 
+#Route for user to change password
 @api.route('/user/<int:user_id>', methods = ['POST'])
 @jwt_required()
 def handle_account(user_id):
@@ -67,13 +73,14 @@ def handle_account(user_id):
     user = User.query.get(user_id)
 
     if current_user_id == user.id:
-        newpassword = request.json.get('newpassword', None)
-        user.password = newpassword
+        new_password = request.json.get('newPassword', None)
+        user.password = new_password
         db.session.commit()
         return jsonify('New password'), 200
     else:
         return jsonify('Error'), 401
-    
+
+#Route for user home page, gets user groups   
 @api.route('/home', methods = ['GET'])
 @jwt_required()
 def handle_home():
@@ -95,6 +102,7 @@ def handle_home():
     else:
         return jsonify({'msg': 'You must be logged in'}), 401
 
+#Route to get user friends
 @api.route('/friends', methods = ['GET'])
 @jwt_required()
 def handle_get_friends():
@@ -111,7 +119,8 @@ def handle_get_friends():
         return jsonify(response_body), 200
     else:
         return jsonify({'msg': 'You must be logged in'}), 401
-    
+
+#Route to add or delete user friends  
 @api.route('/friends', methods = ['POST','DELETE'])
 @jwt_required()
 def manage_friends():
@@ -119,7 +128,7 @@ def manage_friends():
     user = User.query.get(current_user_id)
 
     data = request.get_json()
-    friend_id = data.get('friend_id')
+    friend_id = data.get('friendID')
     friend = User.query.get(friend_id)
 
     if user and friend:
@@ -146,7 +155,8 @@ def manage_friends():
         return jsonify({'message': message, "user":user}), 200
     else:
         return jsonify({'error': 'User or friend not found'}), 404
-    
+
+#Route to get group information 
 @api.route('/groups', methods = ['GET'])
 @jwt_required()
 def handle_get_groups():
@@ -165,6 +175,8 @@ def handle_get_groups():
     else:
         return jsonify({'msg': 'You must be logged in'}), 401
 
+#Route to create new group, adds creating user to group
+#Ids start at 2?
 @api.route('/groups', methods = ['POST'])
 @jwt_required()
 def handle_add_groups():
@@ -174,65 +186,45 @@ def handle_add_groups():
         member_list = []
         member_list.append(user)
         name = request.json.get('name', None)
-        newGroup = Group(name = name, members = member_list)
-        db.session.add(newGroup)
+        new_group = Group(name = name, members = member_list)
+        db.session.add(new_group)
         db.session.commit()
         return jsonify('Added Group'), 200
     else:
         return jsonify({'msg': 'You must be logged in'}), 401
-    
-# @api.route('/groups/<int:group_id>', methods = ['POST'])
-# @jwt_required()
-# def handle_add_group_members(group_id):
-#     group = Group.query.get(group_id)
-#     new_member_id = request.json.get('new member')
-#     new_member = User.query.filter_by(id = new_member_id).first()
 
-#     member_list = []
-#     for x in group.members:
-#         member_list.append(x)
-#     member_list.append(new_member)
-#     # group = group.serialize()
-#     group["members"] = member_list
-#     # db.session.commit()
+#Route to add or remove members from existing group    
+@api.route('/groups/<int:group_id>', methods = ['PUT'])
+@jwt_required()
+def handle_add_group_member(group_id):
+    new_member = User.query.get(request.json.get('newMember'))
+    member_to_delete = User.query.get(request.json.get('oldMember'))
+    group = Group.query.get(group_id)
 
-#     return jsonify({"message": "success", "group": group}), 200 
+    if member_to_delete and group.members:
+        group.members.remove(member_to_delete)
+        db.session.commit()
+        return jsonify('Deleted Member'), 200
 
-#Route seems to be working sometimes but group id might not be passing correctly
+    if new_member and group:
+        if group.members is None:
+            group.members = []
+        group.members.append(new_member)
+        db.session.commit()
+        return jsonify('Added Member'), 200
+    else:
+        return jsonify({'msg': 'You must be logged in'}), 401
+
+#Route to delete a group
 @api.route('/groups/<int:group_id>', methods = ['DELETE'])
 @jwt_required()
 def handle_delete_groups(group_id):
-    groupList = Group.query.all()
-    toDelete = None
-    for item in groupList:
-        if item.serialize()['id'] == group_id:
-            toDelete = item
-        if toDelete == None:
-            return jsonify("Invalid group ID"), 400
-        else:
-            db.session.delete(toDelete)
-            db.session.commit()
-            return jsonify("Group deleted"), 200
+    group_to_delete = Group.query.filter_by(id = group_id).first()
+    if group_to_delete:
+        group_to_delete.members = []
+        db.session.commit()
+        db.session.delete(group_to_delete)
+        db.session.commit()
 
-# @api.route('/groups', methods = ['DELETE'])
-# @jwt_required()
-# def handle_delete_groups():
-#     group_id = request.json.get('group_id')
-#     group = Group.query.get(group_id)
-
-#     groupList = Group.query.all()
-#     toDelete = None
-
-#     response_body = {
-#         group_id
-#     }
-#     return jsonify(response_body), 400
-    # for item in groupList:
-    #     if item.serialize()['id'] == group:
-    #         toDelete = item
-    #     if toDelete == None:
-    #         return jsonify("Invalid group ID"), 400
-    #     else:
-    #         db.session.delete(toDelete)
-    #         db.session.commit()
-    #         return jsonify("Group deleted"), 200
+        return jsonify("group deleted"), 200
+    
