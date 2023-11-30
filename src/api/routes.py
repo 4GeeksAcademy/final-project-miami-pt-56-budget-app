@@ -60,6 +60,20 @@ def handle_signin():
         access_token = create_access_token(identity=user.id)
     return jsonify({"token": access_token, "user_id": user.id}), 200
 
+@api.route('/user/<int:user_id>', methods = ['POST'])
+@jwt_required()
+def handle_account(user_id):
+    current_user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    if current_user_id == user.id:
+        newpassword = request.json.get('newpassword', None)
+        user.password = newpassword
+        db.session.commit()
+        return jsonify('New password'), 200
+    else:
+        return jsonify('Error'), 401
+    
 @api.route('/home', methods = ['GET'])
 @jwt_required()
 def handle_home():
@@ -80,52 +94,6 @@ def handle_home():
         return jsonify(response_body), 200
     else:
         return jsonify({'msg': 'You must be logged in'}), 401
-
-@api.route('/groups', methods = ['GET'])
-@jwt_required()
-def handle_get_groups():
-    current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
-    if user is not None:
-        group_list = []
-        for x in user.groups:
-            group_list.append(x.serialize())
-        response_body = {
-            "message": "Here is the group information!",
-            "user": group_list
-        }
-        return jsonify(response_body), 200
-    else:
-        return jsonify({'msg': 'You must be logged in'}), 401
-
-@api.route('/groups', methods = ['POST'])
-@jwt_required()
-def handle_add_groups():
-    current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
-    if user is not None:
-        name = request.json.get('name', None)
-        newGroup = Group(name = name)
-        db.session.add(newGroup)
-        db.session.commit()
-        return jsonify('Added Group'), 200
-    else:
-        return jsonify({'msg': 'You must be logged in'}), 401
-
-@api.route('/groups/<int:group_id>', methods = ['DELETE'])
-@jwt_required()
-def handle_delete_groups(group_id):
-    groupList = Group.query.all()
-    toDelete = None
-    for item in groupList:
-        if item.serialize()['id'] == group_id:
-            toDelete = item
-        if toDelete == None:
-            return jsonify("Invalid group ID"), 400
-        else:
-            db.session.delete(toDelete)
-            db.session.commit()
-            return jsonify("Group deleted"), 200
 
 @api.route('/friends', methods = ['GET'])
 @jwt_required()
@@ -178,43 +146,93 @@ def manage_friends():
         return jsonify({'message': message, "user":user}), 200
     else:
         return jsonify({'error': 'User or friend not found'}), 404
-            
-# @api.route('/user/<int:user_id>', methods = ['POST'])
+    
+@api.route('/groups', methods = ['GET'])
+@jwt_required()
+def handle_get_groups():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if user is not None:
+        group_list = []
+        for x in user.groups:
+            print(x.members)
+            group_list.append(x.serialize())
+        response_body = {
+            "message": "Here is the group information!",
+            "group list": group_list
+        }
+        return jsonify(response_body), 200
+    else:
+        return jsonify({'msg': 'You must be logged in'}), 401
+
+@api.route('/groups', methods = ['POST'])
+@jwt_required()
+def handle_add_groups():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if user is not None:
+        member_list = []
+        member_list.append(user)
+        name = request.json.get('name', None)
+        newGroup = Group(name = name, members = member_list)
+        db.session.add(newGroup)
+        db.session.commit()
+        return jsonify('Added Group'), 200
+    else:
+        return jsonify({'msg': 'You must be logged in'}), 401
+    
+# @api.route('/groups/<int:group_id>', methods = ['POST'])
 # @jwt_required()
-# def handle_account(user_id):
+# def handle_add_group_members(group_id):
+#     group = Group.query.get(group_id)
+#     new_member_id = request.json.get('new member')
+#     new_member = User.query.filter_by(id = new_member_id).first()
 
+#     member_list = []
+#     for x in group.members:
+#         member_list.append(x)
+#     member_list.append(new_member)
+#     # group = group.serialize()
+#     group["members"] = member_list
+#     # db.session.commit()
 
-# @api.route('/groups', methods=['POST','DELETE'])
+#     return jsonify({"message": "success", "group": group}), 200 
+
+#Route seems to be working sometimes but group id might not be passing correctly
+@api.route('/groups/<int:group_id>', methods = ['DELETE'])
+@jwt_required()
+def handle_delete_groups(group_id):
+    groupList = Group.query.all()
+    toDelete = None
+    for item in groupList:
+        if item.serialize()['id'] == group_id:
+            toDelete = item
+        if toDelete == None:
+            return jsonify("Invalid group ID"), 400
+        else:
+            db.session.delete(toDelete)
+            db.session.commit()
+            return jsonify("Group deleted"), 200
+
+# @api.route('/groups', methods = ['DELETE'])
 # @jwt_required()
-# def manage_groups():
-#     current_user_id = get_jwt_identity()
-#     user = User.query.get(current_user_id)
+# def handle_delete_groups():
+#     group_id = request.json.get('group_id')
+#     group = Group.query.get(group_id)
 
-#     data = request.get_json()
-#     friend_id = data.get('friend_id')
-#     friend = User.query.get(friend_id)
+#     groupList = Group.query.all()
+#     toDelete = None
 
-#     if user and friend:
-#         if request.method == 'POST':
-#             user.add_friend(friend)
-#             message = 'Friend added successfully'
-#         elif request.method == 'DELETE':
-#             if friend in user.friends and user in friend.friends:
-#                 user.friends.remove(friend)
-#                 friend.friends.remove(user)
-#                 db.session.commit()
-#                 message = 'Friend removed successfully'
-#             else:
-#                 return jsonify({'error': 'Friendship not found'}), 404
-#         else:
-#             return jsonify({'error': 'Invalid action'}), 400
-
-#         friends_list = []
-#         for x in user.friends:
-#             friends_list.append(x.serialize())
-#         user = user.serialize()
-#         user["friends"] = friends_list
-
-#         return jsonify({'message': message, "user":user}), 200
-#     else:
-#         return jsonify({'error': 'User or friend not found'}), 404
+#     response_body = {
+#         group_id
+#     }
+#     return jsonify(response_body), 400
+    # for item in groupList:
+    #     if item.serialize()['id'] == group:
+    #         toDelete = item
+    #     if toDelete == None:
+    #         return jsonify("Invalid group ID"), 400
+    #     else:
+    #         db.session.delete(toDelete)
+    #         db.session.commit()
+    #         return jsonify("Group deleted"), 200
