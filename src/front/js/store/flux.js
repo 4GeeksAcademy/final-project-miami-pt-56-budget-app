@@ -1,4 +1,5 @@
 import { AlertLink } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
@@ -22,10 +23,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 		actions: {
 			// Use getActions to call a function within a fuction
 			handleSingIn: async (email, password) => {
+				const navigate = useNavigate();
 				const opts = {
 					method: 'POST',
 					headers: {
-						'Content-Type': 'application/json'
+						'Content-Type': 'application/json',
+						'Access-Control-Allow-Origin':'*'
 					},
 					body: JSON.stringify({
 						"email": email,
@@ -33,12 +36,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 					})
 				}
 				try {
-					const resp = await fetch(`${process.env.BACKEND_URL}/api/login`)
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/signin`, opts)
 					const data = await resp.json();
 
 					if (resp.status === 200) {
 						sessionStorage.setItem('token', data.access_token);
 						setStore({ token: data.access_token });
+						navigate('/home');
 						return true;
 					} else if (resp.status === 404) {
 						//user not found
@@ -53,10 +57,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			handleSingUp: async (firstName, lastName, email, password) => {
+				// const navigate = useNavigate();
 				const opts = {
 					method: 'POST',
 					headers: {
-						'Content-Type': 'application/json'
+						'Content-Type': 'application/json',
+						'Access-Control-Allow-Origin':'*'
 					},
 					body: JSON.stringify({
 						"first_name": firstName,
@@ -66,12 +72,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 					})
 				}
 				try {
-					const resp = await fetch("https://didactic-space-rotary-phone-ggq4wq9rjxwfw65q-3001.app.github.dev/api/signup", opts)
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/signup`, opts)
 					const data = await resp.json();
-
+					console.log('handle Sign Up func', data)
 					if (resp.status === 200) {
 						alert("User Created! Redirecting to signin page");
-						window.location.href = '/signin';
+						// navigate('/signin');
 						return true;
 					} else if (resp.status === 406) {
 						alert(`Passwords don't match`);
@@ -85,6 +91,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch (error) {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
+			},
+			handleLogout: () => {
+				sessionStorage.removeItem('token');
+				console.log('logout function running');
+				setStore({ token: null });
 			},
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
