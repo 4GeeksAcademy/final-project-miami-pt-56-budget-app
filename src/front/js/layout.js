@@ -7,7 +7,7 @@ import Splashpage from "./pages/Splashpage";
 import SignIn from "./pages/SignIn"
 import SignUp from "./pages/SignUp";
 import { Home } from "./pages/home";
-import { Demo } from "./pages/demo";
+import Expenses from "./pages/Expenses";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
 import Piggybank from "./pages/piggybankpage";
@@ -45,7 +45,7 @@ const Layout = () => {
                         <Route element={<SignUp setCurrentURL={setCurrentURL} />} path="/signup" />
                         <Route element={<EditAccount />} path="/account" />
                         <Route element={<Piggybank />} path="/piggybankpage" />
-                        <Route element={<Demo />} path="/demo" />
+                        <Route element={<Expenses />} path="/expenses" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
