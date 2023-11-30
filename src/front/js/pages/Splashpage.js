@@ -1,7 +1,12 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import "../../styles/splashpage.css"
 
-const Splashpage = () => {
+const Splashpage = (props) => {
+
+  useEffect(() => {
+		props.setCurrentURL('');
+	}, [])
+
   return (
     <div>  
       <div className='splash-banner'>

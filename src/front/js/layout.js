@@ -39,14 +39,12 @@ const Layout = () => {
                 <ScrollToTop>
                     {showNavbar && <NavBar />}
                     <Routes>
-
-                        <Route element={<Splashpage />} path="/splashpage" />
-                        <Route element={<Home setCurrentURL={setCurrentURL} />} path="/" />
+                        <Route element={<Splashpage setCurrentURL={setCurrentURL}  />} path="/" />
+                        <Route element={<Home />} path="/home" />
                         <Route element={<SignIn setCurrentURL={setCurrentURL} />} path="/signin" />
                         <Route element={<SignUp setCurrentURL={setCurrentURL} />} path="/signup" />
                         <Route element={<EditAccount />} path="/account" />
                         <Route element={<Piggybank />} path="/piggybankpage" />
-
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
