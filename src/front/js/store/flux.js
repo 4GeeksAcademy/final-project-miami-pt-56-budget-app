@@ -1,5 +1,3 @@
-import { AlertLink } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
 
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
@@ -22,8 +20,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
-			handleSingIn: async (email, password) => {
-				const navigate = useNavigate();
+			handleLogin: async (email, password) => {
+				
 				const opts = {
 					method: 'POST',
 					headers: {
@@ -42,7 +40,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (resp.status === 200) {
 						sessionStorage.setItem('token', data.access_token);
 						setStore({ token: data.access_token });
-						navigate('/home');
 						return true;
 					} else if (resp.status === 404) {
 						//user not found
