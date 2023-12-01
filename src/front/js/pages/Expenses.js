@@ -10,6 +10,7 @@ const Expenses = () => {
     const { store, actions } = useContext(Context);
     // const [showModal, setShowModal] = useState(false);
     const [sortOrder, setSortOrder] = useState('asc');
+    const [splitOption, setSplitOption] = useState('Alone');
 
     const expenses = [
         { id: 1, description: 'Groceries', amount: '$150', date: '2023-04-10' },
@@ -50,10 +51,16 @@ const Expenses = () => {
                             Sort by Amount: <br/> {sortOrder === 'asc' ? 'Ascending' : 'Descending'}
                         </Button>
                     </Col>
-                </Row>
-                <Row>
-                    <Col xs={12}>
-                        <ExpensesTable expenses={expenses} />
+                    {/* Content */}
+                    <Col xl={10}>
+                        <Row>
+                            <Col xl={6}> <h2 className='text-center mt-5'>Expenses</h2></Col>
+                            <Col xl={3}> <button className='expense-btn my-5' onClick={handleAddExpense}>Add Expense</button></Col>
+                            <Col xl={3}> <button className='expense-btn my-5'> Sort by Amount {sortOrder === 'asc' ? 'Ascending' : 'Descending'}</button></Col>
+                        </Row>
+                        <Row>
+                            <ExpensesTable expenses={expenses} />
+                        </Row>
                     </Col>
                 </Row>
                 {/* </Col> */}
