@@ -10,7 +10,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
-CORS(api)
+CORS(api, origins='*')
 
 # Routes
 @api.route('/users', methods = ['GET'])
@@ -34,7 +34,7 @@ def handle_hello():
     }
     return jsonify(response_body), 200
 
-@api.route('/signup', methods = ['POST'])
+@api.route('/signup', methods = ['POST','OPTIONS'])
 def handle_signup():
     print(request.json)
     email = request.json.get('email', None)
