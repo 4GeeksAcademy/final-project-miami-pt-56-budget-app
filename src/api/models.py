@@ -23,6 +23,8 @@ class User(db.Model):
                               back_populates="friends")
                       
     groups = db.relationship("Group", secondary=group_member, back_populates="members")
+    piggybanks = db.relationship("PiggyBank", backref="user")
+    expenses = db.relationship("Expenses", backref="user")
 
     def __repr__(self):
         return f'<User {self.email}>'
@@ -39,8 +41,8 @@ class User(db.Model):
             "email": self.email,
             "first_name": self.first_name,
             "last_name": self.last_name,
-            # "groups": list(map(lambda x: x.serialize(), self.groups))
-            # do not serialize the password, it's a security breach
+            "expenses": list(map(lambda y: y.serialize(), self.expenses)),
+            "piggybanks": list(map(lambda x: x.serialize(), self.piggybanks))
         }
 
 class Group(db.Model):
@@ -48,6 +50,7 @@ class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     members = db.relationship("User", secondary=group_member, back_populates="groups")
+    expenses = db.relationship("Expenses", backref="group")
 
     def __repr__(self):
         return f'<Group {self.name}>'
@@ -56,5 +59,37 @@ class Group(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "members": list(map(lambda x: x.serialize(), self.members))
+            "members": list(map(lambda x: x.serialize(), self.members)),
+            "expenses": list(map(lambda y: y.serialize(), self.expenses))
+        }
+
+class PiggyBank(db.Model):
+    __tablename__ = 'piggybank'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __repr__(self):
+        return f'<PiggyBank {self.name}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name
+        }
+
+class Expenses(db.Model):
+    __tablename__ = 'expenses'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
+
+    def __repr__(self):
+        return f'<Expenses {self.name}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name
         }
