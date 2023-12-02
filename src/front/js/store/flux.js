@@ -2,14 +2,16 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			token: '',
+			token: "",
 			requestBodyEmail: {},
 			message: null,
-			showExpensesModal: false
+			showExpensesModal: false,
+			userName: 'User'
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
 			handleLogin: async (email, password) => {
+				const store = getStore();
 				
 				const opts = {
 					method: 'POST',
@@ -25,13 +27,17 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const resp = await fetch(`${process.env.BACKEND_URL}/api/signin`, opts)
 					const data = await resp.json();
-
+					console.log(data);
 					if (resp.status === 200) {
-						sessionStorage.setItem('token', data.access_token);
-						setStore({ token: data.access_token });
+						console.log('response token:', data.token);
+						sessionStorage.setItem('token', data.token);
+						setStore({ token: data.token });
+						setStore({userName: data.user_name})
+						console.log('token in store:', store.token)
 						return true;
 					} else if (resp.status === 404) {
 						//user not found
+						alert('User not found - create account?');
 					} else if (resp.status === 401) {
 						alert('Incorrect email or password');
 						return false;
