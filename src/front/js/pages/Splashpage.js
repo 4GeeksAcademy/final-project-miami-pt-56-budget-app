@@ -1,11 +1,14 @@
 import React, {useEffect} from 'react';
 import "../../styles/splashpage.css"
 
-const Splashpage = (props) => {
+const Splashpage = () => {
 
-  useEffect(() => {
+/*  This was used to show the NavBar conditionally, 
+    however it was decided to always show. Props were used as arguments.
+
+    useEffect(() => {
 		props.setCurrentURL('');
-	}, [])
+	}, []) */
 
   return (
     <div>  

@@ -9,7 +9,7 @@ export const Home = (props) => {
 
 	return (
 		<div className="text-center mt-5">
-			<SideNavBar/>
+			{/* <SideNavBar/> */}
 			<UserHome/>
 		</div>
 	);
