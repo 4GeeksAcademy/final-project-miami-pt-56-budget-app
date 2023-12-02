@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
 import { Context } from "../store/appContext";
 import { Table, Container } from "react-bootstrap";
-import '../../styles/expenses.css'
+import '../../styles/friends.css'
 
 const FriendsTable = ({ friends }) => {
 	const { store, actions } = useContext(Context);

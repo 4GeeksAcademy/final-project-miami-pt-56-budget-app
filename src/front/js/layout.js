@@ -11,6 +11,7 @@ import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
 import Piggybank from "./pages/piggybankpage";
+import Friends from "./pages/friends";
 
 import { NavBar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -46,6 +47,7 @@ const Layout = () => {
                         <Route element={<EditAccount />} path="/account" />
                         <Route element={<Piggybank />} path="/piggybankpage" />
                         <Route element={<Demo />} path="/demo" />
+                        <Route element={<Friends />} path="/friends" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>

@@ -48,7 +48,7 @@ export default function UserHome() {
                     </div>
                     );})}
                 <div className='d-flex row'> 
-                <button className='userhomebtn btn d-flex justify-content-center col-3 'role='button'>Learn more</button>
+                <button className='userhomebtn btn d-flex justify-content-center col-3 'role='button' href="/friends">Learn more</button>
                 <p className='d-flex justify-content-end col'>msg if none</p>
                 </div>
             </div>

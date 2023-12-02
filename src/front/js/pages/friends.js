@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Button, Modal, Form, Dropdown } from 'react-bootstrap';
-import '../../styles/expenses.css'
+import '../../styles/friends.css'
 import FriendsTable from '../component/FriendsTable';
 
 const Friends = () => {
