@@ -67,6 +67,10 @@ class PiggyBank(db.Model):
     __tablename__ = 'piggybank'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
+    goal = db.Column(db.Numeric(scale = 2), nullable=False)
+    saved = db.Column(db.Numeric(scale = 2), nullable=False)
+    target_date = db.Column(db.String(120), nullable=True)
+    notes = db.Column(db.Text, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
@@ -75,7 +79,11 @@ class PiggyBank(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name
+            "name": self.name,
+            "goal": self.goal,
+            "saved": self.saved,
+            "notes": self.notes,
+            "target date": self.target_date
         }
 
 class Expenses(db.Model):
@@ -84,6 +92,7 @@ class Expenses(db.Model):
     name = db.Column(db.String(120), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
+    amount = db.Column(db.Numeric(scale = 2), nullable=False)
 
     def __repr__(self):
         return f'<Expenses {self.name}>'
@@ -91,5 +100,7 @@ class Expenses(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name
+            "name": self.name,
+            "type": self.type,
+            "amount": self.amount
         }
