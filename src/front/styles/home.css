@@ -1,23 +1,16 @@
-.homeComponentContainer{
-    width: 70%;
-    margin-left: 300px;
-}
+
 .homeComponentBorder{
     border: 1px solid black;
     border-radius: 17px;
     background-color: #709176;
 }
+
 .homeusertag{
     font-weight: 500;
     color: white;
     letter-spacing: 1px;
 
 }
-.body{
-    background: linear-gradient(to top, #DFE9F3 0%, white 100%);
-}
-
-
 
 .userhomebtn {
   align-items: center;

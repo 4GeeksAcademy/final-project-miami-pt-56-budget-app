@@ -7,12 +7,14 @@ import { Link , useNavigate} from "react-router-dom";
 
 import '../../styles/signin.css'
 
-const SignUp = (props) => {
+const SignUp = () => {
     const navigate=useNavigate()
 
-    useEffect(() => {
+/*  This is used to make the NavBar not show on SignUp,
+    but it was decided to show. props were being passed as argument to this page.
+        useEffect(() => {
         props.setCurrentURL("/signup")
-    }, [])
+    }, []) */
     
     const { store, actions } = useContext(Context);
     const [email, setEmail] = useState('');
@@ -59,15 +61,10 @@ const SignUp = (props) => {
                     <button className="form-button" onClick={()=>handleClick()}>
                         Sign Up
                     </button>
-                    <div className="links">
+                    <div className="links mb-3">
                         Already have an account?
                         <Link to="/signin">
                             <span className="ms-1">Sign in</span >
-                        </Link>
-                    </div>
-                    <div className="links mb-3">
-                        <Link to="/">
-                            <span>Home</span>
                         </Link>
                     </div>
                 </div>
