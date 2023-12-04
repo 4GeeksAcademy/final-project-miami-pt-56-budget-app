@@ -3,9 +3,9 @@ import { Modal, Form, Dropdown, Button, InputGroup, Container } from "react-boot
 import { Context } from "../store/appContext";
 
 
-const ExpensesModal = ({ show, expenseToEdit }) => {
+const ExpensesModal = ({ show }) => {
 
-    const { actions } = useContext(Context);
+    const { store, actions } = useContext(Context);
 
     const [splitOption, setSplitOption] = useState('Alone');
     const [selectedSplitOption, setSelectedSplitOptions] = useState('');
@@ -15,13 +15,21 @@ const ExpensesModal = ({ show, expenseToEdit }) => {
     const [splitCustomAmount, setSplitCustomAmount] = useState(0);
     //added to be able to edit expense
     const [expenseDescription, setExpenseDescription] = useState('');
+    const [expenseDate, setExpenseDate] = useState('');
 
     useEffect(() => {
-        if (expenseToEdit) {
-            setSplitAmount(expenseToEdit.amount)
-            setExpenseDescription(expenseToEdit.description)
+        console.log(store.expenseToUpdate);
+        if (store.expenseToUpdate) {
+            setSplitAmount(store.expenseToUpdate.amount);
+            setExpenseDescription(store.expenseToUpdate.description);
+            setExpenseDate(store.expenseToUpdate.date);
+            setSplitOption(store.expenseToUpdate.type);
+        } else {
+            setSplitAmount(0);
+            setExpenseDescription('');
         }
-    }, [expenseToEdit]);
+
+    }, [store.expenseToUpdate]);
 
 
     const handleSaveExpense = () => {
@@ -98,7 +106,7 @@ const ExpensesModal = ({ show, expenseToEdit }) => {
                         </InputGroup>
                         <InputGroup className="mb-3">
                             <InputGroup.Text>Amount Owed</InputGroup.Text>
-                            <Form.Control type="text" value={calculatedAmount.toFixed(2)} readOnly />
+                            <Form.Control type="number" value={calculatedAmount === '' ? '' : calculatedAmount.toFixed(2)} readOnly />
                         </InputGroup>
                         <Container className="mt-3 d-flex justify-content-center">
                             <Button className="me-2" variant="primary" type="button" onClick={() => handleSaveExpense(formData)}>
@@ -116,7 +124,7 @@ const ExpensesModal = ({ show, expenseToEdit }) => {
                     <>
                         <InputGroup className="mb-3">
                             <InputGroup.Text>Amount Owed</InputGroup.Text>
-                            <Form.Control type="text" value={splitEqually.toFixed(2)} readOnly />
+                            <Form.Control type="number" value={splitEqually.toFixed(2)} readOnly />
                         </InputGroup>
                         <Container className="mt-3 d-flex justify-content-center">
                             <Button className="me-2" variant="primary" type="button" onClick={() => handleSaveExpense(formData)}>
@@ -148,7 +156,7 @@ const ExpensesModal = ({ show, expenseToEdit }) => {
                         </InputGroup>
                         <InputGroup className="mb-3">
                             <InputGroup.Text>Amount Owed</InputGroup.Text>
-                            <Form.Control type="text" value={newCalculatedAmount === '' ? '' : newCalculatedAmount.toFixed(2)} readOnly />
+                            <Form.Control type="number" value={newCalculatedAmount === '' ? '' : newCalculatedAmount.toFixed(2)} readOnly />
                         </InputGroup>
                         <Container className="mt-3 d-flex justify-content-center">
                             <Button className="me-2" variant="primary" type="button" onClick={() => handleSaveExpense(formData)}>
@@ -169,7 +177,7 @@ const ExpensesModal = ({ show, expenseToEdit }) => {
     return (
         <Modal className="modals align-center" show={show} onHide={actions.hideExpensesModal}>
             <Modal.Header closeButton>
-                <Modal.Title>{expenseToEdit ? 'Edit Expense' : 'Add Expense'}</Modal.Title>
+                <Modal.Title>{store.expenseToUpdate ? 'Edit Expense' : 'Add Expense'}</Modal.Title>
             </Modal.Header>
             <Modal.Body >
                 <Form>
@@ -180,6 +188,10 @@ const ExpensesModal = ({ show, expenseToEdit }) => {
                     <Form.Group className="mt-3" controlId="expenseAmount">
                         <Form.Label>Amount</Form.Label>
                         <Form.Control type="number" placeholder="Enter amount" value={splitAmount} onChange={(e) => setSplitAmount(e.target.value)} />
+                    </Form.Group>
+                    <Form.Group className="mt-3" controlId="expenseDescription">
+                        <Form.Label>Date</Form.Label>
+                        <Form.Control type="date" placeholder="Enter Date" value={expenseDate} onChange={(e) => setExpenseDate(e.target.value)} />
                     </Form.Group>
                     <Form.Group className="mt-3 d-flex justify-content-center" controlId="splitOption">
                         <Form.Label className="me-3">Type</Form.Label>

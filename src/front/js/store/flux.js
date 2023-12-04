@@ -5,8 +5,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			token: "",
 			requestBodyEmail: {},
 			message: null,
+			userName: 'User',
 			showExpensesModal: false,
-			userName: 'User'
+			expenseToUpdate: {}
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -89,11 +90,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				console.log('logout function running');
 				setStore({ token: null });
 			},
-			showExpensesModal: () => {
-				setStore({showExpensesModal: true})
+			showExpensesModal: (expenseToEdit) => {
+				setStore({showExpensesModal: true});
+				setStore({expenseToUpdate: expenseToEdit});
 			},
 			hideExpensesModal: () => {
-				setStore({showExpensesModal: false})
+				setStore({showExpensesModal: false});
 			}
 		}
 	};

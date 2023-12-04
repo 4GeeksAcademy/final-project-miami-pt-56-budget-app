@@ -11,11 +11,11 @@ const Expenses = () => {
     // const [showModal, setShowModal] = useState(false);
     const [sortOrder, setSortOrder] = useState('asc');
     const [expenses, setExpenses] = useState([
-        { id: 1, description: 'Groceries', amount: '$100', date: '2023-04-10' },
-        { id: 2, description: 'Dinner', amount: '$130', date: '2023-04-11' },
-        { id: 3, description: 'Gym', amount: '$250', date: '2023-04-10' },
-        { id: 4, description: 'Lunch', amount: '$25', date: '2023-04-10' },
-        { id: 5, description: 'Rent', amount: '$2300', date: '2023-04-11' },
+        { id: 1, description: 'Groceries', amount: '100', date: '2023-04-10', type: 'Alone' },
+        { id: 2, description: 'Dinner', amount: '130', date: '2023-04-11', type: 'Alone' },
+        { id: 3, description: 'Gym', amount: '250', date: '2023-04-10', type: 'Alone' },
+        { id: 4, description: 'Lunch', amount: '25', date: '2023-04-10', type: 'Alone' },
+        { id: 5, description: 'Rent', amount: '2300', date: '2023-04-11', type: 'Alone' },
     ])
 
     const handleAddExpense = () => {
