@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
-
 import Splashpage from "./pages/Splashpage";
 import Piggybank from "./pages/piggybankpage";
 import SignIn from "./pages/SignIn"
@@ -46,8 +45,6 @@ const Layout = () => {
                         <Route element={<SignUp setCurrentURL={setCurrentURL} />} path="/signup" />
                         <Route element={<EditAccount />} path="/account" />
                         <Route element={<Piggybank />} path="/piggybankpage" />
-
-
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
@@ -58,5 +55,4 @@ const Layout = () => {
         </div>
     );
 };
-
 export default injectContext(Layout);
