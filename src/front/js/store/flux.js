@@ -5,7 +5,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 			token: "",
 			requestBodyEmail: {},
 			message: null,
-			userName: 'User'
+			showGroupModal: false,
+			showAddMemberModal: false,
+			userName: 'User',
+			userExpenses: [],
+			userFriends: [],
+			userGroups: [],
+			userPiggybanks: [],
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -87,6 +93,133 @@ const getState = ({ getStore, getActions, setStore }) => {
 				sessionStorage.removeItem('token');
 				console.log('logout function running');
 				setStore({ token: null });
+			},
+			handleGetUser: async() => {
+				const opts = {
+					method: 'GET',
+					headers: {
+						Authorization: "Bearer " + sessionStorage.getItem("token"),
+						'Content-Type': 'application/json',
+					}
+				}
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/home`, opts)
+					const data = await resp.json();
+					const userData = data.user;
+					if (resp.status === 200) {
+						const savedInfo = userData[0]
+						setStore({userInfo: userData[0]})
+						setStore({userExpenses: savedInfo.expenses})
+						setStore({userFriends: savedInfo.friends})
+						setStore({userGroups: savedInfo.groups})
+						setStore({userPiggybanks: savedInfo.piggybanks})
+						console.log(getStore().userGroups)
+						return true;
+					} else if (resp.status === 401) {
+						alert(`You must be logged in`);
+						return false;
+					} else {
+						console.error(`Unexpected error: ${data.message}`)
+					}
+				} catch (error) {
+					console.error(`There was a problem with the fetch operation ${error}`)
+				}
+			},
+			handleAddGroups: async(groupName) => {
+				const opts = {
+					method: 'POST',
+					headers: {
+						Authorization: "Bearer " + sessionStorage.getItem("token"),
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						"name": groupName
+					})
+				}
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/groups`, opts)
+					const data = await resp.json();
+					console.log('handle Get Groups func', data)
+					if (resp.status === 200) {
+						alert("Group information");
+						return true;
+					} else if (resp.status === 401) {
+						alert(`You must be logged in`);
+						return false;
+					} else {
+						console.error(`Unexpected error: ${data.message}`)
+					}
+				} catch (error) {
+					console.error(`There was a problem with the fetch operation ${error}`)
+				}
+			},
+			handleAddMembers: async(groupName) => {
+				const opts = {
+					method: 'POST',
+					headers: {
+						Authorization: "Bearer " + sessionStorage.getItem("token"),
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						"name": groupName
+					})
+				}
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/groups`, opts)
+					const data = await resp.json();
+					console.log('handle Get Groups func', data)
+					if (resp.status === 200) {
+						alert("Group information");
+						return true;
+					} else if (resp.status === 401) {
+						alert(`You must be logged in`);
+						return false;
+					} else {
+						console.error(`Unexpected error: ${data.message}`)
+					}
+				} catch (error) {
+					console.error(`There was a problem with the fetch operation ${error}`)
+				}
+			},
+			handleDeleteMembers: async(groupName) => {
+				const opts = {
+					method: 'POST',
+					headers: {
+						Authorization: "Bearer " + sessionStorage.getItem("token"),
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						"name": groupName
+					})
+				}
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/groups`, opts)
+					const data = await resp.json();
+					console.log('handle Get Groups func', data)
+					if (resp.status === 200) {
+						alert("Group information");
+						return true;
+					} else if (resp.status === 401) {
+						alert(`You must be logged in`);
+						return false;
+					} else {
+						console.error(`Unexpected error: ${data.message}`)
+					}
+				} catch (error) {
+					console.error(`There was a problem with the fetch operation ${error}`)
+				}
+			},
+			showGroupModal: () => {
+				setStore({showGroupModal: true})
+			},
+			hideGroupModal: () => {
+				setStore({showGroupModal: false})
+			},
+			showEditMemberModal: () => {
+				setStore({showAddMemberModal: true})
+			},
+			hideEditMemberModal: () => {
+				setStore({showAddMemberModal: false})
 			}
 		}
 	};
