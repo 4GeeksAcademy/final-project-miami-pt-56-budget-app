@@ -10,21 +10,30 @@ const Expenses = () => {
     const { store, actions } = useContext(Context);
     // const [showModal, setShowModal] = useState(false);
     const [sortOrder, setSortOrder] = useState('asc');
-
-    const expenses = [
-        { id: 1, description: 'Groceries', amount: '$150', date: '2023-04-10' },
+    const [expenses, setExpenses] = useState([
+        { id: 1, description: 'Groceries', amount: '$100', date: '2023-04-10' },
         { id: 2, description: 'Dinner', amount: '$130', date: '2023-04-11' },
-        { id: 3, description: 'Gym', amount: '$150', date: '2023-04-10' },
-        { id: 4, description: 'Rent', amount: '$2300', date: '2023-04-11' },
-    ]
+        { id: 3, description: 'Gym', amount: '$250', date: '2023-04-10' },
+        { id: 4, description: 'Lunch', amount: '$25', date: '2023-04-10' },
+        { id: 5, description: 'Rent', amount: '$2300', date: '2023-04-11' },
+    ])
 
     const handleAddExpense = () => {
         actions.showExpensesModal(true);
     }
 
-    const handleCloseModal = () => {
-        setShowModal(false)
+
+    const handleSortByAmount = () => {
+        const sortedExpenses = [...expenses].sort((a, b) => {
+            const amountA = parseFloat(a.amount.slice(1));
+            const amountB = parseFloat(b.amount.slice(1));
+            return sortOrder === 'asc' ? amountA - amountB : amountB - amountA;
+        });
+
+        setExpenses(sortedExpenses);
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     }
+
 
     return (
         <>
@@ -46,7 +55,7 @@ const Expenses = () => {
                         </Button>
                     </Col>
                     <Col xl={3} xs={12} sm={6}>
-                        <Button className='my-3 sort-btn text-break'>
+                        <Button className='my-3 sort-btn text-break' onClick={handleSortByAmount}>
                             Sort by Amount: <br/> {sortOrder === 'asc' ? 'Ascending' : 'Descending'}
                         </Button>
                     </Col>

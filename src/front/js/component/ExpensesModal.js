@@ -1,43 +1,49 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Modal, Form, Dropdown, Button, InputGroup, Container } from "react-bootstrap";
-import Expenses from "../pages/Expenses";
 import { Context } from "../store/appContext";
 
 
-const ExpensesModal = ({ show }) => {
+const ExpensesModal = ({ show, expenseToEdit }) => {
 
     const { actions } = useContext(Context);
 
     const [splitOption, setSplitOption] = useState('Alone');
     const [selectedSplitOption, setSelectedSplitOptions] = useState('');
-    const [splitTo, setSplitTo] = useState('');
+    const [splitWith, setSplitWith] = useState('');
     const [splitAmount, setSplitAmount] = useState(0);
     const [splitPercentage, setSplitPercentage] = useState(0);
     const [splitCustomAmount, setSplitCustomAmount] = useState(0);
-    const [splitEquallyAmount, setSplitEquallyAmount] = useState(0);
-    const [calculatedAmount, setCalculatedAmount] = useState('');
+    //added to be able to edit expense
+    const [expenseDescription, setExpenseDescription] = useState('');
 
+    useEffect(() => {
+        if (expenseToEdit) {
+            setSplitAmount(expenseToEdit.amount)
+            setExpenseDescription(expenseToEdit.description)
+        }
+    }, [expenseToEdit]);
 
-    const handleSplitEqually = () => {
-        const splitEqually = parseFloat(splitAmount) / 2;
-        setSplitEquallyAmount(splitEqually);
-        setSelectedSplitOptions('Equally');
-    }
 
     const handleSaveExpense = () => {
 
-        setSplitTo('');
+        setSplitWith('');
+        setSplitAmount(0);
+        setSplitPercentage(0);
+        setSplitCustomAmount(0);
+
+        actions.hideExpensesModal;
+
     }
 
     const renderSplitOptions = () => {
         switch (splitOption) {
             case 'Alone':
                 return (
-                    <Container className="mt-3">
-                        <Button variant="primary" type="button" onClick={() => handleSaveExpense(formData)}>
+                    <Container className="mt-3 p-0 d-flex justify-content-center">
+                        <Button className="me-2" variant="primary" type="button" onClick={() => handleSaveExpense(formData)}>
                             Submit
                         </Button>
-                        <Button variant="primary" type="button" onClick={() => handleSaveExpense(formData)}>
+                        <Button variant="primary" type="button" onClick={actions.hideExpensesModal}>
                             Cancel
                         </Button>
                     </Container>
@@ -45,19 +51,21 @@ const ExpensesModal = ({ show }) => {
             case 'Split':
                 return (
                     <>
-                        <Form.Group controlId="splitTo">
-                            <Form.Label>{`Split With ${splitTo}`}</Form.Label>
-                            <Form.Control type="text" placeholder={`Enter ${splitOption}`} value={splitTo} onChange={(e) => setSplitTo(e.target.value)} />
+                        <Form.Group controlId="splitWith">
+                            <Form.Label>{`Split With ${splitWith}`}</Form.Label>
+                            <Form.Control type="text" placeholder={`Enter Group or Friend name`} value={splitWith} onChange={(e) => setSplitWith(e.target.value)} />
                         </Form.Group>
-                        <Button variant="secondary" onClick={() => handleSplitEqually(splitAmount)}>
-                            Equally
-                        </Button>
-                        <Button variant="secondary" onClick={() => setSelectedSplitOptions('Percentage')}>
-                            %
-                        </Button>
-                        <Button variant="secondary" onClick={() => setSelectedSplitOptions('CustomAmount')}>
-                            Custom Amount
-                        </Button>
+                        <Container className=" my-3 d-flex justify-content-center">
+                            <Button className="m-1" variant="secondary" onClick={() => setSelectedSplitOptions('Equally')}>
+                                Equally
+                            </Button>
+                            <Button className="m-1" variant="secondary" onClick={() => setSelectedSplitOptions('Percentage')}>
+                                %
+                            </Button>
+                            <Button className="m-1" variant="secondary" onClick={() => setSelectedSplitOptions('CustomAmount')}>
+                                Custom Amount
+                            </Button>
+                        </Container>
                     </>
                 );
             default:
@@ -69,94 +77,88 @@ const ExpensesModal = ({ show }) => {
         if (splitOption === 'Alone') {
             return null;
         }
-
         switch (selectedSplitOption) {
             case 'Percentage':
                 const splitByPercentage = parseFloat(splitPercentage);
                 const calculatedAmount = !isNaN(splitByPercentage)
                     ? (splitByPercentage / 100) * parseFloat(splitAmount)
                     : '';
-
                 return (
                     <>
-                        <Form.Group controlId="splitPercentage">
-                            <Form.Label>Enter %</Form.Label>
+                        <InputGroup className="mb-3">
+                            <InputGroup.Text>Enter %</InputGroup.Text>
                             <Form.Control
                                 type="number"
                                 placeholder="Enter percentage"
                                 value={splitPercentage}
                                 onChange={(e) => {
                                     setSplitPercentage(e.target.value);
-                                    const newCalculatedAmount = !isNaN(splitByPercentage)
-                                        ? (splitByPercentage / 100) * parseFloat(splitAmount)
-                                        : '';
-                                    setCalculatedAmount(newCalculatedAmount);
                                 }}
                             />
-                        </Form.Group>
+                        </InputGroup>
                         <InputGroup className="mb-3">
                             <InputGroup.Text>Amount Owed</InputGroup.Text>
-                            <Form.Control type="text" value={calculatedAmount} readOnly />
+                            <Form.Control type="text" value={calculatedAmount.toFixed(2)} readOnly />
                         </InputGroup>
-                        <Container className="mt-3">
-                            <Button variant="primary" type="button" onClick={() => handleSaveExpense(formData)}>
+                        <Container className="mt-3 d-flex justify-content-center">
+                            <Button className="me-2" variant="primary" type="button" onClick={() => handleSaveExpense(formData)}>
                                 Submit
                             </Button>
-                            <Button variant="primary" type="button" onClick={() => handleSaveExpense(formData)}>
+                            <Button variant="primary" type="button" onClick={actions.hideExpensesModal}>
                                 Cancel
                             </Button>
                         </Container>
                     </>
-
                 );
             case 'Equally':
+                const splitEqually = parseFloat(splitAmount) / 2;
                 return (
                     <>
                         <InputGroup className="mb-3">
                             <InputGroup.Text>Amount Owed</InputGroup.Text>
-                            {splitEquallyAmount && <p>{splitEquallyAmount}</p>}
+                            <Form.Control type="text" value={splitEqually.toFixed(2)} readOnly />
                         </InputGroup>
-                        <Container className="mt-3">
-                            <Button variant="primary" type="button" onClick={() => handleSaveExpense(formData)}>
+                        <Container className="mt-3 d-flex justify-content-center">
+                            <Button className="me-2" variant="primary" type="button" onClick={() => handleSaveExpense(formData)}>
                                 Submit
                             </Button>
-                            <Button variant="primary" type="button" onClick={() => handleSaveExpense(formData)}>
+                            <Button variant="primary" type="button" onClick={actions.hideExpensesModal}>
                                 Cancel
                             </Button>
                         </Container>
                     </>
-
                 );
             case 'CustomAmount':
+                const newCalculatedAmount = splitAmount - parseFloat(splitCustomAmount);
                 return (
                     <>
                         <InputGroup className="mb-3">
-                            <InputGroup.Text>Split Custom Amount</InputGroup.Text>
+                            <InputGroup.Text>Enter Custom Amount</InputGroup.Text>
                             <Form.Control
                                 type="number"
-                                placeholder="Enter custom amount"
+                                placeholder={
+                                    splitCustomAmount === '' || splitCustomAmount > splitAmount
+                                        ? 'Enter a valid amount'
+                                        : splitCustomAmount}
                                 value={splitCustomAmount}
                                 onChange={(e) => {
                                     setSplitCustomAmount(e.target.value);
-                                    const newCalculatedAmount = splitAmount - parseFloat(splitCustomAmount);
-                                    setCalculatedAmount(newCalculatedAmount.toFixed(2));
                                 }}
                             />
                         </InputGroup>
                         <InputGroup className="mb-3">
                             <InputGroup.Text>Amount Owed</InputGroup.Text>
-                            <Form.Control type="text" value={calculatedAmount} readOnly />
+                            <Form.Control type="text" value={newCalculatedAmount === '' ? '' : newCalculatedAmount.toFixed(2)} readOnly />
                         </InputGroup>
-                        <Container className="mt-3">
-                            <Button variant="primary" type="button" onClick={() => handleSaveExpense(formData)}>
+                        <Container className="mt-3 d-flex justify-content-center">
+                            <Button className="me-2" variant="primary" type="button" onClick={() => handleSaveExpense(formData)}>
                                 Submit
                             </Button>
-                            <Button variant="primary" type="button" onClick={() => handleSaveExpense(formData)}>
+                            <Button variant="primary" type="button" onClick={actions.hideExpensesModal}>
                                 Cancel
                             </Button>
                         </Container>
                     </>
-
                 );
             default:
                 return null;
@@ -165,22 +167,22 @@ const ExpensesModal = ({ show }) => {
 
 
     return (
-        <Modal show={show} onHide={actions.hideExpensesModal}>
+        <Modal className="modals align-center" show={show} onHide={actions.hideExpensesModal}>
             <Modal.Header closeButton>
-                <Modal.Title>Add Expense</Modal.Title>
+                <Modal.Title>{expenseToEdit ? 'Edit Expense' : 'Add Expense'}</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body >
                 <Form>
                     <Form.Group controlId="expenseDescription">
                         <Form.Label>Description</Form.Label>
-                        <Form.Control type="text" placeholder="Enter description" />
+                        <Form.Control type="text" placeholder="Enter description" value={expenseDescription} onChange={(e) => setExpenseDescription(e.target.value)} />
                     </Form.Group>
-                    <Form.Group controlId="expenseAmount">
+                    <Form.Group className="mt-3" controlId="expenseAmount">
                         <Form.Label>Amount</Form.Label>
                         <Form.Control type="number" placeholder="Enter amount" value={splitAmount} onChange={(e) => setSplitAmount(e.target.value)} />
                     </Form.Group>
-                    <Form.Group controlId="splitOption">
-                        <Form.Label>Split Option</Form.Label>
+                    <Form.Group className="mt-3 d-flex justify-content-center" controlId="splitOption">
+                        <Form.Label className="me-3">Type</Form.Label>
                         <Dropdown onSelect={(eventKey) => setSplitOption(eventKey)}>
                             <Dropdown.Toggle variant="primary" id="splitDropdown">
                                 {splitOption}

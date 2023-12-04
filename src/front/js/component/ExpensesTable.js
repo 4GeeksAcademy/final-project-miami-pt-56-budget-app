@@ -9,6 +9,14 @@ import '../../styles/expenses.css'
 const ExpensesTable = ({ expenses }) => {
 	const { store, actions } = useContext(Context);
 
+	const [expenseToEdit, setExpenseToEdit] = useState(null);
+
+	const handleEditExpense = (expense) => {
+        // Logic to handle editing an existing expense
+        setExpenseToEdit(expense);
+        actions.showExpensesModal;
+    };
+
 	return (
 		<Container>
 			<Table striped bordered hover>
@@ -26,7 +34,7 @@ const ExpensesTable = ({ expenses }) => {
 							<td>{expense.amount}</td>
 							<td>{expense.date}</td>
 							<td> 
-								<a href=""><FontAwesomeIcon icon={faEdit} className="me-2 icon-lnk" /></a>
+								<FontAwesomeIcon icon={faEdit} className="me-2 icon-lnk" onClick={() => handleEditExpense(expense)} />
 								<a href=""><FontAwesomeIcon icon={faTrash} className="icon-lnk" /></a>
 							</td>
 						</tr>
