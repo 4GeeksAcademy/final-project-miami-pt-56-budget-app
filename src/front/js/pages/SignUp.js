@@ -3,15 +3,18 @@ import { Context } from "../store/appContext"
 import { Container } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { Link } from "react-router-dom";
+import { Link , useNavigate} from "react-router-dom";
 
 import '../../styles/signin.css'
 
-const SignUp = (props) => {
+const SignUp = () => {
+    const navigate=useNavigate()
 
-    useEffect(() => {
+/*  This is used to make the NavBar not show on SignUp,
+    but it was decided to show. props were being passed as argument to this page.
+        useEffect(() => {
         props.setCurrentURL("/signup")
-    }, [])
+    }, []) */
     
     const { store, actions } = useContext(Context);
     const [email, setEmail] = useState('');
@@ -20,15 +23,19 @@ const SignUp = (props) => {
     const [lastName, setLastName] = useState('');
     const [verifyPassword, setVerifyPassword] = useState('');
 
-    const handleClick = () => {
-        actions.handleSingUp(firstName, lastName, email, password, verifyPassword);
+    const handleClick = async () => {
+        if (verifyPassword==password) {
+       let result = await actions.handleSingUp(firstName, lastName, email, password);
+       if (result==true) {
+        navigate("/signin")
+       }}else{alert("password must match")}
     }
 
     return (
         <>
             <h1 className="text-center mt-5">Create Account</h1>
             <Container className="singin-container">
-                <Form>
+                <div>
                     <Form.Group className="mb-3 mt-3" controlId="formFirstName">
                         <Form.Control type="text" placeholder="Enter First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
                         <Form.Text className="text-muted">
@@ -51,21 +58,16 @@ const SignUp = (props) => {
                     <Form.Group className="mb-3" controlId="formVerifyPassword">
                         <Form.Control type="password" placeholder="Verify Password" value={verifyPassword} onChange={(e) => setVerifyPassword(e.target.value)} />
                     </Form.Group>
-                    <button className="form-button" type="submit" onClick={handleClick}>
+                    <button className="form-button" onClick={()=>handleClick()}>
                         Sign Up
                     </button>
-                    <div className="links">
+                    <div className="links mb-3">
                         Already have an account?
                         <Link to="/signin">
                             <span className="ms-1">Sign in</span >
                         </Link>
                     </div>
-                    <div className="links mb-3">
-                        <Link to="/">
-                            <span>Home</span>
-                        </Link>
-                    </div>
-                </Form>
+                </div>
             </Container>
         </>
     );

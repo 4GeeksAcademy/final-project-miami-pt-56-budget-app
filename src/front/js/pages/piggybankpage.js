@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import '../../styles/piggybankpage.css'
-import { PiggybankModal } from '../component/piggybankmodal'
+import { PiggybankModal } from '../component/Piggybankmodal'
 export default function Piggybank() {
     const[action, setAction] = useState(null)
   return (
