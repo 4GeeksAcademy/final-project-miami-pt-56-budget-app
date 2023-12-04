@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
-
 import Splashpage from "./pages/Splashpage";
+import Piggybank from "./pages/piggybankpage";
 import SignIn from "./pages/SignIn"
 import SignUp from "./pages/SignUp";
 import { Home } from "./pages/home";
@@ -60,5 +60,4 @@ const Layout = () => {
         </div>
     );
 };
-
 export default injectContext(Layout);
