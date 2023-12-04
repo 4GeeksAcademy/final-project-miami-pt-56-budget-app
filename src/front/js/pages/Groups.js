@@ -37,11 +37,9 @@ const Groups = (props) => {
         let results = await actions.handleAddMembers()
     }
 
-    // const groups = store.userGroups;
-
     return (
         <>
-        {console.log(store.userGroups[0])}
+        {store.userGroups && store.userGroups.length > 0 &&
             <Container>
                 <Row className="mt-3">
                     <Col className="d-flex align-items-center">
@@ -54,7 +52,7 @@ const Groups = (props) => {
                 <div className='border border-2 border-dark rounded p-3'>
                     <Row>
                         <Col>
-                            <h3>Group</h3>
+                            <h3>{store.userGroups[0].name}</h3>
                         </Col>
                         <Col className='d-flex flex-row-reverse align-items-center'>
                             <button className='expense-btn' onClick={handleEditMember}>Edit Group</button>
@@ -86,6 +84,7 @@ const Groups = (props) => {
                     </Row>                    
                 </div>
             </Container>
+            }
 
             {/* Add group modal */}
             <Modal show={store.showGroupModal} onHide={handleCloseModal}>
