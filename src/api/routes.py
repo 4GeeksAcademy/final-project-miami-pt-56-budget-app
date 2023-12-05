@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Group
+from api.models import db, User, Group, PiggyBank, Expenses
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
@@ -63,7 +63,7 @@ def handle_signin():
         return jsonify({"msg" : "Bad username or password"}), 401
     else:
         access_token = create_access_token(identity=user.id)
-    return jsonify({"token": access_token, "user_id": user.id}), 200
+        return jsonify({"token": access_token, "name": user.first_name}), 200
 
 #Route for user to change password
 @api.route('/user/<int:user_id>', methods = ['POST'])
@@ -80,18 +80,22 @@ def handle_account(user_id):
     else:
         return jsonify('Error'), 401
 
-#Route for user home page, gets user groups   
+#Route for user home page, gets all user information  
 @api.route('/home', methods = ['GET'])
 @jwt_required()
 def handle_home():
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
-    if user is not None:
+    if user:
+        friends_list = []
         group_list = []
+        for x in user.friends:
+            friends_list.append(x.serialize())
         for x in user.groups:
             group_list.append(x.serialize())
         user = user.serialize()
         user['groups'] = group_list
+        user["friends"] = friends_list
         serialized_user = []
         serialized_user.append(user)
         response_body = {
@@ -102,23 +106,23 @@ def handle_home():
     else:
         return jsonify({'msg': 'You must be logged in'}), 401
 
-#Route to get user friends
-@api.route('/friends', methods = ['GET'])
-@jwt_required()
-def handle_get_friends():
-    current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
-    if user is not None:
-        friend_list = []
-        for x in user.friends:
-            friend_list.append(x.serialize())
-        response_body = {
-            "message": "Here is the friend information!",
-            "user": friend_list
-        }
-        return jsonify(response_body), 200
-    else:
-        return jsonify({'msg': 'You must be logged in'}), 401
+# #Route to get user friends
+# @api.route('/friends', methods = ['GET'])
+# @jwt_required()
+# def handle_get_friends():
+#     current_user_id = get_jwt_identity()
+#     user = User.query.get(current_user_id)
+#     if user is not None:
+#         friend_list = []
+#         for x in user.friends:
+#             friend_list.append(x.serialize())
+#         response_body = {
+#             "message": "Here is the friend information!",
+#             "user": friend_list
+#         }
+#         return jsonify(response_body), 200
+#     else:
+#         return jsonify({'msg': 'You must be logged in'}), 401
 
 #Route to add or delete user friends  
 @api.route('/friends', methods = ['POST','DELETE'])
@@ -157,26 +161,25 @@ def manage_friends():
         return jsonify({'error': 'User or friend not found'}), 404
 
 #Route to get group information 
-@api.route('/groups', methods = ['GET'])
-@jwt_required()
-def handle_get_groups():
-    current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
-    if user is not None:
-        group_list = []
-        for x in user.groups:
-            print(x.members)
-            group_list.append(x.serialize())
-        response_body = {
-            "message": "Here is the group information!",
-            "group list": group_list
-        }
-        return jsonify(response_body), 200
-    else:
-        return jsonify({'msg': 'You must be logged in'}), 401
+# @api.route('/groups', methods = ['GET'])
+# @jwt_required()
+# def handle_get_groups():
+#     current_user_id = get_jwt_identity()
+#     user = User.query.get(current_user_id)
+#     if user is not None:
+#         group_list = []
+#         for x in user.groups:
+#             print(x.members)
+#             group_list.append(x.serialize())
+#         response_body = {
+#             "message": "Here is the group information!",
+#             "group list": group_list
+#         }
+#         return jsonify(response_body), 200
+#     else:
+#         return jsonify({'msg': 'You must be logged in'}), 401
 
 #Route to create new group, adds creating user to group
-#Ids start at 2?
 @api.route('/groups', methods = ['POST'])
 @jwt_required()
 def handle_add_groups():
@@ -228,3 +231,126 @@ def handle_delete_groups(group_id):
 
         return jsonify("group deleted"), 200
     
+#Route to get just piggybank
+@api.route('/piggybank', methods = ['GET'])
+@jwt_required()
+def handle_piggys():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if user:
+        piggys = []
+        for x in user.piggybanks:
+            piggys.append(x.serialize())
+        return jsonify(piggys), 200
+
+#Route to create piggybank
+@api.route('/piggybank', methods = ['POST'])
+@jwt_required()
+def add_piggys():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if user:
+        name = request.json.get('name', None)
+        new_piggy = PiggyBank(name = name, user_id = current_user_id)
+        db.session.add(new_piggy)
+        db.session.commit()
+        return jsonify('Added PiggyBank'), 200
+    else:
+        return jsonify({'msg': 'You must be logged in'}), 401
+
+#Route to delete piggybank
+@api.route('/piggybank/<int:piggy_id>', methods = ['DELETE'])
+@jwt_required()
+def handle_delete_piggy(piggy_id):
+    piggy_to_delete = PiggyBank.query.filter_by(id = piggy_id).first()
+    if piggy_to_delete:
+        db.session.delete(piggy_to_delete)
+        db.session.commit()
+
+        return jsonify("Piggy deleted"), 200
+
+#Route to modify piggybank
+#Only changes one element at a time
+@api.route('/piggybank/<int:piggy_id>', methods = ['PUT'])
+@jwt_required()
+def handle_change_piggy(piggy_id):
+    piggy = PiggyBank.query.get(piggy_id)
+    new_name = request.json.get('newName')
+    new_goal = request.json.get('newGoal')
+    new_saved = request.json.get('newSaved')
+    new_note = request.json.get('newNote')
+    new_date = request.json.get('newDate')
+
+    if new_name and piggy:
+        piggy.name = new_name
+        db.session.commit()
+        return jsonify('Changed Name'), 200
+    if new_goal and piggy:
+        piggy.goal = new_goal
+        db.session.commit()
+        return jsonify('Changed goal'), 200
+    if new_saved and piggy:
+        piggy.saved = new_saved
+        db.session.commit()
+        return jsonify('Changed saved amount'), 200
+    if new_note and piggy:
+        piggy.notes = new_note
+        db.session.commit()
+        return jsonify('Changed Note'), 200
+    if new_date and piggy:
+        piggy.nametarget_date = new_date
+        db.session.commit()
+        return jsonify('Changed date'), 200
+    else:
+        return jsonify({'msg': 'You must be logged in'}), 401
+
+#Route to get just individual expenses
+@api.route('/expenses', methods = ['GET'])
+@jwt_required()
+def handle_expenses():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if user:
+        expenses = []
+        for x in user.expenses:
+            expenses.append(x.serialize())
+        return jsonify(expenses), 200
+
+#Route to create expense
+@api.route('/expenses', methods = ['POST'])
+@jwt_required()
+def add_expenses():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    group = request.json.get("groupID")
+    if user and group is None:
+        name = request.json.get('name', None)
+        new_expenses = Expenses(name = name, user_id = current_user_id)
+        db.session.add(new_expenses)
+        db.session.commit()
+        return jsonify('Added expenses'), 200
+    if user and group:
+        name = request.json.get('name', None)
+        new_expenses = Expenses(name = name, group_id = group)
+        db.session.add(new_expenses)
+        db.session.commit()
+        return jsonify('Added expenses'), 200
+    else:
+        return jsonify({'msg': 'You must be logged in'}), 401
+
+#Route to delete expense
+@api.route('/expenses/<int:expenses_id>', methods = ['DELETE'])
+@jwt_required()
+def delete_expenses(expenses_id):
+    expense_to_delete = Expenses.query.filter_by(id = expenses_id).first()
+    if expense_to_delete:
+        db.session.delete(expense_to_delete)
+        db.session.commit()
+
+        return jsonify("Expense deleted"), 200
+
+#Route to modify expense
+# @api.route('/expenses/<int:expenses_id>', methods = ['PUT'])
+# @jwt_required()
+# def change_expenses(expenses_id):
+#     expense = Expenses.query.get(expenses_id)

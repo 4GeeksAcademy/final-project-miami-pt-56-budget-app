@@ -6,10 +6,13 @@ import SideNavBar from "../component/sidenavbar";
 
 export const Home = (props) => {
 	const { store, actions } = useContext(Context);
+	useEffect(() => {
+		actions.handleGetUser()
+	}, [])
 
 	return (
 		<div className="text-center mt-5">
-			<SideNavBar/>
+			{/* <SideNavBar/> */}
 			<UserHome/>
 		</div>
 	);

@@ -8,11 +8,13 @@ import { Link } from "react-router-dom";
 
 import '../../styles/signin.css'
 
-const SignIn = (props) => {
+const SignIn = () => {
 
-  useEffect(() => {
+/*  This was used to make the NavBar hidden on the SignIn page,
+    however it was decided to show. Props were used as argument to this page.
+    useEffect(() => {
     props.setCurrentURL('/signin');
-  }, [])
+  }, []) */
 
   const { store, actions } = useContext(Context);
   const [email, setEmail] = useState('');
@@ -42,14 +44,9 @@ const SignIn = (props) => {
           <button className="form-button" type="button" onClick={handleClick}>
             Submit
           </button>
-          <div className="links">
+          <div className="links mb-3">
             <Link to="/signup">
               <span>Create Account</span >
-            </Link>
-          </div>
-          <div className="links mb-3">
-            <Link to="/">
-              <span>Home</span>
             </Link>
           </div>
         </div>
