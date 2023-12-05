@@ -239,6 +239,20 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			hideEditMemberModal: () => {
 				setStore({showAddMemberModal: false})
+			},
+			addFriends: (friendEmail) => {
+				let opt = {
+					method:'POST',
+					headers: {
+						"Content-Type": "application/json",
+						Authorization : "Bearer " + sessionStorage.getItem("token")
+					},
+					body: JSON.stringify({friendEmail: friendEmail})
+				}
+				fetch(`${process.env.BACKEND_URL}/api/friends`, opt)
+				.then(resp => resp.json())
+				.then(data => setStore({userFriends: data})) 
+				
 			}
 		}
 	}

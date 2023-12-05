@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { Modal, Button } from "react-bootstrap";
+import { Context } from "../store/appContext";
 
 const DeleteFriendsModal = () => {
     const { store, actions } = useContext(Context);

@@ -131,34 +131,39 @@ def handle_home():
 @jwt_required()
 def manage_friends():
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    user = User.query.filter_by(id = current_user_id).first()
 
     data = request.get_json()
-    friend_id = data.get('friendID')
-    friend = User.query.get(friend_id)
+    friend_email = data.get('friendEmail')
+    friend = User.query.filter_by(email=friend_email).first()
 
     if user and friend:
         if request.method == 'POST':
-            user.add_friend(friend)
-            message = 'Friend added successfully'
+            if user.friends is None:
+                user.friends = []
+            if friend.friends is None:
+                friend.friends = []
+            if friend in user.friends or user in friend.friends:
+                message = 'This user is already a friend'
+                return jsonify({'message' : message}), 409
+            friend.friends.append(user)
+            user.friends.append(friend)
+            db.session.commit()
+            user = User.query.get(current_user_id)
+            message = "Friend sucessfully added"
+            return jsonify({'message': message, "user":user.serialize()}), 200
         elif request.method == 'DELETE':
             if friend in user.friends and user in friend.friends:
                 user.friends.remove(friend)
                 friend.friends.remove(user)
                 db.session.commit()
+                user = User.query.get(current_user_id)
                 message = 'Friend removed successfully'
+                return jsonify({'message': message, "user":user.serialize()}), 200
             else:
                 return jsonify({'error': 'Friendship not found'}), 404
         else:
             return jsonify({'error': 'Invalid action'}), 400
-
-        friends_list = []
-        for x in user.friends:
-            friends_list.append(x.serialize())
-        user = user.serialize()
-        user["friends"] = friends_list
-
-        return jsonify({'message': message, "user":user}), 200
     else:
         return jsonify({'error': 'User or friend not found'}), 404
 
