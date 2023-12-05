@@ -40,7 +40,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 						console.log('response token:', data.token);
 						sessionStorage.setItem('token', data.token);
 						setStore({ token: data.token });
-						setStore({userName: data.user_name})
+						setStore({userName: data.name})
+						console.log(store.userName)
 						console.log('token in store:', store.token)
 						return true;
 					} else if (resp.status === 404) {
@@ -97,17 +98,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 				console.log('logout function running');
 				setStore({ token: null });
 			},
-      
 			showExpensesModal: (expenseToEdit) => {
 				setStore({showExpensesModal: true});
 				setStore({expenseToUpdate: expenseToEdit});
 			},
-      
 			hideExpensesModal: () => {
 				setStore({showExpensesModal: false});
-      },
-      
-			handleGetUser: async() => {
+      		},
+			  handleGetUser: async() => {
 				const opts = {
 					method: 'GET',
 					headers: {
@@ -138,7 +136,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-      
 			handleAddGroups: async(groupName) => {
 				const opts = {
 					method: 'POST',
@@ -155,6 +152,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
+						setStore({userGroups: data.groups})
 						alert("Group information");
 						return true;
 					} else if (resp.status === 401) {
@@ -167,17 +165,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-
-			// Show delete friends modal
 			showDeleteFriendsModal: () =>{
 				setStore({showDeleteFriendsModal: true});
 			},
-      
 			hideDeleteFriendsModal: () => {
 				setStore({showDeleteFriendsModal: false})
-      },
-
-			handleAddMembers: async(groupName) => {
+      		},
+			  handleAddMembers: async(groupName) => {
 				const opts = {
 					method: 'POST',
 					headers: {
@@ -205,7 +199,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-      
 			handleDeleteMembers: async(groupName) => {
 				const opts = {
 					method: 'POST',
@@ -235,24 +228,21 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-      
 			showGroupModal: () => {
 				setStore({showGroupModal: true})
 			},
-      
 			hideGroupModal: () => {
 				setStore({showGroupModal: false})
 			},
-      
 			showEditMemberModal: () => {
 				setStore({showAddMemberModal: true})
 			},
-      
 			hideEditMemberModal: () => {
 				setStore({showAddMemberModal: false})
 			}
 		}
-	};
-};
+	}
+}
+			
 
 export default getState;

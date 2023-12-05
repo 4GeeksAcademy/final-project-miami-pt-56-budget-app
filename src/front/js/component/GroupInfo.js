@@ -27,7 +27,13 @@ const GroupInfo = (props) => {
                         </Col>
                     </Row>
                     <Row>
-                        <h6>Group Member 1, Group Member 2, Group Member 3</h6>
+                        <h6>
+                            {group.members.map((person)=>{
+                                return(
+                                    <span>{person.first_name + " " +person.last_name}</span>
+                                )
+                            })}
+                        </h6>
                     </Row>
                     <Row>
                         <Col>

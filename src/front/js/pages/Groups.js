@@ -17,9 +17,9 @@ const Groups = (props) => {
     const { store, actions } = useContext(Context)
     const [groupName, setGroupName] = useState('');
 
-    useEffect(() => {
-		actions.handleGetUser()
-	}, [])
+    // useEffect(() => {
+	// 	actions.handleGetUser()
+	// }, [])
 
     const handleAddGroup = ()=> {
         actions.showGroupModal(true);

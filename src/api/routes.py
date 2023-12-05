@@ -194,7 +194,13 @@ def handle_add_groups():
         new_group = Group(name = name, members = member_list)
         db.session.add(new_group)
         db.session.commit()
-        return jsonify('Added Group'), 200
+        groups = Group.query.all()
+        groups_serialized = []
+        for x in groups:
+            if user in x.members:
+                groups_serialized.append(x.serialize())
+        payload = {"msg": "added group", "groups": groups_serialized}
+        return jsonify(payload), 200
     else:
         return jsonify({'msg': 'You must be logged in'}), 401
 
