@@ -3,9 +3,15 @@
     border: 1px solid #ebebe4;
     border-radius: 0.356rem;
     padding: 0.7rem;
-    color: #dd6031;
-
+    letter-spacing: 1px;
+    font-weight: 500;
+    border: 1px;
+    border-radius: 17px;
+    color: #333333;
+    image-rendering: crisp-edges;
+    background-color: #E3C8D1;
 }
+
 .splash-panels{
     padding: 0.7rem;
 
@@ -14,7 +20,8 @@
     display:flex;
     gap: 2rem;
     justify-content: space-around;
-    color: #709176;
+    border-radius: 1px;
+    color: #333333;
     
 
 }
@@ -23,18 +30,78 @@
     gap: 2rem;
     justify-content: space-around;
     margin-top: 2rem;
-    color: #709176;
+    color: #333333;
     
 }
 .panel{
-    width: 400px;
+    width: 100%;
     text-align: center;
+    border: 1px;
+    border-radius: 0.356rem;
+    padding: 0.7rem;
+    letter-spacing: 1px;
+    font-weight: 500;
+    border: 10px;
+    color: #333333;
+    image-rendering: crisp-edges;
+    border-image: auto;
+    border-radius: 20px;
 
 }
-.background{
+.pane2{
+    width: 10px;
+    text-align: center;
+    border: 1px;
+    border-radius: 0.356rem;
+    padding: 0.7rem;
+    letter-spacing: 1px;
+    font-weight: 500;
+    border: 1px;
     color: #333333;
+    image-rendering: crisp-edges;
+    border-image: auto;
+
+
+}
+.pane3{
+    width: 400px;
+    text-align: center;
+    border: 1px;
+    border-radius: 0.356rem;
+    padding: 0.7rem;
+    letter-spacing: 1px;
+    font-weight: 500;
+    border: 1px;
+    color: #333333;
+    image-rendering: crisp-edges;
+    border-image: auto;
+
+}
+.pane4{
+    width: 400px;
+    text-align: center;
+    border: 1px;
+    border-radius: 0.356rem;
+    padding: 0.7rem;
+    letter-spacing: 1px;
+    font-weight: 500;
+    border: 1px;
+    color: #333333;
+    image-rendering: crisp-edges;
+    border-image: auto;
 }
 .footer{
     display: flex;
     flex-direction: column;
+}
+.imageContainerfriend{
+    width: auto;
+}
+.splashcard{
+    background-color: #E3C8D1;
+
+}
+.splashcardheader{
+    margin-bottom: 0rem;
+    padding-bottom: 0.5rem;
 }

@@ -2,15 +2,17 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
-
 import Splashpage from "./pages/Splashpage";
+import Piggybank from "./pages/piggybankpage";
 import SignIn from "./pages/SignIn"
 import SignUp from "./pages/SignUp";
+import Groups from "./pages/Groups";
 import { Home } from "./pages/home";
 import Expenses from "./pages/Expenses";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
 import Piggybank from "./pages/piggybankpage";
+import Friends from "./pages/friends";
 
 import { NavBar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -25,6 +27,7 @@ const Layout = () => {
 
  /*    This was used to hide the NavBar on the signin and signup pages,
         However it was decided to not be used and always show the NavBar.
+
 
         const [showNavbar, setShowNavbar] = useState(true);
         const [currentURL, setCurrentURL] = useState(true)
@@ -51,6 +54,9 @@ const Layout = () => {
                         <Route element={<EditAccount />} path="/account" />
                         <Route element={<Piggybank />} path="/piggybankpage" />
                         <Route element={<Expenses />} path="/expenses" />
+                        <Route element={<Groups />} path="/groups" />
+                        <Route element={<Demo />} path="/demo" />
+                        <Route element={<Friends />} path="/friends" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
@@ -60,5 +66,4 @@ const Layout = () => {
         </div>
     );
 };
-
 export default injectContext(Layout);

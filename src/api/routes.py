@@ -80,18 +80,23 @@ def handle_account(user_id):
     else:
         return jsonify('Error'), 401
 
-#Route for user home page, gets user groups   
+
+#Route for user home page, gets all user information  
 @api.route('/home', methods = ['GET'])
 @jwt_required()
 def handle_home():
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
-    if user is not None:
+    if user:
+        friends_list = []
         group_list = []
+        for x in user.friends:
+            friends_list.append(x.serialize())
         for x in user.groups:
             group_list.append(x.serialize())
         user = user.serialize()
         user['groups'] = group_list
+        user["friends"] = friends_list
         serialized_user = []
         serialized_user.append(user)
         response_body = {
@@ -102,23 +107,24 @@ def handle_home():
     else:
         return jsonify({'msg': 'You must be logged in'}), 401
 
-#Route to get user friends
-@api.route('/friends', methods = ['GET'])
-@jwt_required()
-def handle_get_friends():
-    current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
-    if user is not None:
-        friend_list = []
-        for x in user.friends:
-            friend_list.append(x.serialize())
-        response_body = {
-            "message": "Here is the friend information!",
-            "user": friend_list
-        }
-        return jsonify(response_body), 200
-    else:
-        return jsonify({'msg': 'You must be logged in'}), 401
+# #Route to get user friends
+# @api.route('/friends', methods = ['GET'])
+# @jwt_required()
+# def handle_get_friends():
+#     current_user_id = get_jwt_identity()
+#     user = User.query.get(current_user_id)
+#     if user is not None:
+#         friend_list = []
+#         for x in user.friends:
+#             friend_list.append(x.serialize())
+#         response_body = {
+#             "message": "Here is the friend information!",
+#             "user": friend_list
+#         }
+#         return jsonify(response_body), 200
+#     else:
+#         return jsonify({'msg': 'You must be logged in'}), 401
+
 
 #Route to add or delete user friends  
 @api.route('/friends', methods = ['POST','DELETE'])
@@ -157,23 +163,23 @@ def manage_friends():
         return jsonify({'error': 'User or friend not found'}), 404
 
 #Route to get group information 
-@api.route('/groups', methods = ['GET'])
-@jwt_required()
-def handle_get_groups():
-    current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
-    if user is not None:
-        group_list = []
-        for x in user.groups:
-            print(x.members)
-            group_list.append(x.serialize())
-        response_body = {
-            "message": "Here is the group information!",
-            "group list": group_list
-        }
-        return jsonify(response_body), 200
-    else:
-        return jsonify({'msg': 'You must be logged in'}), 401
+# @api.route('/groups', methods = ['GET'])
+# @jwt_required()
+# def handle_get_groups():
+#     current_user_id = get_jwt_identity()
+#     user = User.query.get(current_user_id)
+#     if user is not None:
+#         group_list = []
+#         for x in user.groups:
+#             print(x.members)
+#             group_list.append(x.serialize())
+#         response_body = {
+#             "message": "Here is the group information!",
+#             "group list": group_list
+#         }
+#         return jsonify(response_body), 200
+#     else:
+#         return jsonify({'msg': 'You must be logged in'}), 401
 
 #Route to create new group, adds creating user to group
 @api.route('/groups', methods = ['POST'])
