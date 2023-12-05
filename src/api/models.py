@@ -101,6 +101,5 @@ class Expenses(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "type": self.type,
             "amount": self.amount
         }
