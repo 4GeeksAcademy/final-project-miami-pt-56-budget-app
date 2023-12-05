@@ -10,7 +10,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
-CORS(api)
+CORS(api, origins='*')
 
 # Routes
 
@@ -80,6 +80,7 @@ def handle_account(user_id):
     else:
         return jsonify('Error'), 401
 
+
 #Route for user home page, gets all user information  
 @api.route('/home', methods = ['GET'])
 @jwt_required()
@@ -123,6 +124,7 @@ def handle_home():
 #         return jsonify(response_body), 200
 #     else:
 #         return jsonify({'msg': 'You must be logged in'}), 401
+
 
 #Route to add or delete user friends  
 @api.route('/friends', methods = ['POST','DELETE'])

@@ -8,10 +8,9 @@ import SignIn from "./pages/SignIn"
 import SignUp from "./pages/SignUp";
 import Groups from "./pages/Groups";
 import { Home } from "./pages/home";
-import { Demo } from "./pages/demo";
+import Expenses from "./pages/Expenses";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
-import Piggybank from "./pages/piggybankpage";
 import Friends from "./pages/friends";
 
 import { NavBar } from "./component/navbar";
@@ -27,6 +26,7 @@ const Layout = () => {
 
  /*    This was used to hide the NavBar on the signin and signup pages,
         However it was decided to not be used and always show the NavBar.
+
 
         const [showNavbar, setShowNavbar] = useState(true);
         const [currentURL, setCurrentURL] = useState(true)
@@ -52,8 +52,8 @@ const Layout = () => {
                         <Route element={<SignUp />} path="/signup" />
                         <Route element={<EditAccount />} path="/account" />
                         <Route element={<Piggybank />} path="/piggybankpage" />
+                        <Route element={<Expenses />} path="/expenses" />
                         <Route element={<Groups />} path="/groups" />
-                        <Route element={<Demo />} path="/demo" />
                         <Route element={<Friends />} path="/friends" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />

@@ -5,7 +5,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			token: "",
 			requestBodyEmail: {},
 			message: null,
-
+			showExpensesModal: false,
+			expenseToUpdate: {},
 			showDeleteFriendsModal: false,
 			showGroupModal: false,
 			showAddMemberModal: false,
@@ -13,7 +14,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			userExpenses: [],
 			userFriends: [],
 			userGroups: [],
-			userPiggybanks: [],
+			userPiggybanks: []
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -96,6 +97,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 				console.log('logout function running');
 				setStore({ token: null });
 			},
+      
+			showExpensesModal: (expenseToEdit) => {
+				setStore({showExpensesModal: true});
+				setStore({expenseToUpdate: expenseToEdit});
+			},
+      
+			hideExpensesModal: () => {
+				setStore({showExpensesModal: false});
+      },
+      
 			handleGetUser: async() => {
 				const opts = {
 					method: 'GET',
@@ -127,6 +138,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
+      
 			handleAddGroups: async(groupName) => {
 				const opts = {
 					method: 'POST',
@@ -160,8 +172,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			showDeleteFriendsModal: () =>{
 				setStore({showDeleteFriendsModal: true});
 			},
+      
 			hideDeleteFriendsModal: () => {
 				setStore({showDeleteFriendsModal: false})
+      },
 
 			handleAddMembers: async(groupName) => {
 				const opts = {
@@ -191,6 +205,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
+      
 			handleDeleteMembers: async(groupName) => {
 				const opts = {
 					method: 'POST',
@@ -202,6 +217,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"name": groupName
 					})
 				}
+        
 				try {
 					const resp = await fetch(`${process.env.BACKEND_URL}/api/groups`, opts)
 					const data = await resp.json();
@@ -219,15 +235,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
+      
 			showGroupModal: () => {
 				setStore({showGroupModal: true})
 			},
+      
 			hideGroupModal: () => {
 				setStore({showGroupModal: false})
 			},
+      
 			showEditMemberModal: () => {
 				setStore({showAddMemberModal: true})
 			},
+      
 			hideEditMemberModal: () => {
 				setStore({showAddMemberModal: false})
 			}
