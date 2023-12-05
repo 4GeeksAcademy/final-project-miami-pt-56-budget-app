@@ -1,31 +1,22 @@
-import { AlertLink } from "react-bootstrap";
 
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			token: '',
+			token: "",
 			requestBodyEmail: {},
 			message: null,
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
+			userName: 'User'
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
-			handleSingIn: async (email, password) => {
+			handleLogin: async (email, password) => {
+				const store = getStore();
+				
 				const opts = {
 					method: 'POST',
 					headers: {
-						'Content-Type': 'application/json'
+						'Content-Type': 'application/json',
+						'Access-Control-Allow-Origin':'*'
 					},
 					body: JSON.stringify({
 						"email": email,
@@ -33,15 +24,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 					})
 				}
 				try {
-					const resp = await fetch(`${process.env.BACKEND_URL}/api/login`)
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/signin`, opts)
 					const data = await resp.json();
-
+					console.log(data);
 					if (resp.status === 200) {
-						sessionStorage.setItem('token', data.access_token);
-						setStore({ token: data.access_token });
+						console.log('response token:', data.token);
+						sessionStorage.setItem('token', data.token);
+						setStore({ token: data.token });
+						setStore({userName: data.user_name})
+						console.log('token in store:', store.token)
 						return true;
 					} else if (resp.status === 404) {
 						//user not found
+						alert('User not found - create account?');
 					} else if (resp.status === 401) {
 						alert('Incorrect email or password');
 						return false;
@@ -53,10 +48,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			handleSingUp: async (firstName, lastName, email, password) => {
+				// const navigate = useNavigate();
 				const opts = {
 					method: 'POST',
 					headers: {
-						'Content-Type': 'application/json'
+						'Content-Type': 'application/json',
+						'Access-Control-Allow-Origin':'*'
 					},
 					body: JSON.stringify({
 						"first_name": firstName,
@@ -66,12 +63,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 					})
 				}
 				try {
-					const resp = await fetch("https://didactic-space-rotary-phone-ggq4wq9rjxwfw65q-3001.app.github.dev/api/signup", opts)
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/signup`, opts)
 					const data = await resp.json();
-
+					console.log('handle Sign Up func', data)
 					if (resp.status === 200) {
 						alert("User Created! Redirecting to signin page");
-						window.location.href = '/signin';
+						// navigate('/signin');
 						return true;
 					} else if (resp.status === 406) {
 						alert(`Passwords don't match`);
@@ -86,35 +83,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
-
-			getMessage: async () => {
-				try {
-					// fetching data from the backend
-					const resp = await fetch(process.env.BACKEND_URL + "/api/hello")
-					const data = await resp.json()
-					setStore({ message: data.message })
-					// don't forget to return something, that is how the async resolves
-					return data;
-				} catch (error) {
-					console.log("Error loading message from backend", error)
-				}
-			},
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
-
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
-
-				//reset the global store
-				setStore({ demo: demo });
+			handleLogout: () => {
+				sessionStorage.removeItem('token');
+				console.log('logout function running');
+				setStore({ token: null });
 			}
 		}
 	};

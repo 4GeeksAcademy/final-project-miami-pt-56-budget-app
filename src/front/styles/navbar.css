@@ -5,12 +5,15 @@
     color: black;
 }
 
-.navbar {
-    background-color: #F2EEE4;
-    color: #5065A8;
+.navbar, .dropdown {
+    background-color: #ffff;
 }
 
 .navbar-brand-img {
-    max-width: 120px;
-    max-height: 120px;
+    max-height: 125px;
+    max-width: 200px;
   }
+
+.logout{
+    color: red;
+}
