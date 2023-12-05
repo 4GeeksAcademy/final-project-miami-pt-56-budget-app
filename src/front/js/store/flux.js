@@ -124,7 +124,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						setStore({userFriends: savedInfo.friends})
 						setStore({userGroups: savedInfo.groups})
 						setStore({userPiggybanks: savedInfo.piggybanks})
-						console.log(getStore().userGroups)
+						setStore({userName: savedInfo.first_name})
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);
@@ -171,7 +171,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			hideDeleteFriendsModal: () => {
 				setStore({showDeleteFriendsModal: false})
       		},
-			  handleAddMembers: async(groupName) => {
+			handleAddMembers: async(groupName) => {
 				const opts = {
 					method: 'POST',
 					headers: {

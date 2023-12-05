@@ -17,7 +17,7 @@ const GroupInfo = (props) => {
     // }
 
 	return (
-        <div className='border border-2 border-dark rounded p-3 mb-2'>
+        <div className='border border-2 border-dark rounded px-3 py-2 mt-2'>
                     <Row>
                         <Col>
                             <h3>{group.name}</h3>

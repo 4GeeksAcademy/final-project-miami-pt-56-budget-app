@@ -17,9 +17,9 @@ const Groups = (props) => {
     const { store, actions } = useContext(Context)
     const [groupName, setGroupName] = useState('');
 
-    // useEffect(() => {
-	// 	actions.handleGetUser()
-	// }, [])
+    useEffect(() => {
+		actions.handleGetUser()
+	}, [])
 
     const handleAddGroup = ()=> {
         actions.showGroupModal(true);
@@ -30,6 +30,7 @@ const Groups = (props) => {
     }
     const handleSaveGroup = async()=>{
        let results = await actions.handleAddGroups(groupName)
+       handleCloseModal
     }
     const handleAddMember = async()=>{
         let results = await actions.handleAddMembers()
