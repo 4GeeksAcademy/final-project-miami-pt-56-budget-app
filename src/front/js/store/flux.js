@@ -5,6 +5,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			token: "",
 			requestBodyEmail: {},
 			message: null,
+
+			showDeleteFriendsModal: false,
 			showGroupModal: false,
 			showAddMemberModal: false,
 			userName: 'User',
@@ -153,6 +155,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
+
+			// Show delete friends modal
+			showDeleteFriendsModal: () =>{
+				setStore({showDeleteFriendsModal: true});
+			},
+			hideDeleteFriendsModal: () => {
+				setStore({showDeleteFriendsModal: false})
+
 			handleAddMembers: async(groupName) => {
 				const opts = {
 					method: 'POST',

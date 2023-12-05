@@ -35,37 +35,34 @@ const userInfo= [
 ]
 export default function UserHome() {
     return (
-       <div className='container '>
-        {userInfo.map((section)=>{
-            return(<Table striped bordered hover>
-				<thead>
-                    <h1>{section.title}</h1>
-					<tr>
-						<th>Title</th>
-						<th>Catagoty</th>
-						<th>Amount</th>
-					</tr>
-				</thead>
-				<tbody>
-					{section.data.map((item, index) => (
-						<tr key={index}>
-							<td>{item.title}</td>
-							<td>{item.catagory}</td>
-							<td>{item.Amount}</td>
-                            <td>
-                </td>
-                            <td>
-								<span><i class="fa-solid fa-pen-to-square"></i></span>
-								<span><i class="fa-solid fa-trash"></i></span>
-							</td>
-						</tr>
-					))}
-				</tbody>
-                <Link to={section["Link"]}>
-                <button class="button-56" role="button">View more...</button>
-                </Link>
-			</Table>)
-        })}
-			
+
+        <div className='body'>
+        <div className='homeComponentContainer'>
+            {userInfo.map((item,i)=>{
+                return(
+                    <div key={i}>
+                        <h1>{item.title}</h1>
+            <div className='homeComponentBorder p-3 w-50 m-auto'>
+            {item.data.map((dataItem,i)=>{
+                return(
+                    <div key={i}>
+                         <div className='accountInfo d-flex justify-content-start'>
+                    <p className='homeusertag mx-5 d-flex justify-content-center col'>{dataItem.title}</p>
+                    <p className='homeusertag mx-5 d-flex justify-content-center col'>{dataItem.catagory}</p>
+                    <p className='homeusertag mx-5 d-flex justify-content-center col'>{dataItem.Amount}</p>
+                </div>
+                    </div>
+                    );})}
+                <div className='d-flex row'> 
+                <button className='userhomebtn btn d-flex justify-content-center col-3 'role='button' href="/friends">Learn more</button>
+                <p className='d-flex justify-content-end col'>msg if none</p>
+                </div>
+            </div>
+                    </div>
+                );
+            })}
+            
+
         </div>
-    )}
+
+     
