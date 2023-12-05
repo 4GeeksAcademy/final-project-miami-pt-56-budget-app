@@ -54,6 +54,10 @@
   outline: 0;
 }
 
+.friends-container{
+    padding: 20;
+}
+
 @media (min-width: 768px) {
   .friends-btn {
     padding: 0 40px;

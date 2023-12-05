@@ -1,38 +1,47 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { Container, Table } from "react-bootstrap";
 import { Context } from "../store/appContext";
-import { Table, Container } from "react-bootstrap";
-import '../../styles/friends.css'
+import DeleteFriendsModal from "./DeleteFriendsModal";
 
 const FriendsTable = ({ friends }) => {
-	const { store, actions } = useContext(Context);
+  const { store, actions } = useContext(Context);
 
-	return (
-		<Container>
-			<Table striped bordered hover>
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Shared Group</th>
-					</tr>
-				</thead>
-				<tbody>
-					{expenses.map((friends) => (
-						<tr key={friends.id}>
-							<td>{friends.name}</td>
-							<td>{friends.sharedgroup}</td>
-							<td> 
-								<a href=""><FontAwesomeIcon icon={faEdit} className="me-2 icon-lnk" /></a>
-								<a href=""><FontAwesomeIcon icon={faTrash} className="icon-lnk" /></a>
-							</td>
-						</tr>
-					))}
-				</tbody>
-			</Table>
-		</Container>
-	);
+  const handleDeleteFriends = () => {
+    actions.showDeleteFriendsModal();
+  };
+
+  return (
+    <Container className="friends-container">
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Shared Group</th>
+          </tr>
+        </thead>
+        <tbody>
+          {friends.map((friend) => (
+            <tr key={friend.id}>
+              <td>{friend.name}</td>
+              <td>{friend.sharedgroup}</td>
+              <td>
+                <a href="#">
+                  <FontAwesomeIcon
+                    icon={faTrash}
+                    className="icon-lnk"
+                    onClick={() => handleDeleteFriends()}
+                  />
+                </a>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+      {store.showDeleteFriendsModal && <DeleteFriendsModal />}
+    </Container>
+  );
 };
 
 export default FriendsTable;
