@@ -11,7 +11,6 @@ import { Home } from "./pages/home";
 import Expenses from "./pages/Expenses";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
-import Piggybank from "./pages/piggybankpage";
 import Friends from "./pages/friends";
 
 import { NavBar } from "./component/navbar";
@@ -55,7 +54,6 @@ const Layout = () => {
                         <Route element={<Piggybank />} path="/piggybankpage" />
                         <Route element={<Expenses />} path="/expenses" />
                         <Route element={<Groups />} path="/groups" />
-                        <Route element={<Demo />} path="/demo" />
                         <Route element={<Friends />} path="/friends" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
