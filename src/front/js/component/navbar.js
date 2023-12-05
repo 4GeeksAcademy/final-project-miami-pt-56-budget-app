@@ -46,8 +46,8 @@ export const NavBar = () => {
           {/* For Splash page */}
           {!loggedIn && (
             <Nav className="ms-auto">
-              <Link to={"/signin"}>Login</Link>
-              <Link to={"/signup"}>Sign up</Link>
+              <Link className="nav-link" to={"/signin"}>Login</Link>
+              <Link className="nav-link" to={"/signup"}>Sign up</Link>
             </Nav>
           )}
 
@@ -55,10 +55,10 @@ export const NavBar = () => {
           {loggedIn && (
             <>
               <Nav className="me-auto">
-                <Link to={"/expenses"}>Expenses</Link>
-                <Link to={"/piggybankpage"}>Piggy Bank</Link>
-                <Link to={"/groups"}>Groups</Link>
-                <Link to={"/friends"}>Friends</Link>
+                <Link className="nav-link" to={"/expenses"}>Expenses</Link>
+                <Link className="nav-link" to={"/piggybankpage"}>Piggy Bank</Link>
+                <Link className="nav-link" to={"/groups"}>Groups</Link>
+                <Link className="nav-link" to={"/friends"}>Friends</Link>
               </Nav>
               <NavDropdown
                 title={
@@ -67,8 +67,14 @@ export const NavBar = () => {
                 className="custom-dropdown"
                 id="navbarScrollingDropdown">
 
-                <NavDropdown.Item to={"/account"} className="dropdown m-0">Account Settings</NavDropdown.Item>
-                <NavDropdown.Item onClick={handleLogoutClick} className="logout dropdown m-0">Logout</NavDropdown.Item>
+                <NavDropdown.Item className="dropdown m-0">
+                  <Link className="dropdown-item" to={"/account"}>
+                    Account Settings
+                  </Link>
+                </NavDropdown.Item>
+                <NavDropdown.Item onClick={handleLogoutClick} className="dropdown m-0">
+                  <span className="dropdown-item logout">Logout</span>
+                </NavDropdown.Item>
               </NavDropdown>
             </>
           )}
