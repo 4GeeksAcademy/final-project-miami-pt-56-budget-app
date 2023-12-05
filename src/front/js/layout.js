@@ -6,6 +6,7 @@ import Splashpage from "./pages/Splashpage";
 import Piggybank from "./pages/piggybankpage";
 import SignIn from "./pages/SignIn"
 import SignUp from "./pages/SignUp";
+import Groups from "./pages/Groups";
 import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
@@ -50,6 +51,7 @@ const Layout = () => {
                         <Route element={<SignUp />} path="/signup" />
                         <Route element={<EditAccount />} path="/account" />
                         <Route element={<Piggybank />} path="/piggybankpage" />
+                        <Route element={<Groups />} path="/groups" />
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
