@@ -355,21 +355,21 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ showDeleteFriendsModal: true });
 			},
 			hideDeleteFriendsModal: () => {
-				setStore({ showDeleteFriendsModal: false })
-			},
-			handleAddMembers: async (groupName) => {
+				setStore({showDeleteFriendsModal: false})
+      		},
+			handleAddMembers: async(memberID, groupID) => {
 				const opts = {
-					method: 'POST',
+					method: 'PUT',
 					headers: {
 						Authorization: "Bearer " + sessionStorage.getItem("token"),
 						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify({
-						"name": groupName
+						"newMember": memberID
 					})
 				}
 				try {
-					const resp = await fetch(`${process.env.BACKEND_URL}/api/groups`, opts)
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/groups/${groupID}`, opts)
 					const data = await resp.json();
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
@@ -385,20 +385,20 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			handleDeleteMembers: async (groupName) => {
+			handleDeleteMembers: async(memberID, groupID) => {
 				const opts = {
-					method: 'POST',
+					method: 'PUT',
 					headers: {
 						Authorization: "Bearer " + sessionStorage.getItem("token"),
 						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify({
-						"name": groupName
+						"oldMember": memberID
 					})
 				}
 
 				try {
-					const resp = await fetch(`${process.env.BACKEND_URL}/api/groups`, opts)
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/groups/${groupID}`, opts)
 					const data = await resp.json();
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
