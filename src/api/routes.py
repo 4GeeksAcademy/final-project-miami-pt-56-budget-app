@@ -324,6 +324,25 @@ def handle_expenses():
             expenses.append(x.serialize())
         return jsonify(expenses), 200
 
+#Route to show user groups and friends on the expenses modal
+@api.route('/user-rel', methods=['GET'])
+@jwt_required()
+def get_user_details():
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+
+        if user:
+            groups = [group.name for group in user.groups]
+            friends = [friend.email for friend in user.friends]
+
+            return jsonify({'groups': groups, 'friends': friends}), 200
+        else:
+            return jsonify({'msg': 'User not found'}), 404
+    except Exception as e:
+        print(e)
+        return jsonify({'error': 'Internal Server Error'}), 500
+
 #Route to create expense
 @api.route('/expenses', methods = ['POST'])
 @jwt_required()

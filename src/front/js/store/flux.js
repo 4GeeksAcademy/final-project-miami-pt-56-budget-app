@@ -20,12 +20,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// Use getActions to call a function within a fuction
 			handleLogin: async (email, password) => {
 				const store = getStore();
-				
+
 				const opts = {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
-						'Access-Control-Allow-Origin':'*'
+						'Access-Control-Allow-Origin': '*'
 					},
 					body: JSON.stringify({
 						"email": email,
@@ -40,7 +40,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						console.log('response token:', data.token);
 						sessionStorage.setItem('token', data.token);
 						setStore({ token: data.token });
-						setStore({userName: data.name})
+						setStore({ userName: data.name })
 						console.log(store.userName)
 						console.log('token in store:', store.token)
 						return true;
@@ -63,7 +63,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
-						'Access-Control-Allow-Origin':'*'
+						'Access-Control-Allow-Origin': '*'
 					},
 					body: JSON.stringify({
 						"first_name": firstName,
@@ -73,7 +73,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					})
 				}
 				try {
-					const resp = await fetch(`${process.env.BACKEND_URL}/api/signup`, opts)
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/signup`, opts);
 					const data = await resp.json();
 					console.log('handle Sign Up func', data)
 					if (resp.status === 200) {
@@ -98,14 +98,53 @@ const getState = ({ getStore, getActions, setStore }) => {
 				console.log('logout function running');
 				setStore({ token: null });
 			},
+			fetchUserExpenses: async () => {
+				const store = getStore();
+				const opts = {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+						'Access-Control-Allow-Origin': '*',
+						'Authorization': `Bearer ${sessionStorage.token}`
+					}
+				}
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/expenses`, opts)
+					const data = await resp.json();
+					console.log('fetch expenses ', data)
+					if(resp.status === 200){
+						setStore({userExpenses: data})
+					}
+				} catch (error) {
+					console.error(`There was a problem with the fetch operation ${error}`);
+				}
+			},
+			fetchUserRelationships: async () => {
+				const store = getStore();
+				const opts = {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+						'Access-Control-Allow-Origin': '*',
+						'Authorization': `Bearer ${sessionStorage.token}`
+					}
+				}
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/user-rel`, opts);
+					const data = await resp.json();
+					console.log('fetch user rel ' + data);
+				} catch (error) {
+					console.error(`There was a problem with the fetch operation ${error}`);
+				}
+			},
 			showExpensesModal: (expenseToEdit) => {
-				setStore({showExpensesModal: true});
-				setStore({expenseToUpdate: expenseToEdit});
+				setStore({ showExpensesModal: true });
+				setStore({ expenseToUpdate: expenseToEdit });
 			},
 			hideExpensesModal: () => {
-				setStore({showExpensesModal: false});
-      		},
-			  handleGetUser: async() => {
+				setStore({ showExpensesModal: false });
+			},
+			handleGetUser: async () => {
 				const opts = {
 					method: 'GET',
 					headers: {
@@ -119,12 +158,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const userData = data.user;
 					if (resp.status === 200) {
 						const savedInfo = userData[0]
-						setStore({userInfo: userData[0]})
-						setStore({userExpenses: savedInfo.expenses})
-						setStore({userFriends: savedInfo.friends})
-						setStore({userGroups: savedInfo.groups})
-						setStore({userPiggybanks: savedInfo.piggybanks})
-						setStore({userName: savedInfo.first_name})
+						setStore({ userInfo: userData[0] })
+						setStore({ userExpenses: savedInfo.expenses })
+						setStore({ userFriends: savedInfo.friends })
+						setStore({ userGroups: savedInfo.groups })
+						setStore({ userPiggybanks: savedInfo.piggybanks })
+						setStore({ userName: savedInfo.first_name })
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);
@@ -136,7 +175,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			handleAddGroups: async(groupName) => {
+			handleAddGroups: async (groupName) => {
 				const opts = {
 					method: 'POST',
 					headers: {
@@ -152,7 +191,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
-						setStore({userGroups: data.groups})
+						setStore({ userGroups: data.groups })
 						alert("Group information");
 						return true;
 					} else if (resp.status === 401) {
@@ -165,13 +204,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			showDeleteFriendsModal: () =>{
-				setStore({showDeleteFriendsModal: true});
+			showDeleteFriendsModal: () => {
+				setStore({ showDeleteFriendsModal: true });
 			},
 			hideDeleteFriendsModal: () => {
-				setStore({showDeleteFriendsModal: false})
-      		},
-			handleAddMembers: async(groupName) => {
+				setStore({ showDeleteFriendsModal: false })
+			},
+			handleAddMembers: async (groupName) => {
 				const opts = {
 					method: 'POST',
 					headers: {
@@ -199,7 +238,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			handleDeleteMembers: async(groupName) => {
+			handleDeleteMembers: async (groupName) => {
 				const opts = {
 					method: 'POST',
 					headers: {
@@ -210,7 +249,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"name": groupName
 					})
 				}
-        
+
 				try {
 					const resp = await fetch(`${process.env.BACKEND_URL}/api/groups`, opts)
 					const data = await resp.json();
@@ -229,20 +268,20 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			showGroupModal: () => {
-				setStore({showGroupModal: true})
+				setStore({ showGroupModal: true })
 			},
 			hideGroupModal: () => {
-				setStore({showGroupModal: false})
+				setStore({ showGroupModal: false })
 			},
 			showEditMemberModal: () => {
-				setStore({showAddMemberModal: true})
+				setStore({ showAddMemberModal: true })
 			},
 			hideEditMemberModal: () => {
-				setStore({showAddMemberModal: false})
+				setStore({ showAddMemberModal: false })
 			}
 		}
 	}
 }
-			
+
 
 export default getState;

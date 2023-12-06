@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Context } from "../store/appContext";
 import { Container, Row, Col, Button, Modal, Form, Dropdown } from 'react-bootstrap';
 import ExpensesTable from '../component/ExpensesTable';
@@ -17,6 +17,10 @@ const Expenses = () => {
         { id: 4, description: 'Lunch', amount: '25', date: '2023-04-10', type: 'Alone' },
         { id: 5, description: 'Rent', amount: '2300', date: '2023-04-11', type: 'Alone' },
     ])
+
+    useEffect(()=> {
+        console.log(actions.fetchUserExpenses());
+    }, [])
 
     const handleAddExpense = () => {
         actions.showExpensesModal(true);
