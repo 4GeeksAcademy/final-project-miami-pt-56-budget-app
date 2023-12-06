@@ -234,6 +234,8 @@ def handle_delete_groups(group_id):
     if group_to_delete:
         group_to_delete.members = []
         db.session.commit()
+        group_to_delete.expenses = []
+        db.session.commit()
         db.session.delete(group_to_delete)
         db.session.commit()
 

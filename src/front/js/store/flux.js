@@ -10,11 +10,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 			showDeleteFriendsModal: false,
 			showGroupModal: false,
 			showAddMemberModal: false,
+			showDeleteGroup: false,
 			userName: 'User',
 			userExpenses: [],
 			userFriends: [],
 			userGroups: [],
-			userPiggybanks: []
+			userPiggybanks: [],
+			userID:[]
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -105,7 +107,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			hideExpensesModal: () => {
 				setStore({showExpensesModal: false});
       		},
-			  handleGetUser: async() => {
+			handleGetUser: async() => {
 				const opts = {
 					method: 'GET',
 					headers: {
@@ -119,6 +121,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const userData = data.user;
 					if (resp.status === 200) {
 						const savedInfo = userData[0]
+						setStore({userID: savedInfo.id})
 						setStore({userInfo: userData[0]})
 						setStore({userExpenses: savedInfo.expenses})
 						setStore({userFriends: savedInfo.friends})
@@ -171,19 +174,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 			hideDeleteFriendsModal: () => {
 				setStore({showDeleteFriendsModal: false})
       		},
-			handleAddMembers: async(groupName) => {
+			handleAddMembers: async(memberID, groupID) => {
 				const opts = {
-					method: 'POST',
+					method: 'PUT',
 					headers: {
 						Authorization: "Bearer " + sessionStorage.getItem("token"),
 						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify({
-						"name": groupName
+						"newMember": memberID
 					})
 				}
 				try {
-					const resp = await fetch(`${process.env.BACKEND_URL}/api/groups`, opts)
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/groups/${groupID}`, opts)
 					const data = await resp.json();
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
@@ -199,20 +202,44 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			handleDeleteMembers: async(groupName) => {
+			handleDeleteMembers: async(memberID, groupID) => {
 				const opts = {
-					method: 'POST',
+					method: 'PUT',
 					headers: {
 						Authorization: "Bearer " + sessionStorage.getItem("token"),
 						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify({
-						"name": groupName
+						"oldMember": memberID
 					})
 				}
-        
 				try {
-					const resp = await fetch(`${process.env.BACKEND_URL}/api/groups`, opts)
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/groups/${groupID}`, opts)
+					const data = await resp.json();
+					console.log('handle Get Groups func', data)
+					if (resp.status === 200) {
+						alert("Group information");
+						return true;
+					} else if (resp.status === 401) {
+						alert(`You must be logged in`);
+						return false;
+					} else {
+						console.error(`Unexpected error: ${data.message}`)
+					}
+				} catch (error) {
+					console.error(`There was a problem with the fetch operation ${error}`)
+				}
+			},
+			handleDeleteGroups: async(groupID) => {
+				const opts = {
+					method: 'DELETE',
+					headers: {
+						Authorization: "Bearer " + sessionStorage.getItem("token"),
+						'Content-Type': 'application/json',
+					}
+				}
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/groups/${groupID}`, opts)
 					const data = await resp.json();
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
@@ -239,6 +266,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			hideEditMemberModal: () => {
 				setStore({showAddMemberModal: false})
+			},
+			showDeleteGroupModal: () => {
+				setStore({showDeleteGroup: true})
+			},
+			hideDeleteGroupModal: () => {
+				setStore({showDeleteGroup: false})
 			}
 		}
 	}
