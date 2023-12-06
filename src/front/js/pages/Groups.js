@@ -5,14 +5,6 @@ import { Link , useNavigate} from "react-router-dom";
 import { Hint } from 'react-autocomplete-hint';
 import GroupInfo from "../component/GroupInfo";
 
-// notes to self:
-//     X: need add group button that leads to create group Modal
-//     Group info includes:
-//    X     Group name:
-//    X     Group members:
-//         Balance due to which user:
-//    X     list of shared expenses:
-
 const Groups = () => {
     const navigate=useNavigate();
     const { store, actions } = useContext(Context);
@@ -31,25 +23,33 @@ const Groups = () => {
     const handleCloseModal = ()=> {
         actions.hideGroupModal(false)
         actions.hideEditMemberModal(false)
+        actions.hideDeleteGroupModal(false)
         setSelectedGroup(null)
         actions.handleGetUser()
     };
     const handleSaveGroup = async()=>{
-       let results = await actions.handleAddGroups(groupName)
+       await actions.handleAddGroups(groupName)
        actions.hideGroupModal(false)
     };
     const handleAddMember = async()=>{
         let newMember = friends.find((member)=> member.label == name)
-        console.log(newMember)
         await actions.handleAddMembers(newMember.id, selectedGroup)
         setName('')
     };
     const handleDeleteMember = async()=>{
         let oldMember = friends.find((member)=> member.label == remove)
-        console.log(oldMember)
         await actions.handleDeleteMembers(oldMember.id, selectedGroup)
         setRemove('')
-    }
+    };
+    const handleDeleteUser = async()=>{
+        let oldMember = store.userID
+        await actions.handleDeleteMembers(oldMember, selectedGroup)
+        handleCloseModal()
+    };
+    const handleDeleteGroup = async()=>{
+        await actions.handleDeleteGroups(selectedGroup)
+        handleCloseModal()
+    };
 
     const userFriends = store.userFriends
     const friends = []
@@ -59,7 +59,6 @@ const Groups = () => {
         newObj['label'] = friend.first_name + " " + friend.last_name;
         friends.push(newObj)
     })
-
 
     return (
         <>
@@ -140,6 +139,28 @@ const Groups = () => {
                     <div className="mt-3 d-flex justify-content-center">
                         <Button  variant="primary" type="button" onClick={handleCloseModal}>
                                 Done
+                        </Button>
+                    </div>
+                </Modal.Body>
+            </Modal>
+
+            {/* Delete group modal */}
+            <Modal show={store.showDeleteGroup} onHide={handleCloseModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Delete Group</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <h6 className="d-flex justify-content-center">Do you want to leave the group?</h6>
+                    <div className="d-flex justify-content-evenly">
+                        <Button variant="primary" type="button" onClick={handleDeleteUser}>
+                            Leave group
+                        </Button>
+                    </div>
+                    <h6 className="d-flex justify-content-center mt-5">Do you want to delete the group?</h6>
+                    <p className="d-flex justify-content-center">This will delete the group for everyone</p>
+                    <div className="d-flex justify-content-evenly">
+                        <Button variant="primary" type="button" onClick={handleDeleteGroup}>
+                            Delete group
                         </Button>
                     </div>
                 </Modal.Body>

@@ -10,6 +10,9 @@ const GroupInfo = (props) => {
     const handleEditMember = () => {
         actions.showEditMemberModal(true)
     };
+    const handleDeleteGroup = () => {
+        actions.showDeleteGroupModal(true)
+    }
     const group = props.group
 
 	return (
@@ -33,7 +36,7 @@ const GroupInfo = (props) => {
                     })}
                 </h6>
             </Row>
-            <Row>
+            <Row className="mb-1">
                 <Col>
                     <h5>Shared Expenses</h5>
                 </Col>
@@ -63,7 +66,12 @@ const GroupInfo = (props) => {
                 <Col>
                     <h5 className='d-flex flex-row-reverse'>$0.00</h5>
                 </Col>
-            </Row>                    
+            </Row>
+            <div className="d-flex justify-content-evenly mb-2">
+                <button className='expense-btn' onClick={()=>{
+                    handleDeleteGroup(props.setSelectedGroup(group.id))}}
+                >Delete Group</button> 
+            </div>                    
         </div>
     )
 };
