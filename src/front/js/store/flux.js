@@ -15,11 +15,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 			showEditPiggyBankModal: false,
 			showDeletePiggyBankModal: false,
 			userName: 'User',
+			userFullName: '',
 			userExpenses: [],
 			userFriends: [],
 			userGroups: [],
 			userPiggybanks: [],
-			userID:[]
+			userID: null,
+			userEmail:[]
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -131,6 +133,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 						setStore({userGroups: savedInfo.groups})
 						setStore({userPiggybanks: savedInfo.piggybanks})
 						setStore({userName: savedInfo.first_name})
+						setStore({userEmail: savedInfo.email})
+						setStore({userFullName: savedInfo.first_name +' '+ savedInfo.last_name})
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);
@@ -159,7 +163,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
 						setStore({userGroups: data.groups})
-						alert("Group information");
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);
@@ -193,7 +196,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
-						alert("Group information");
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);
@@ -221,7 +223,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
-						alert("Group information");
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);
@@ -246,7 +247,33 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
-						alert("Group information");
+						return true;
+					} else if (resp.status === 401) {
+						alert(`You must be logged in`);
+						return false;
+					} else {
+						console.error(`Unexpected error: ${data.message}`)
+					}
+				} catch (error) {
+					console.error(`There was a problem with the fetch operation ${error}`)
+				}
+			},
+			handleChangePassword: async(newPassword) => {
+				const opts = {
+					method: 'POST',
+					headers: {
+						Authorization: "Bearer " + sessionStorage.getItem("token"),
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						"newPassword": newPassword
+					})
+				}
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/user/${getStore().userID}`, opts)
+					const data = await resp.json();
+					console.log('handle get new password func', data)
+					if (resp.status === 200) {
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);
