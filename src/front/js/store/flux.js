@@ -7,6 +7,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			message: null,
 			showExpensesModal: false,
 			expenseToUpdate: {},
+			sortOrder: 'asc',
 			showDeleteFriendsModal: false,
 			showGroupModal: false,
 			showAddMemberModal: false,
@@ -99,7 +100,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ token: null });
 			},
 			fetchUserExpenses: async () => {
-				const store = getStore();
+				// const store = getStore();
 				const opts = {
 					method: 'GET',
 					headers: {
@@ -112,12 +113,43 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const resp = await fetch(`${process.env.BACKEND_URL}/api/expenses`, opts)
 					const data = await resp.json();
 					console.log('fetch expenses ', data)
-					if(resp.status === 200){
-						setStore({userExpenses: data})
+					if (resp.status === 200) {
+						setStore({ userExpenses: data })
 					}
 				} catch (error) {
 					console.error(`There was a problem with the fetch operation ${error}`);
 				}
+			},
+			formatDate: (date, useModalFormat) => {
+				const dateObject = new Date(date);
+
+				if (useModalFormat) {
+					const year = dateObject.getFullYear();
+					const month = (dateObject.getMonth() + 1).toString().padStart(2, '0');
+					const day = dateObject.getDate().toString().padStart(2, '0');
+					return `${year}-${month}-${day}`;
+				} else {
+					const formattedDate = dateObject.toLocaleString('en-us', { month: 'short', day: '2-digit', year: 'numeric' });
+					return formattedDate;
+				}
+
+			},
+			handleSortByAmount: () => {
+				const store = getStore();
+
+				console.log("Before Sorting:", store.userExpenses);
+
+				const sortedExpenses = [...store.userExpenses].sort((a, b) => {
+					const amountA = parseFloat(a.amount.slice(1));
+					const amountB = parseFloat(b.amount.slice(1));
+					return store.sortOrder === 'asc' ? amountA - amountB : amountB - amountA;
+				});
+
+				console.log("After Sorting:", sortedExpenses);
+
+				setStore({ userExpenses: sortedExpenses });
+				setStore({ sortOrder: store.sortOrder === 'asc' ? 'desc' : 'asc' });
+
 			},
 			fetchUserRelationships: async () => {
 				const store = getStore();
@@ -132,7 +164,116 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const resp = await fetch(`${process.env.BACKEND_URL}/api/user-rel`, opts);
 					const data = await resp.json();
-					console.log('fetch user rel ' + data);
+					console.log('fetch user rel ' + JSON.stringify(data));
+					if (resp.status === 200) {
+						const { groups, friends } = data;
+
+						setStore({ userGroups: groups });
+						setStore({ userFriends: friends });
+						console.log(store.userGroups, store.userFriends);
+					}
+				} catch (error) {
+					console.error(`There was a problem with the fetch operation ${error}`);
+				}
+			},
+			handleAddExpense: async (expenseName, expenseAmount, expenseDate, expenseType, splitWith) => {
+				const actions = getActions();
+				let bodyData = {
+					"name": expenseName,
+					"amount": expenseAmount,
+					"date": expenseDate,
+					"type": expenseType
+				};
+
+				if (expenseType === 'Split') {
+					if (splitWith) {
+						const relationship = await actions.fetchUserRelationships();
+
+						if (Array.isArray(relationship)) {
+							const isFriend = relationship.includes(splitWith);
+							const isGroup = relationship.includes(splitWith);
+							if (isFriend) {
+								bodyData["group"] = null;
+								bodyData["friend"] = splitWith;
+							} else if (isGroup) {
+								bodyData["group"] = splitWith;
+								bodyData["friend"] = null;
+							}
+						}
+					}
+				}
+
+				const opts = {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'Access-Control-Allow-Origin': '*',
+						'Authorization': `Bearer ${sessionStorage.token}`
+					},
+					body: JSON.stringify(bodyData)
+				}
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/expense`, opts);
+					const data = await resp.json();
+					console.log('add expense ', data);
+					if (resp.status === 200) {
+						console.log('Expense added successfully')
+					} else if (resp.status === 401) {
+						alert('You must be logged in');
+					} else {
+						console.error(`Unexpected error: ${data.message}`)
+					}
+				} catch (error) {
+					console.error(`There was a problem with the fetch operation ${error}`);
+				}
+			},
+			handleUpdateExpenses: async (expenseID, expenseName, expenseAmount, expenseDate, expenseType, splitWith) => {
+				const actions = getActions();
+				let bodyData = {
+					"name": expenseName,
+					"amount": expenseAmount,
+					"date": expenseDate,
+					"type": expenseType
+				};
+
+				if (expenseType === 'Split') {
+					if (splitWith) {
+						const relationship = await actions.fetchUserRelationships();
+
+						if (Array.isArray(relationship)) {
+							const isFriend = relationship.includes(splitWith);
+							const isGroup = relationship.includes(splitWith);
+							if (isFriend) {
+								bodyData["group"] = null;
+								bodyData["friend"] = splitWith;
+							} else if (isGroup) {
+								bodyData["group"] = splitWith;
+								bodyData["friend"] = null;
+							}
+						}
+					}
+				}
+
+				const opts = {
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json',
+						'Access-Control-Allow-Origin': '*',
+						'Authorization': `Bearer ${sessionStorage.token}`
+					},
+					body: JSON.stringify(bodyData)
+				}
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/expenses/${expenseID}`, opts);
+					const data = await resp.json();
+					console.log('add expense ', data);
+					if (resp.status === 200) {
+						console.log('Expense Updated successfully')
+					} else if (resp.status === 401) {
+						alert('You must be logged in');
+					} else {
+						console.error(`Unexpected error: ${data.message}`)
+					}
 				} catch (error) {
 					console.error(`There was a problem with the fetch operation ${error}`);
 				}

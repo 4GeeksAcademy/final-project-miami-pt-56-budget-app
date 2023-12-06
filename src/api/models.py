@@ -23,25 +23,34 @@ class Expenses(db.Model):
     friend_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
     
-    user = db.relationship("User", foreign_keys=[user_id])
+    user = db.relationship("User", back_populates='expenses', foreign_keys=[user_id])
     friend = db.relationship("User", foreign_keys=[friend_id])
-    group = db.relationship('Group', back_populates='expenses')
+    group = db.relationship('Group', back_populates='expenses', foreign_keys=[group_id])
     
 
     def __repr__(self):
         return f'<Expenses {self.name}>'
 
     def serialize(self, include_user=True):
-        return {
+        data = {
             "id": self.id,
             "name": self.name,
-            "amount": self.amount,
+            "amount": str(self.amount),
             "date": self.date,
             "type": self.type,
-            "user": self.user.serialize() if self.user and include_user else None,
-            "friend": self.friend.serialize() if self.friend else None,
-            "group": self.group.serialize() if self.group else None,
+            # "user": self.user.serialize(),
+            "friend": None,
+            "group": None,
         }
+
+        if self.type =="Alone":
+            pass
+        elif self.type == "Split":
+            data["friend"] = self.friend.serialize() if self.friend else None
+            data["group"] = self.group.serialize() if self.group else None
+
+        return data
+
 
 
 class User(db.Model):
@@ -68,7 +77,7 @@ class User(db.Model):
     )                   
     groups = db.relationship("Group", secondary=group_member, back_populates="members")
     piggybanks = db.relationship("PiggyBank", backref="user_piggybank")
-    expenses = db.relationship("Expenses", backref="user_expense",  foreign_keys="[Expenses.user_id]")
+    expenses = db.relationship("Expenses",back_populates="user", foreign_keys="[Expenses.user_id]")
 
     def __repr__(self):
         return f'<User {self.email}>'
@@ -79,13 +88,13 @@ class User(db.Model):
             friend.friends.append(self)
             db.session.commit()
 
-    def serialize(self, include_expenses=True):
+    def serialize(self):
         return {
             "id": self.id,
             "email": self.email,
             "first_name": self.first_name,
             "last_name": self.last_name,
-            # "expenses": list(map(lambda y: y.serialize(include_user=False), self.expenses)) if include_expenses else [],
+            # "expenses": list(map(lambda y: y.serialize(include_user=False), self.expenses))
             # "piggybanks": list(map(lambda x: x.serialize(), self.piggybanks))
         }
 
@@ -94,7 +103,7 @@ class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     members = db.relationship("User", secondary=group_member, back_populates="groups")
-    expenses = db.relationship("Expenses", backref="group_expense")
+    expenses = db.relationship("Expenses", back_populates='group')
 
     def __repr__(self):
         return f'<Group {self.name}>'

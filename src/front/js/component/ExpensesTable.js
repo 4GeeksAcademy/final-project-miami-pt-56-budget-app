@@ -9,6 +9,9 @@ import '../../styles/expenses.css'
 const ExpensesTable = ({ expenses }) => {
 	const { store, actions } = useContext(Context);
 
+	useEffect(() => {
+
+	},[])
 	//addition to edit expense with existing expenses modal
 	const handleEditExpense = (expense) => {
 		actions.showExpensesModal(expense);
@@ -28,9 +31,9 @@ const ExpensesTable = ({ expenses }) => {
 				<tbody>
 					{(expenses.map((expense) => (
 						<tr key={expense.id}>
-							<td>{expense.description}</td>
+							<td>{expense.name}</td>
 							<td>${expense.amount}</td>
-							<td>{expense.date}</td>
+							<td>{actions.formatDate(expense.date, false)}</td>
 							<td>{expense.type}</td>
 							<td>
 								<FontAwesomeIcon icon={faEdit} className="me-2 icon-lnk" onClick={() => handleEditExpense(expense)} />

@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Modal, Form, Dropdown, Button, InputGroup, Container } from "react-bootstrap";
+import { Hint } from "react-autocomplete-hint";
 import { Context } from "../store/appContext";
 
 
@@ -17,38 +18,69 @@ const ExpensesModal = ({ show }) => {
     const [expenseDescription, setExpenseDescription] = useState('');
     const [expenseDate, setExpenseDate] = useState('');
 
+
     useEffect(() => {
-        console.log(store.expenseToUpdate);
-        if (store.expenseToUpdate) {
+        if (store.expenseToUpdate && store.expenseToUpdate.type === 'Split') {
+            actions.fetchUserRelationships();
+
             setSplitAmount(store.expenseToUpdate.amount);
-            setExpenseDescription(store.expenseToUpdate.description);
-            setExpenseDate(store.expenseToUpdate.date);
+            setExpenseDescription(store.expenseToUpdate.name);
+            setExpenseDate(actions.formatDate(store.expenseToUpdate.date, true));
+            setSplitOption(store.expenseToUpdate.type);
+            if (store.expenseToUpdate.friend) {
+                console.log('use effect modal', store.expenseToUpdate, store.expenseToUpdate.friend)
+                setSplitWith(`${store.expenseToUpdate.friend.first_name} ${store.expenseToUpdate.friend.last_name}`);
+            } else {
+                setSplitWith(store.expenseToUpdate.group.name);
+            }
+        } else if (store.expenseToUpdate && store.expenseToUpdate.type === 'Alone') {
+            setSplitAmount(store.expenseToUpdate.amount);
+            setExpenseDescription(store.expenseToUpdate.name);
+            setExpenseDate(actions.formatDate(store.expenseToUpdate.date, true));
             setSplitOption(store.expenseToUpdate.type);
         } else {
             setSplitAmount(0);
             setExpenseDescription('');
+            setExpenseDate('');
+            setSplitOption('Alone');
         }
+        
 
     }, [store.expenseToUpdate]);
 
 
     const handleSaveExpense = () => {
+        console.log('handle save expense', store.expenseToUpdate);
 
+        if (splitOption === 'Split' && store.expenseToUpdate.length > 0) {
+            // Update existing expense
+            actions.handleUpdateExpenses(store.expenseToUpdate.id, expenseDescription, splitAmount, expenseDate, splitOption, splitWith);
+        } else if (splitOption === 'Split') {
+            // Add new expense
+            actions.handleAddExpense(expenseDescription, splitAmount, expenseDate, splitOption, splitWith);
+        } else if (splitOption === 'Alone' && store.expenseToUpdate) {
+            //Update existing expense Alone
+            actions.handleUpdateExpenses(store.expenseToUpdate.id, expenseDescription, splitAmount, expenseDate, splitOption, splitWith);
+        } else {
+            // Add new expense (for 'Alone' case)
+            actions.handleAddExpense(expenseDescription, splitAmount, expenseDate, splitOption);
+        }
+    
         setSplitWith('');
         setSplitAmount(0);
+        setExpenseDate('');
         setSplitPercentage(0);
         setSplitCustomAmount(0);
-
-        actions.hideExpensesModal;
-
-    }
+    
+        actions.hideExpensesModal();
+    };
 
     const renderSplitOptions = () => {
         switch (splitOption) {
             case 'Alone':
                 return (
                     <Container className="mt-3 p-0 d-flex justify-content-center">
-                        <Button className="me-2" variant="primary" type="button" onClick={() => handleSaveExpense(formData)}>
+                        <Button className="me-2" variant="primary" type="button" onClick={() => handleSaveExpense()}>
                             Submit
                         </Button>
                         <Button variant="primary" type="button" onClick={actions.hideExpensesModal}>
@@ -62,6 +94,13 @@ const ExpensesModal = ({ show }) => {
                         <Form.Group controlId="splitWith">
                             <Form.Label>{`Split With ${splitWith}`}</Form.Label>
                             <Form.Control type="text" placeholder={`Enter Group or Friend name`} value={splitWith} onChange={(e) => setSplitWith(e.target.value)} />
+                            {/* <Hint options={renderFilteredOptions()} allowTabFill>
+                                <input
+                                    value={splitWith}
+                                    onChange={e => setSplitWith(e.target.value)}
+                                    placeholder="Enter Group or Friend name"
+                                />
+                            </Hint> */}
                         </Form.Group>
                         <Container className=" my-3 d-flex justify-content-center">
                             <Button className="m-1" variant="secondary" onClick={() => setSelectedSplitOptions('Equally')}>
@@ -80,6 +119,16 @@ const ExpensesModal = ({ show }) => {
                 return null;
         }
     };
+
+    // const renderFilteredOptions = () => {
+
+    //     const allOptions = [...store.userGroups, ...store.userfriends].map(option => option.name)
+    //     console.log(allOptions)
+    //     return allOptions.map(option => ({
+    //         label: option
+    //     }))
+    // };
+
 
     const renderSplitInput = () => {
         if (splitOption === 'Alone') {
@@ -109,7 +158,7 @@ const ExpensesModal = ({ show }) => {
                             <Form.Control type="number" value={calculatedAmount === '' ? '' : calculatedAmount.toFixed(2)} readOnly />
                         </InputGroup>
                         <Container className="mt-3 d-flex justify-content-center">
-                            <Button className="me-2" variant="primary" type="button" onClick={() => handleSaveExpense(formData)}>
+                            <Button className="me-2" variant="primary" type="button" onClick={() => handleSaveExpense()}>
                                 Submit
                             </Button>
                             <Button variant="primary" type="button" onClick={actions.hideExpensesModal}>
@@ -127,7 +176,7 @@ const ExpensesModal = ({ show }) => {
                             <Form.Control type="number" value={splitEqually.toFixed(2)} readOnly />
                         </InputGroup>
                         <Container className="mt-3 d-flex justify-content-center">
-                            <Button className="me-2" variant="primary" type="button" onClick={() => handleSaveExpense(formData)}>
+                            <Button className="me-2" variant="primary" type="button" onClick={() => handleSaveExpense()}>
                                 Submit
                             </Button>
                             <Button variant="primary" type="button" onClick={actions.hideExpensesModal}>
@@ -159,7 +208,7 @@ const ExpensesModal = ({ show }) => {
                             <Form.Control type="number" value={newCalculatedAmount === '' ? '' : newCalculatedAmount.toFixed(2)} readOnly />
                         </InputGroup>
                         <Container className="mt-3 d-flex justify-content-center">
-                            <Button className="me-2" variant="primary" type="button" onClick={() => handleSaveExpense(formData)}>
+                            <Button className="me-2" variant="primary" type="button" onClick={() => handleSaveExpense()}>
                                 Submit
                             </Button>
                             <Button variant="primary" type="button" onClick={actions.hideExpensesModal}>
