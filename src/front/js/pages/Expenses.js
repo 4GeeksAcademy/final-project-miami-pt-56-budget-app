@@ -24,7 +24,7 @@ const Expenses = () => {
     }, [])
 
     useEffect(()=> {
-        console.log(actions.fetchUserExpenses());
+        actions.fetchUserExpenses();
     }, [])
 
     const handleAddExpense = () => {

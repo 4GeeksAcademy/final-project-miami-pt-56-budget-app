@@ -90,7 +90,7 @@ class User(db.Model):
             friend.friends.append(self)
             db.session.commit()
 
-    def serialize(self, include_expenses=True):
+    def serialize(self):
         return {
             "id": self.id,
             "email": self.email,

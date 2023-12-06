@@ -71,7 +71,7 @@ const ExpensesModal = ({ show }) => {
         setExpenseDate('');
         setSplitPercentage(0);
         setSplitCustomAmount(0);
-        actions.fetchUserExpenses();
+    
         actions.hideExpensesModal();
     };
 

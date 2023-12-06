@@ -336,7 +336,6 @@ def get_user_details():
     if user:
         groups = [group.name for group in user.groups]
         friends = [friend.email for friend in user.friends]
-        # friend_of = [friend.email for friend in user.friend_of]
 
         return jsonify({'groups': groups, 'friends': friends}), 200
     else:
