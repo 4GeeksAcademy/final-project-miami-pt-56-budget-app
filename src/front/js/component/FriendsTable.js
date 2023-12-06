@@ -7,8 +7,10 @@ import DeleteFriendsModal from "./DeleteFriendsModal";
 
 const FriendsTable = ({ friends }) => {
   const { store, actions } = useContext(Context);
+  const [friendEmail, setFriendEmail] = useState('')
 
-  const handleDeleteFriends = () => {
+  const handleDeleteFriends = (email) => {
+    setFriendEmail(email)
     actions.showDeleteFriendsModal();
   };
 
@@ -31,7 +33,7 @@ const FriendsTable = ({ friends }) => {
                   <FontAwesomeIcon
                     icon={faTrash}
                     className="icon-lnk"
-                    onClick={() => handleDeleteFriends()}
+                    onClick={() => handleDeleteFriends(friend.email)}
                   />
                 </a>
               </td>
@@ -39,7 +41,7 @@ const FriendsTable = ({ friends }) => {
           ))}
         </tbody>
       </Table>
-      {store.showDeleteFriendsModal && <DeleteFriendsModal />}
+      {store.showDeleteFriendsModal && <DeleteFriendsModal friendEmail={friendEmail}/>}
     </Container>
   );
 };

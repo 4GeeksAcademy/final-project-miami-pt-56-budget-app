@@ -132,11 +132,11 @@ def handle_home():
 def manage_friends():
     current_user_id = get_jwt_identity()
     user = User.query.filter_by(id = current_user_id).first()
-
+    print(user.friends)
     data = request.get_json()
     friend_email = data.get('friendEmail')
     friend = User.query.filter_by(email=friend_email).first()
-
+    print(friend.friends)
     if user and friend:
         if request.method == 'POST':
             if user.friends is None:
@@ -149,17 +149,27 @@ def manage_friends():
             friend.friends.append(user)
             user.friends.append(friend)
             db.session.commit()
-            user = User.query.get(current_user_id)
+            user = User.query.filter_by(id = current_user_id).first()
+            serialized_friends = [] 
+            for x in user.friends: 
+                serialized_friends.append(x.serialize())
+            user = user.serialize()
+            user["friends"] = serialized_friends
             message = "Friend sucessfully added"
-            return jsonify({'message': message, "user":user.serialize()}), 200
+            return jsonify({'message': message, "user":user}), 200
         elif request.method == 'DELETE':
             if friend in user.friends and user in friend.friends:
                 user.friends.remove(friend)
                 friend.friends.remove(user)
                 db.session.commit()
-                user = User.query.get(current_user_id)
+                user = User.query.filter_by(id = current_user_id).first()
+                serialized_friends = [] 
+                for x in user.friends: 
+                    serialized_friends.append(x.serialize())
+                user = user.serialize()
+                user["friends"] = serialized_friends
                 message = 'Friend removed successfully'
-                return jsonify({'message': message, "user":user.serialize()}), 200
+                return jsonify({'message': message, "user":user}), 200
             else:
                 return jsonify({'error': 'Friendship not found'}), 404
         else:
