@@ -108,22 +108,22 @@ def handle_home():
         return jsonify({'msg': 'You must be logged in'}), 401
 
 # #Route to get user friends
-# @api.route('/friends', methods = ['GET'])
-# @jwt_required()
-# def handle_get_friends():
-#     current_user_id = get_jwt_identity()
-#     user = User.query.get(current_user_id)
-#     if user is not None:
-#         friend_list = []
-#         for x in user.friends:
-#             friend_list.append(x.serialize())
-#         response_body = {
-#             "message": "Here is the friend information!",
-#             "user": friend_list
-#         }
-#         return jsonify(response_body), 200
-#     else:
-#         return jsonify({'msg': 'You must be logged in'}), 401
+@api.route('/friends', methods = ['GET'])
+@jwt_required()
+def handle_get_friends():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if user is not None:
+        friend_list = []
+        for x in user.friends:
+            friend_list.append(x.serialize())
+        response_body = {
+            "message": "Here is the friend information!",
+            "user": friend_list
+        }
+        return jsonify(response_body), 200
+    else:
+        return jsonify({'msg': 'You must be logged in'}), 401
 
 
 #Route to add or delete user friends  
