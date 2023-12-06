@@ -23,6 +23,10 @@ const Expenses = () => {
         actions.fetchUserRelationships();
     }, [])
 
+    useEffect(()=> {
+        console.log(actions.fetchUserExpenses());
+    }, [])
+
     const handleAddExpense = () => {
         actions.showExpensesModal(true);
     }
