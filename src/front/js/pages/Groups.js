@@ -32,6 +32,7 @@ const Groups = () => {
         actions.hideGroupModal(false)
         actions.hideEditMemberModal(false)
         setSelectedGroup(null)
+        actions.handleGetUser()
     };
     const handleSaveGroup = async()=>{
        let results = await actions.handleAddGroups(groupName)
@@ -41,11 +42,13 @@ const Groups = () => {
         let newMember = friends.find((member)=> member.label == name)
         console.log(newMember)
         await actions.handleAddMembers(newMember.id, selectedGroup)
+        setName('')
     };
     const handleDeleteMember = async()=>{
         let oldMember = friends.find((member)=> member.label == remove)
         console.log(oldMember)
         await actions.handleDeleteMembers(oldMember.id, selectedGroup)
+        setRemove('')
     }
 
     const userFriends = store.userFriends
