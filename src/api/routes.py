@@ -334,6 +334,7 @@ def get_user_details():
     if user:
         groups = [group.name for group in user.groups]
         friends = [friend.email for friend in user.friends]
+        # friend_of = [friend.email for friend in user.friend_of]
 
         return jsonify({'groups': groups, 'friends': friends}), 200
     else:
@@ -359,7 +360,7 @@ def add_expenses():
         db.session.commit()
         return jsonify('Added expenses'), 200
     if user and group:
-        group_id = User.query.filter_by(name = group).first()
+        group_id = Group.query.filter_by(name = group).first()
         print(group_id)
         new_expenses = Expenses(name = name, group_id = group_id.id, user_id = current_user_id, amount = amount, date = date, type = type )
         db.session.add(new_expenses)

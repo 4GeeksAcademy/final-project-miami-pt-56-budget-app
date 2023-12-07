@@ -25,31 +25,32 @@ class Expenses(db.Model):
     
     user = db.relationship("User", back_populates='expenses', foreign_keys=[user_id])
     friend = db.relationship("User", foreign_keys=[friend_id])
-    group = db.relationship('Group', back_populates='expenses', foreign_keys=[group_id])
+    group = db.relationship('Group', foreign_keys=[group_id])
     
-
     def __repr__(self):
         return f'<Expenses {self.name}>'
-
+    
     def serialize(self, include_user=True):
-        data = {
-            "id": self.id,
-            "name": self.name,
-            "amount": str(self.amount),
-            "date": self.date,
-            "type": self.type,
-            # "user": self.user.serialize(),
-            "friend": None,
-            "group": None,
-        }
+            data = {
+                "id": self.id,
+                "name": self.name,
+                "amount": str(self.amount),
+                "date": self.date,
+                "type": self.type,
+                "user": None,
+                "friend": None,
+                "group": None,
+            }
 
-        if self.type =="Alone":
-            pass
-        elif self.type == "Split":
-            data["friend"] = self.friend.serialize() if self.friend else None
-            data["group"] = self.group.serialize() if self.group else None
+            if include_user and self.type == "Alone":
+                data["user"] = self.user.serialize() if self.user else None
+            elif self.type == "Split":
+                data["user"] = self.user.serialize() if self.user else None
+                data["friend"] = self.friend.serialize() if self.friend else None
+                data["group"] = self.group.serialize() if self.group else None
 
-        return data
+            return data
+        
 
 
 
@@ -60,6 +61,7 @@ class User(db.Model):
     first_name = db.Column(db.String(120), nullable=False, unique=False)
     last_name = db.Column(db.String(120), nullable=False, unique=False)
     password = db.Column(db.String(80), nullable=False, unique=False)
+    access_token = db.Column(db.String(120), nullable=True, unique=True)
     
     friends = db.relationship(
         "User",
@@ -113,7 +115,7 @@ class Group(db.Model):
             "id": self.id,
             "name": self.name,
             "members": list(map(lambda x: x.serialize(), self.members)),
-            "expenses": list(map(lambda y: y.serialize(), self.expenses))
+            # "expenses": list(map(lambda y: y.serialize(), self.expenses))
         }
 
 class PiggyBank(db.Model):

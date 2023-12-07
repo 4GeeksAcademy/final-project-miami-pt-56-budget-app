@@ -20,6 +20,7 @@ const Expenses = () => {
 
     useEffect(()=> {
         actions.fetchUserExpenses();
+        actions.fetchUserRelationships();
     }, [])
 
     const handleAddExpense = () => {

@@ -10,7 +10,7 @@ const ExpensesTable = ({ expenses }) => {
 	const { store, actions } = useContext(Context);
 
 	useEffect(() => {
-
+		actions.fetchUserExpenses();
 	},[])
 	//addition to edit expense with existing expenses modal
 	const handleEditExpense = (expense) => {

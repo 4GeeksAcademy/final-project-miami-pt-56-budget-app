@@ -58,7 +58,7 @@ const ExpensesModal = ({ show }) => {
         } else if (splitOption === 'Split') {
             // Add new expense
             actions.handleAddExpense(expenseDescription, splitAmount, expenseDate, splitOption, splitWith);
-        } else if (splitOption === 'Alone' && store.expenseToUpdate) {
+        } else if (splitOption === 'Alone' && store.expenseToUpdate.length > 0) {
             //Update existing expense Alone
             actions.handleUpdateExpenses(store.expenseToUpdate.id, expenseDescription, splitAmount, expenseDate, splitOption, splitWith);
         } else {
@@ -71,7 +71,7 @@ const ExpensesModal = ({ show }) => {
         setExpenseDate('');
         setSplitPercentage(0);
         setSplitCustomAmount(0);
-    
+        actions.fetchUserExpenses();
         actions.hideExpensesModal();
     };
 
