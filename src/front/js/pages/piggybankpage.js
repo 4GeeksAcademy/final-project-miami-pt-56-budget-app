@@ -100,8 +100,21 @@ const Piggybank = ()=> {
               <textarea className="form-control mb-2" placeholder="Any notes about your piggy bank? (optional)" value={notes} onChange={(e) => setNotes(e.target.value)} />
             </Form.Group>
             <Button className="mt-2" variant="primary" type="button" onClick={handleSavePiggyBank}>
-                    Create Group
+              Create Piggy Bank
             </Button>
+        </Modal.Body>
+      </Modal>
+
+      {/* Delete piggybank modal */}
+      <Modal show={store.showDeletePiggyBankModal} onHide={handleClosePiggyBankModals}>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Piggy Bank</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h6 className="d-flex justify-content-center">Are you sure you want to delete this piggy bank?</h6>
+          <Button className="mt-2" variant="primary" type="button" onClick={handleDeletePiggyBank}>
+            Delete Piggy Bank
+          </Button>
         </Modal.Body>
       </Modal>
     </>
