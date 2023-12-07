@@ -15,11 +15,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 			showAddMemberModal: false,
 			showDeleteGroup: false,
 			userName: 'User',
+			userFullName: '',
 			userExpenses: [],
 			userFriends: [],
 			userGroups: [],
 			userPiggybanks: [],
-			userID: []
+			userID: null,
+			userEmail:[]
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -333,7 +335,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ showExpensesModal: false });
 				setStore({ showDeleteExpenseModal: false });
 			},
-			handleGetUser: async () => {
+			handleGetUser: async() => {
 				const opts = {
 					method: 'GET',
 					headers: {
@@ -348,12 +350,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (resp.status === 200) {
 						const savedInfo = userData[0]
 						setStore({userID: savedInfo.id})
-						setStore({ userInfo: userData[0] })
-						setStore({ userExpenses: savedInfo.expenses })
-						setStore({ userFriends: savedInfo.friends })
-						setStore({ userGroups: savedInfo.groups })
-						setStore({ userPiggybanks: savedInfo.piggybanks })
-						setStore({ userName: savedInfo.first_name })
+						setStore({userInfo: userData[0]})
+						setStore({userExpenses: savedInfo.expenses})
+						setStore({userFriends: savedInfo.friends})
+						setStore({userGroups: savedInfo.groups})
+						setStore({userPiggybanks: savedInfo.piggybanks})
+						setStore({userName: savedInfo.first_name})
+						setStore({userEmail: savedInfo.email})
+						setStore({userFullName: savedInfo.first_name +' '+ savedInfo.last_name})
+
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);
@@ -381,8 +386,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
-						setStore({ userGroups: data.groups })
-						alert("Group information");
+						setStore({userGroups: data.groups})
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);
@@ -400,7 +404,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			hideDeleteFriendsModal: () => {
 				setStore({ showDeleteFriendsModal: false })
 			},
-			handleAddMembers: async (memberID, groupID) => {
+			handleAddMembers: async(memberID, groupID) => {
 				const opts = {
 					method: 'PUT',
 					headers: {
@@ -416,7 +420,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
-						alert("Group information");
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);
@@ -428,7 +431,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			handleDeleteMembers: async (memberID, groupID) => {
+			handleDeleteMembers: async(memberID, groupID) => {
 				const opts = {
 					method: 'PUT',
 					headers: {
@@ -444,7 +447,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
-						alert("Group information");
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);
@@ -469,7 +471,33 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
-						alert("Group information");
+						return true;
+					} else if (resp.status === 401) {
+						alert(`You must be logged in`);
+						return false;
+					} else {
+						console.error(`Unexpected error: ${data.message}`)
+					}
+				} catch (error) {
+					console.error(`There was a problem with the fetch operation ${error}`)
+				}
+			},
+			handleChangePassword: async(newPassword) => {
+				const opts = {
+					method: 'POST',
+					headers: {
+						Authorization: "Bearer " + sessionStorage.getItem("token"),
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						"newPassword": newPassword
+					})
+				}
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/user/${getStore().userID}`, opts)
+					const data = await resp.json();
+					console.log('handle get new password func', data)
+					if (resp.status === 200) {
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);
@@ -491,13 +519,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ showAddMemberModal: true })
 			},
 			hideEditMemberModal: () => {
-				setStore({ showAddMemberModal: false })
+				setStore({showAddMemberModal: false})
 			},
 			showDeleteGroupModal: () => {
-				setStore({ showDeleteGroup: true })
+				setStore({showDeleteGroup: true})
 			},
 			hideDeleteGroupModal: () => {
-				setStore({ showDeleteGroup: false })
+				setStore({showDeleteGroup: false})
 			}
 		}
 	}
