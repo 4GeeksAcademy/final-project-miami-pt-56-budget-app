@@ -96,7 +96,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			handleLogout: () => {
 				sessionStorage.removeItem('token');
-				console.log('logout function running');
+				//console.log('logout function running');
 				setStore({ token: null });
 			},
 			fetchUserExpenses: async () => {
@@ -177,6 +177,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			handleAddExpense: async (expenseName, expenseAmount, expenseDate, expenseType, splitWith) => {
+				const store = getStore();
 				const actions = getActions();
 				let bodyData = {
 					"name": expenseName,
@@ -184,24 +185,29 @@ const getState = ({ getStore, getActions, setStore }) => {
 					"date": expenseDate,
 					"type": expenseType
 				};
-
+				console.log('handle add', splitWith);
 				if (expenseType === 'Split') {
-					if (splitWith) {
-						const relationship = await actions.fetchUserRelationships();
-
-						if (Array.isArray(relationship)) {
-							const isFriend = relationship.includes(splitWith);
-							const isGroup = relationship.includes(splitWith);
-							if (isFriend) {
-								bodyData["group"] = null;
-								bodyData["friend"] = splitWith;
-							} else if (isGroup) {
-								bodyData["group"] = splitWith;
-								bodyData["friend"] = null;
-							}
+					const hasEmailSymbol = /@/.test(splitWith);
+				
+					if (hasEmailSymbol) {
+						// Check if splitWith is a friend
+						const isFriend = store.userFriends.includes(splitWith);
+				
+						if (isFriend) {
+							bodyData["group"] = null;
+							bodyData["friend"] = splitWith;
+						} else {
+							// If it's not a friend, you can handle this case as needed
+							alert('Friend not found');
 						}
+					} else {
+						// If splitWith doesn't contain '@', assume it's a group
+						bodyData["group"] = splitWith;
+						bodyData["friend"] = null;
 					}
 				}
+
+				console.log('bodydata', bodyData);
 
 				const opts = {
 					method: 'POST',

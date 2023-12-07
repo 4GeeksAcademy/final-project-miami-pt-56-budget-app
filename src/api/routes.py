@@ -352,7 +352,7 @@ def add_expenses():
     amount = request.json.get("amount")
     date = request.json.get("date")
     type = request.json.get("type")
-    print(request.json)
+    print('expenses post', request.json)
 
     if user and (group is None and friend is None):
         new_expenses = Expenses(name = name, user_id = current_user_id, amount = amount, date = date, type = type)
@@ -361,14 +361,14 @@ def add_expenses():
         return jsonify('Added expenses'), 200
     if user and group:
         group_id = Group.query.filter_by(name = group).first()
-        print(group_id)
+        print('group_id', group_id)
         new_expenses = Expenses(name = name, group_id = group_id.id, user_id = current_user_id, amount = amount, date = date, type = type )
         db.session.add(new_expenses)
         db.session.commit()
         return jsonify('Added expenses'), 200
     if user and friend:
         friend_id = User.query.filter_by(email = friend).first()
-        print(friend_id)
+        print('friend_id', friend_id)
         new_expenses = Expenses(name = name, friend_id = friend_id.id, user_id = current_user_id, amount = amount, date = date, type = type )
         db.session.add(new_expenses)
         db.session.commit()
