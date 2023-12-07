@@ -17,7 +17,7 @@ const PiggyBank = (props) => {
     }
 
     const bank = props.bank
-    // console.log(bank)
+    console.log(bank)
     return(
         <div className='border border-2 border-dark rounded px-3 py-2 mt-2'>
             <Row>

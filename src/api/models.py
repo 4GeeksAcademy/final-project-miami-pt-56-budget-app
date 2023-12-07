@@ -83,7 +83,7 @@ class PiggyBank(db.Model):
             "goal": self.goal,
             "saved": self.saved,
             "notes": self.notes,
-            "target date": self.target_date
+            "target_date": self.target_date
         }
 
 class Expenses(db.Model):
