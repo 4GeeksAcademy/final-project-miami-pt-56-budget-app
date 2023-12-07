@@ -142,20 +142,6 @@ const ExpensesModal = ({ show, typeOfModal, setTypeOfModal }) => {
         }
     };
 
-    // const renderFilteredOptions = () => {
-    //     const hasEmailSymbol = /@/.test(splitWith);
-    //     const allOptions =[]
-    //     const userOptions = [...store.userGroups, ...store.userfriends].map((allOptions) => {
-    //         let newObj = {};
-    //         newObj['id'] = allOptions.id;
-    //     })
-    //     console.log(allOptions)
-    //     return allOptions.map(option => ({
-    //         label: option
-    //     }))
-    // };
-
-
     const renderSplitInput = () => {
         if (splitOption === 'Alone') {
             return null;
