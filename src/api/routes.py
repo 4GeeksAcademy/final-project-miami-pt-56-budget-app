@@ -326,38 +326,109 @@ def handle_expenses():
             expenses.append(x.serialize())
         return jsonify(expenses), 200
 
+#Route to show user groups and friends on the expenses modal
+@api.route('/user-rel', methods=['GET'])
+@jwt_required()
+def get_user_details():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    if user:
+        groups = [group.name for group in user.groups]
+        friends = [friend.email for friend in user.friends]
+
+        return jsonify({'groups': groups, 'friends': friends}), 200
+    else:
+        return jsonify({'msg': 'User not found'}), 404
+
 #Route to create expense
-@api.route('/expenses', methods = ['POST'])
+@api.route('/expense', methods = ['POST'])
 @jwt_required()
 def add_expenses():
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
-    group = request.json.get("groupID")
-    if user and group is None:
-        name = request.json.get('name', None)
-        new_expenses = Expenses(name = name, user_id = current_user_id)
+    name = request.json.get('name', None)
+    group = request.json.get("group")
+    friend = request.json.get("friend")
+    amount = request.json.get("amount")
+    date = request.json.get("date")
+    type = request.json.get("type")
+    print('expenses post', request.json)
+
+    if user and (group is None and friend is None):
+        new_expenses = Expenses(name = name, user_id = current_user_id, amount = amount, date = date, type = type)
         db.session.add(new_expenses)
         db.session.commit()
         return jsonify('Added expenses'), 200
     if user and group:
-        name = request.json.get('name', None)
-        new_expenses = Expenses(name = name, group_id = group)
+        group_id = Group.query.filter_by(name = group).first()
+        print('group_id', group_id)
+        new_expenses = Expenses(name = name, group_id = group_id.id, user_id = current_user_id, amount = amount, date = date, type = type )
         db.session.add(new_expenses)
         db.session.commit()
         return jsonify('Added expenses'), 200
+    if user and friend:
+        friend_id = User.query.filter_by(email = friend).first()
+        print('friend_id', friend_id)
+        new_expenses = Expenses(name = name, friend_id = friend_id.id, user_id = current_user_id, amount = amount, date = date, type = type )
+        db.session.add(new_expenses)
+        db.session.commit()
+
+        expenses = Expenses.query.all()
+        serialized_expenses = []
+        for expense in expenses:
+            serialized_expenses.append(expense.serialize())
+        return jsonify({'message': 'Expense Added', 'expenses' : serialized_expenses}), 200
+    
     else:
         return jsonify({'msg': 'You must be logged in'}), 401
 
-#Route to delete expense
-@api.route('/expenses/<int:expenses_id>', methods = ['DELETE'])
+#Route to update and delete expense
+@api.route('/expenses/<int:expenses_id>', methods = ['PUT','DELETE'])
 @jwt_required()
-def delete_expenses(expenses_id):
-    expense_to_delete = Expenses.query.filter_by(id = expenses_id).first()
-    if expense_to_delete:
-        db.session.delete(expense_to_delete)
-        db.session.commit()
+def individual_expenses(expenses_id):
+    method = request.method
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
 
-        return jsonify("Expense deleted"), 200
+    if method == 'PUT':
+        expense_to_update = Expenses.query.filter_by(id = expenses_id, user_id = user.id).one()
+        
+        if expense_to_update:
+            new_name = request.json.get('name')
+            new_amount = request.json.get('amount')
+            new_date = request.json.get('date')
+            new_type = request.json.get('type')
+
+            if new_name:
+                expense_to_update.name = new_name
+            if new_amount:
+                expense_to_update.amount = new_amount
+            if new_date:
+                expense_to_update.date = new_date
+            if new_type:
+                expense_to_update.type = new_type
+
+            db.session.commit()
+            expenses = Expenses.query.all()
+            serialized_expenses = []
+            for expense in expenses:
+                serialized_expenses.append(expense.serialize())
+            return jsonify({'message': 'Expense updated', 'expenses' : serialized_expenses}), 200
+        
+    elif method == 'DELETE':
+        expense_to_delete = Expenses.query.filter_by(id = expenses_id, user_id = user.id).first()
+        
+        if expense_to_delete:
+            db.session.delete(expense_to_delete)
+            db.session.commit()
+            expenses = Expenses.query.all()
+            serialized_expenses = []
+            for expense in expenses:
+                serialized_expenses.append(expense.serialize())
+            return jsonify({'message': 'Expense deleted', 'expenses' : serialized_expenses}), 200
+    
+   
 
 #Route to modify expense
 # @api.route('/expenses/<int:expenses_id>', methods = ['PUT'])
