@@ -351,6 +351,38 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
+			handleEditPiggyBanks: async(name, goal, saved, date, notes, bankID) => {
+				const opts = {
+					method: 'PUT',
+					headers: {
+						Authorization: "Bearer " + sessionStorage.getItem("token"),
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						"name": name,
+						"goal": goal,
+    					"saved": saved,
+    					"date": date,
+    					"notes": notes
+					})
+				}
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/piggybank/${bankID}`, opts)
+					const data = await resp.json();
+					console.log('handle Get Groups func', data)
+					if (resp.status === 200) {
+						alert("PiggyBank information");
+						return true;
+					} else if (resp.status === 401) {
+						alert(`You must be logged in`);
+						return false;
+					} else {
+						console.error(`Unexpected error: ${data.message}`)
+					}
+				} catch (error) {
+					console.error(`There was a problem with the fetch operation ${error}`)
+				}
+			}
 		}
 	}
 }

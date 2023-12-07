@@ -17,7 +17,7 @@ const PiggyBank = (props) => {
     }
 
     const bank = props.bank
-    console.log(bank)
+
     return(
         <div className='border border-2 border-dark rounded px-3 py-2 mt-2'>
             <Row>
@@ -25,7 +25,7 @@ const PiggyBank = (props) => {
                     <h3>{bank.name}</h3>
                     <div>
                         <button onClick={()=>{
-                            editPiggyBank(props.setSelectedBank(bank.id))
+                            editPiggyBank(props.setSelectedBank(bank.id), props.setEditing(true))
                         }}>
                             <FontAwesomeIcon icon={faEdit} className="me-2 icon-lnk" />
                         </button>
