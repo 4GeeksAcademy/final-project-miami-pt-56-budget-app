@@ -8,6 +8,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			showExpensesModal: false,
 			expenseToUpdate: {},
 			sortOrder: 'asc',
+			showDeleteExpenseModal: false,
+			expenseToDelete: {},
 			showDeleteFriendsModal: false,
 			showGroupModal: false,
 			showAddMemberModal: false,
@@ -17,7 +19,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			userFriends: [],
 			userGroups: [],
 			userPiggybanks: [],
-			userID:[]
+			userID: []
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -139,15 +141,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 			handleSortByAmount: () => {
 				const store = getStore();
 
-				console.log("Before Sorting:", store.userExpenses);
+				// console.log("Before Sorting:", store.userExpenses);
 
 				const sortedExpenses = [...store.userExpenses].sort((a, b) => {
-					const amountA = parseFloat(a.amount.slice(1));
-					const amountB = parseFloat(b.amount.slice(1));
+					const amountA = a.amount;
+					const amountB = b.amount;
+					// console.log('sort by func amount A', amountA, 'sort by func amount B', amountB);
 					return store.sortOrder === 'asc' ? amountA - amountB : amountB - amountA;
 				});
 
-				console.log("After Sorting:", sortedExpenses);
+				// console.log("After Sorting:", sortedExpenses);
 
 				setStore({ userExpenses: sortedExpenses });
 				setStore({ sortOrder: store.sortOrder === 'asc' ? 'desc' : 'asc' });
@@ -172,7 +175,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 						setStore({ userGroups: groups });
 						setStore({ userFriends: friends });
-						console.log(store.userGroups, store.userFriends);
+						// console.log(store.userGroups, store.userFriends);
 					}
 				} catch (error) {
 					console.error(`There was a problem with the fetch operation ${error}`);
@@ -180,85 +183,87 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			handleAddExpense: async (expenseName, expenseAmount, expenseDate, expenseType, splitWith) => {
 				const store = getStore();
-				const actions = getActions();
+				if (expenseName.length > 0 && expenseAmount.length > 0 && expenseDate.length > 0) {
+					let bodyData = {
+						"name": expenseName,
+						"amount": expenseAmount,
+						"date": expenseDate,
+						"type": expenseType
+					};
+					console.log('handle add', splitWith);
+					if (expenseType === 'Split') {
+						const hasEmailSymbol = /@/.test(splitWith);
+
+						if (hasEmailSymbol) {
+							const isFriend = store.userFriends.includes(splitWith);
+
+							if (isFriend) {
+								bodyData["group"] = null;
+								bodyData["friend"] = splitWith;
+							} else {
+								alert('Friend not found');
+							}
+						} else {
+							// If splitWith doesn't contain '@', assume it's a group
+							bodyData["group"] = splitWith;
+							bodyData["friend"] = null;
+						}
+					}
+
+					console.log('bodydata', bodyData);
+
+					const opts = {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'Access-Control-Allow-Origin': '*',
+							'Authorization': `Bearer ${sessionStorage.token}`
+						},
+						body: JSON.stringify(bodyData)
+					}
+					try {
+						const resp = await fetch(`${process.env.BACKEND_URL}/api/expense`, opts);
+						const data = await resp.json();
+						console.log('add expense ', data);
+						if (resp.status === 200) {
+							setStore({userExpenses: data.expenses})
+							console.log('Expense added successfully')
+						} else if (resp.status === 401) {
+							alert('You must be logged in');
+						} else {
+							console.error(`Unexpected error: ${data.message}`)
+						}
+					} catch (error) {
+						console.error(`There was a problem with the fetch operation ${error}`);
+					}
+				} else {
+					alert('You need to enter')
+				}
+			},
+			handleUpdateExpenses: async (expenseID, expenseName, expenseAmount, expenseDate, expenseType, splitWith) => {
 				let bodyData = {
 					"name": expenseName,
 					"amount": expenseAmount,
 					"date": expenseDate,
 					"type": expenseType
 				};
-				console.log('handle add', splitWith);
+
 				if (expenseType === 'Split') {
 					const hasEmailSymbol = /@/.test(splitWith);
-				
+
 					if (hasEmailSymbol) {
-						// Check if splitWith is a friend
 						const isFriend = store.userFriends.includes(splitWith);
-				
+
 						if (isFriend) {
 							bodyData["group"] = null;
 							bodyData["friend"] = splitWith;
 						} else {
-							// If it's not a friend, you can handle this case as needed
 							alert('Friend not found');
 						}
 					} else {
 						// If splitWith doesn't contain '@', assume it's a group
 						bodyData["group"] = splitWith;
 						bodyData["friend"] = null;
-					}
-				}
-
-				console.log('bodydata', bodyData);
-
-				const opts = {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						'Access-Control-Allow-Origin': '*',
-						'Authorization': `Bearer ${sessionStorage.token}`
-					},
-					body: JSON.stringify(bodyData)
-				}
-				try {
-					const resp = await fetch(`${process.env.BACKEND_URL}/api/expense`, opts);
-					const data = await resp.json();
-					console.log('add expense ', data);
-					if (resp.status === 200) {
-						console.log('Expense added successfully')
-					} else if (resp.status === 401) {
-						alert('You must be logged in');
-					} else {
-						console.error(`Unexpected error: ${data.message}`)
-					}
-				} catch (error) {
-					console.error(`There was a problem with the fetch operation ${error}`);
-				}
-			},
-			handleUpdateExpenses: async (expenseID, expenseName, expenseAmount, expenseDate, expenseType, splitWith) => {
-				const actions = getActions();
-				let bodyData = {
-					"name": expenseName,
-					"amount": expenseAmount,
-					"date": expenseDate,
-					"type": expenseType
-				};
-
-				if (expenseType === 'Split') {
-					if (splitWith) {
-						const relationship = await actions.fetchUserRelationships();
-
-						if (Array.isArray(relationship)) {
-							const isFriend = relationship.includes(splitWith);
-							const isGroup = relationship.includes(splitWith);
-							if (isFriend) {
-								bodyData["group"] = null;
-								bodyData["friend"] = splitWith;
-							} else if (isGroup) {
-								bodyData["group"] = splitWith;
-								bodyData["friend"] = null;
-							}
-						}
 					}
 				}
 
@@ -276,6 +281,35 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 					console.log('add expense ', data);
 					if (resp.status === 200) {
+						setStore({userExpenses: data.expenses})
+						console.log('Expense Updated successfully')
+					} else if (resp.status === 401) {
+						alert('You must be logged in');
+					} else {
+						console.error(`Unexpected error: ${data.message}`)
+					}
+				} catch (error) {
+					console.error(`There was a problem with the fetch operation ${error}`);
+				}
+			},
+			handleDeleteExpense: async (expenseID) => {
+				const opts = {
+					method: 'DELETE',
+					headers: {
+						'Content-Type': 'application/json',
+						'Access-Control-Allow-Origin': '*',
+						'Authorization': `Bearer ${sessionStorage.token}`
+					},
+					body: JSON.stringify({
+						"id": expenseID
+					})
+				}
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/expenses/${expenseID}`, opts);
+					const data = await resp.json();
+					console.log('add expense ', data);
+					if (resp.status === 200) {
+						setStore({userExpenses: data.expenses})
 						console.log('Expense Updated successfully')
 					} else if (resp.status === 401) {
 						alert('You must be logged in');
@@ -290,8 +324,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ showExpensesModal: true });
 				setStore({ expenseToUpdate: expenseToEdit });
 			},
+			showDeleteExpenseModal: (expenseToDelete) => {
+				console.log('show delete expense modal func', expenseToDelete);
+				setStore({ showDeleteExpenseModal: true });
+				setStore({ expenseToDelete: expenseToDelete })
+			},
 			hideExpensesModal: () => {
 				setStore({ showExpensesModal: false });
+				setStore({ showDeleteExpenseModal: false });
 			},
 			handleGetUser: async () => {
 				const opts = {
@@ -358,9 +398,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ showDeleteFriendsModal: true });
 			},
 			hideDeleteFriendsModal: () => {
-				setStore({showDeleteFriendsModal: false})
-      		},
-			handleAddMembers: async(memberID, groupID) => {
+				setStore({ showDeleteFriendsModal: false })
+			},
+			handleAddMembers: async (memberID, groupID) => {
 				const opts = {
 					method: 'PUT',
 					headers: {
@@ -388,7 +428,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			handleDeleteMembers: async(memberID, groupID) => {
+			handleDeleteMembers: async (memberID, groupID) => {
 				const opts = {
 					method: 'PUT',
 					headers: {
@@ -416,7 +456,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			handleDeleteGroups: async(groupID) => {
+			handleDeleteGroups: async (groupID) => {
 				const opts = {
 					method: 'DELETE',
 					headers: {
@@ -451,13 +491,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ showAddMemberModal: true })
 			},
 			hideEditMemberModal: () => {
-				setStore({showAddMemberModal: false})
+				setStore({ showAddMemberModal: false })
 			},
 			showDeleteGroupModal: () => {
-				setStore({showDeleteGroup: true})
+				setStore({ showDeleteGroup: true })
 			},
 			hideDeleteGroupModal: () => {
-				setStore({showDeleteGroup: false})
+				setStore({ showDeleteGroup: false })
 			}
 		}
 	}

@@ -373,7 +373,13 @@ def add_expenses():
         new_expenses = Expenses(name = name, friend_id = friend_id.id, user_id = current_user_id, amount = amount, date = date, type = type )
         db.session.add(new_expenses)
         db.session.commit()
-        return jsonify('Added expenses'), 200
+
+        expenses = Expenses.query.all()
+        serialized_expenses = []
+        for expense in expenses:
+            serialized_expenses.append(expense.serialize())
+        return jsonify({'message': 'Expense Added', 'expenses' : serialized_expenses}), 200
+    
     else:
         return jsonify({'msg': 'You must be logged in'}), 401
 
@@ -404,7 +410,11 @@ def individual_expenses(expenses_id):
                 expense_to_update.type = new_type
 
             db.session.commit()
-            return jsonify('Expense updated'), 200
+            expenses = Expenses.query.all()
+            serialized_expenses = []
+            for expense in expenses:
+                serialized_expenses.append(expense.serialize())
+            return jsonify({'message': 'Expense updated', 'expenses' : serialized_expenses}), 200
         
     elif method == 'DELETE':
         expense_to_delete = Expenses.query.filter_by(id = expenses_id, user_id = user.id).first()
@@ -412,7 +422,11 @@ def individual_expenses(expenses_id):
         if expense_to_delete:
             db.session.delete(expense_to_delete)
             db.session.commit()
-            return jsonify("Expense deleted"), 200
+            expenses = Expenses.query.all()
+            serialized_expenses = []
+            for expense in expenses:
+                serialized_expenses.append(expense.serialize())
+            return jsonify({'message': 'Expense deleted', 'expenses' : serialized_expenses}), 200
     
    
 

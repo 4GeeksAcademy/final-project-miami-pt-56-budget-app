@@ -4,7 +4,7 @@ import { Hint } from "react-autocomplete-hint";
 import { Context } from "../store/appContext";
 
 
-const ExpensesModal = ({ show }) => {
+const ExpensesModal = ({ show, typeOfModal, setTypeOfModal }) => {
 
     const { store, actions } = useContext(Context);
 
@@ -44,28 +44,28 @@ const ExpensesModal = ({ show }) => {
             setExpenseDate('');
             setSplitOption('Alone');
         }
-        
+
 
     }, [store.expenseToUpdate]);
 
-
+    //not working as expected, HELP!
     const handleSaveExpense = () => {
-        console.log('handle save expense', store.expenseToUpdate);
 
-        if (splitOption === 'Split' && store.expenseToUpdate.length > 0) {
+        if (splitOption === 'Split' && typeOfModal === 'Edit Expense') {
             // Update existing expense
             actions.handleUpdateExpenses(store.expenseToUpdate.id, expenseDescription, splitAmount, expenseDate, splitOption, splitWith);
-        } else if (splitOption === 'Split') {
+        } else if (splitOption === 'Split' && typeOfModal === 'Add Expense') {
             // Add new expense
             actions.handleAddExpense(expenseDescription, splitAmount, expenseDate, splitOption, splitWith);
-        } else if (splitOption === 'Alone' && store.expenseToUpdate.length > 0) {
+        } else if (splitOption === 'Alone' && typeOfModal === 'Edit Expense') {
             //Update existing expense Alone
             actions.handleUpdateExpenses(store.expenseToUpdate.id, expenseDescription, splitAmount, expenseDate, splitOption, splitWith);
         } else {
             // Add new expense (for 'Alone' case)
             actions.handleAddExpense(expenseDescription, splitAmount, expenseDate, splitOption);
         }
-    
+
+        setTypeOfModal('');
         setSplitWith('');
         setSplitAmount(0);
         setExpenseDate('');
@@ -74,6 +74,27 @@ const ExpensesModal = ({ show }) => {
     
         actions.hideExpensesModal();
     };
+
+    
+    const userFriends = store.userFriends
+    const friends = []
+    userFriends.map((friend) => {
+        let newObj = {};
+        newObj['id'] = friend.id;
+        newObj['label'] = friend.first_name + " " + friend.last_name;
+        friends.push(newObj);
+    });
+    
+    const userGroups = store.userGroups
+    const groups = []
+    userFriends.map((group) => {
+        let newObj = {};
+        newObj['id'] = group.id;
+        newObj['label'] = group.name;
+        groups.push(newObj);
+    });
+
+    const allOptions = [...userFriends, ...userGroups];
 
     const renderSplitOptions = () => {
         switch (splitOption) {
@@ -93,14 +114,15 @@ const ExpensesModal = ({ show }) => {
                     <>
                         <Form.Group controlId="splitWith">
                             <Form.Label>{`Split With ${splitWith}`}</Form.Label>
-                            <Form.Control type="text" placeholder={`Enter Group or Friend name`} value={splitWith} onChange={(e) => setSplitWith(e.target.value)} />
-                            {/* <Hint options={renderFilteredOptions()} allowTabFill>
+                            {/* Need to find a way to either list or autocomplete user relations (groups and friends) */}
+                            {/* <Form.Control type="text" placeholder={`Enter Group or Friend name`} value={splitWith} onChange={(e) => setSplitWith(e.target.value)} /> */}
+                            <Hint options={allOptions} allowTabFill>
                                 <input
                                     value={splitWith}
                                     onChange={e => setSplitWith(e.target.value)}
                                     placeholder="Enter Group or Friend name"
                                 />
-                            </Hint> */}
+                            </Hint>
                         </Form.Group>
                         <Container className=" my-3 d-flex justify-content-center">
                             <Button className="m-1" variant="secondary" onClick={() => setSelectedSplitOptions('Equally')}>
@@ -121,8 +143,12 @@ const ExpensesModal = ({ show }) => {
     };
 
     // const renderFilteredOptions = () => {
-
-    //     const allOptions = [...store.userGroups, ...store.userfriends].map(option => option.name)
+    //     const hasEmailSymbol = /@/.test(splitWith);
+    //     const allOptions =[]
+    //     const userOptions = [...store.userGroups, ...store.userfriends].map((allOptions) => {
+    //         let newObj = {};
+    //         newObj['id'] = allOptions.id;
+    //     })
     //     console.log(allOptions)
     //     return allOptions.map(option => ({
     //         label: option
@@ -226,7 +252,7 @@ const ExpensesModal = ({ show }) => {
     return (
         <Modal className="modals align-center" show={show} onHide={actions.hideExpensesModal}>
             <Modal.Header closeButton>
-                <Modal.Title>{store.expenseToUpdate ? 'Edit Expense' : 'Add Expense'}</Modal.Title>
+                <Modal.Title>{typeOfModal}</Modal.Title>
             </Modal.Header>
             <Modal.Body >
                 <Form>

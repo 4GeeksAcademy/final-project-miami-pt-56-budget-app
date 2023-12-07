@@ -4,21 +4,28 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
 import { Context } from "../store/appContext";
 import { Table, Container } from "react-bootstrap";
+import DeleteExpenseModal from "./DeleteExpenseModal";
 import '../../styles/expenses.css'
 
-const ExpensesTable = ({ expenses }) => {
+const ExpensesTable = ({ expenses, setTypeOfModal }) => {
 	const { store, actions } = useContext(Context);
 
 	useEffect(() => {
 		actions.fetchUserExpenses();
-	},[])
+	}, [])
 	//addition to edit expense with existing expenses modal
 	const handleEditExpense = (expense) => {
+		setTypeOfModal('Edit Expense');
 		actions.showExpensesModal(expense);
 	};
 
+	const handleDeleteExpense = (expense) => {
+		console.log('clicking delete button');
+		actions.showDeleteExpenseModal(expense);
+	}
+
 	const renderExpensesTable = () => {
-		if (expenses.length > 0) {
+		if (expenses?.length > 0) {
 			return (<Table striped bordered hover>
 				<thead>
 					<tr>
@@ -37,7 +44,8 @@ const ExpensesTable = ({ expenses }) => {
 							<td>{expense.type}</td>
 							<td>
 								<FontAwesomeIcon icon={faEdit} className="me-2 icon-lnk" onClick={() => handleEditExpense(expense)} />
-								<a href=""><FontAwesomeIcon icon={faTrash} className="icon-lnk" /></a>
+								{/* Delete modal not showing when clicking button */}
+								<FontAwesomeIcon icon={faTrash} className="icon-lnk" onClick={() => handleDeleteExpense(expense)} />
 							</td>
 						</tr>)
 					))}
@@ -51,9 +59,16 @@ const ExpensesTable = ({ expenses }) => {
 
 
 	return (
-		<Container>
-			{renderExpensesTable()}
-		</Container>
+		<>
+			<Container>
+				{renderExpensesTable()}
+			</Container>
+
+			{/* Delete expense modal */}
+			<DeleteExpenseModal show={store.showDeleteExpenseModal}></DeleteExpenseModal>
+		</>
+
+
 	);
 };
 

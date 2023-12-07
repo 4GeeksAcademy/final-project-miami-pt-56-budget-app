@@ -8,6 +8,7 @@ import '../../styles/expenses.css'
 
 const Expenses = () => {
     const { store, actions } = useContext(Context);
+    const [typeOfModal, setTypeOfModal] = useState('');
     // const [showModal, setShowModal] = useState(false);
     // const [sortOrder, setSortOrder] = useState('asc');
     // const [expenses, setExpenses] = useState([
@@ -28,6 +29,7 @@ const Expenses = () => {
     }, [])
 
     const handleAddExpense = () => {
+        setTypeOfModal('Add Expense')
         actions.showExpensesModal(true);
     }
 
@@ -72,15 +74,15 @@ const Expenses = () => {
                 </Row>
                 <Row>
                     <Col xs={12}>
-                        <ExpensesTable expenses={store.userExpenses} />
+                        <ExpensesTable setTypeOfModal={setTypeOfModal} expenses={store.userExpenses} />
                     </Col>
                 </Row>
                 {/* </Col> */}
                 {/* </Row> */}
             </Container>
 
-                {/* Expenses modal */}
-                <ExpensesModal show={store.showExpensesModal}></ExpensesModal>
+                {/* Expenses modals */}
+                <ExpensesModal typeOfModal={typeOfModal} setTypeOfModal={setTypeOfModal} show={store.showExpensesModal}></ExpensesModal>
                     
         </>
 
