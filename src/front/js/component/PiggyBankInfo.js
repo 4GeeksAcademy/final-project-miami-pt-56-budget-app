@@ -17,19 +17,19 @@ const PiggyBank = (props) => {
     }
 
     const bank = props.bank
-
+    // console.log(bank)
     return(
         <div className='border border-2 border-dark rounded px-3 py-2 mt-2'>
             <Row>
                 <Col className="d-flex justify-content-between">
                     <h3>{bank.name}</h3>
                     <div>
-                        <button onClick={()=>{
+                        <button className="btn" onClick={()=>{
                             editPiggyBank(props.setSelectedBank(bank.id), props.setEditing(true))
                         }}>
-                            <FontAwesomeIcon icon={faEdit} className="me-2 icon-lnk" />
+                            <FontAwesomeIcon icon={faEdit} className="icon-lnk" />
                         </button>
-                        <button onClick={()=>{
+                        <button className="btn" onClick={()=>{
                             deletePiggyBank(props.setSelectedBank(bank.id))
                         }}>
                             <FontAwesomeIcon icon={faTrash} className="icon-lnk" />

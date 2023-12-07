@@ -138,10 +138,15 @@ const Piggybank = ()=> {
           <Modal.Title>Delete Piggy Bank</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <h6 className="d-flex justify-content-center">Are you sure you want to delete this piggy bank?</h6>
-          <Button className="mt-2" variant="primary" type="button" onClick={handleDeletePiggyBank}>
-            Delete Piggy Bank
-          </Button>
+          <h6 className="text-center">Are you sure you want to delete this piggy bank?</h6>
+          <div className="d-flex justify-content-evenly">
+            <Button className="mt-2" variant="primary" type="button" onClick={handleDeletePiggyBank}>
+              Delete
+            </Button>
+            <Button className="mt-2" variant="danger" type="button" onClick={handleClosePiggyBankModals}>
+              Cancel
+            </Button>
+          </div>
         </Modal.Body>
       </Modal>
     </>
