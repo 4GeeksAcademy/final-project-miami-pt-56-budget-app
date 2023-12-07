@@ -20,7 +20,7 @@
     display:flex;
     gap: 2rem;
     justify-content: space-around;
-    border-radius: 1px;
+    margin-top: 2rem;
     color: #333333;
     
 
@@ -34,22 +34,21 @@
     
 }
 .panel{
-    width: 100%;
+    width: 500px;
     text-align: center;
     border: 1px;
     border-radius: 0.356rem;
     padding: 0.7rem;
     letter-spacing: 1px;
     font-weight: 500;
-    border: 10px;
+    border: 1px;
     color: #333333;
     image-rendering: crisp-edges;
     border-image: auto;
-    border-radius: 20px;
 
 }
 .pane2{
-    width: 10px;
+    width: 500px;
     text-align: center;
     border: 1px;
     border-radius: 0.356rem;
@@ -64,7 +63,7 @@
 
 }
 .pane3{
-    width: 400px;
+    width: 500px;
     text-align: center;
     border: 1px;
     border-radius: 0.356rem;
@@ -78,7 +77,7 @@
 
 }
 .pane4{
-    width: 400px;
+    width: 500px;
     text-align: center;
     border: 1px;
     border-radius: 0.356rem;
@@ -99,7 +98,6 @@
 }
 .splashcard{
     background-color: #E3C8D1;
-
 }
 .splashcardheader{
     margin-bottom: 0rem;
