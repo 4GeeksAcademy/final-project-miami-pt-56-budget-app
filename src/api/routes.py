@@ -261,7 +261,11 @@ def add_piggys():
     user = User.query.get(current_user_id)
     if user:
         name = request.json.get('name', None)
-        new_piggy = PiggyBank(name = name, user_id = current_user_id)
+        goal = request.json.get('goal', None)
+        saved = request.json.get('saved', None)
+        date = request.json.get('date', None)
+        notes = request.json.get('notes', None)
+        new_piggy = PiggyBank(name = name, goal = goal, saved = saved, target_date = date, notes = notes, user_id = current_user_id)
         db.session.add(new_piggy)
         db.session.commit()
         return jsonify('Added PiggyBank'), 200
