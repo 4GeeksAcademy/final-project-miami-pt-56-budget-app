@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Container, Table } from "react-bootstrap";
@@ -6,9 +6,13 @@ import { Context } from "../store/appContext";
 import DeleteFriendsModal from "./DeleteFriendsModal";
 
 const FriendsTable = ({ friends }) => {
-  const { store, actions } = useContext(Context);
+  console.log("Friends table")
 
-  const handleDeleteFriends = () => {
+  const { store, actions } = useContext(Context);
+  const [friendEmail, setFriendEmail] = useState('')
+
+  const handleDeleteFriends = (email) => {
+    setFriendEmail(email)
     actions.showDeleteFriendsModal();
   };
 
@@ -18,28 +22,28 @@ const FriendsTable = ({ friends }) => {
         <thead>
           <tr>
             <th>Name</th>
-            <th>Shared Group</th>
+            <th>Email</th>
           </tr>
         </thead>
         <tbody>
-          {friends.map((friend) => (
+          {friends.length == 0?(<div><h2>You have no friends</h2><h2>Click on add friends to add one</h2></div>):friends?.map((friend) => (
             <tr key={friend.id}>
-              <td>{friend.name}</td>
-              <td>{friend.sharedgroup}</td>
+              <td>{friend.first_name}</td>
+              <td>{friend.email}</td>
               <td>
-                <a href="#">
+                <button>
                   <FontAwesomeIcon
                     icon={faTrash}
                     className="icon-lnk"
-                    onClick={() => handleDeleteFriends()}
+                    onClick={() => handleDeleteFriends(friend.email)}
                   />
-                </a>
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
-      {store.showDeleteFriendsModal && <DeleteFriendsModal />}
+      {store.showDeleteFriendsModal && <DeleteFriendsModal friendEmail={friendEmail}/>}
     </Container>
   );
 };

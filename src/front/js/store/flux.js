@@ -76,7 +76,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"first_name": firstName,
 						"last_name": lastName,
 						"email": email,
-						"password": password,
+						"password": password
 					})
 				}
 				try {
@@ -526,7 +526,62 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			hideDeleteGroupModal: () => {
 				setStore({showDeleteGroup: false})
-			}
+			},
+			addFriends: (friendEmail) => {
+				console.log(friendEmail)
+				let opt = {
+				  method: "POST",
+				  headers: {
+					"Content-Type": "application/json",
+					Authorization: "Bearer " + sessionStorage.getItem("token"),
+				  },
+				  body: JSON.stringify({ friendEmail: friendEmail }),
+				};
+				fetch(`${process.env.BACKEND_URL}/api/friends`, opt)
+				  .then((resp) => resp.json())
+				  .then((data) => setStore({ userFriends: data }));
+			  },
+			  deleteFriends: (friendEmail) => {
+				let opt = {
+				  method: "DELETE",
+				  headers: {
+					"Content-Type": "application/json",
+					Authorization: "Bearer " + sessionStorage.getItem("token"),
+				  },
+				  body: JSON.stringify({ friendEmail: friendEmail }),
+				};
+				fetch(`${process.env.BACKEND_URL}/api/friends`, opt)
+				  .then((resp) => resp.json())
+				  .then((data) => setStore({ userFriends: data }));
+			  },
+			  fetchFriends: async () => {
+				const opts = {
+				  method: "GET",
+				  headers: {
+					Authorization: "Bearer " + sessionStorage.getItem("token"),
+					"Content-Type": "application/json",
+				  },
+				};
+				try {
+				  const resp = await fetch(
+					`${process.env.BACKEND_URL}/api/friends`,
+					opts
+				  );
+				  const data = await resp.json();
+		
+				  if (resp.status == 200) {
+					setStore({ userFriends: data });
+					return true;
+				  } else if (resp.status === 401) {
+					alert(`You must be logged in`);
+					return false;
+				  } else {
+					console.error(`Unexpected error: ${data.message}`);
+				  }
+				} catch (error) {
+				  console.error("There has been an error fetching friends:", error);
+				}
+			  }
 		}
 	}
 }

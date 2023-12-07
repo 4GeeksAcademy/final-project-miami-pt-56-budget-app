@@ -61,9 +61,11 @@ def handle_signin():
     user = User.query.filter_by(email = email, password=password).first()
     if user is None:
         return jsonify({"msg" : "Bad username or password"}), 401
-    else:
-        access_token = create_access_token(identity=user.id)
-        return jsonify({"token": access_token, "name": user.first_name}), 200
+    friends = []
+    for friend in user.friends:
+        friends.append(friend.serialize())
+    access_token = create_access_token(identity=user.id)
+    return jsonify({"token": access_token, "name": user.first_name, "friends": friends}), 200
 
 #Route for user to change password
 @api.route('/user/<int:user_id>', methods = ['POST'])
@@ -108,22 +110,22 @@ def handle_home():
         return jsonify({'msg': 'You must be logged in'}), 401
 
 # #Route to get user friends
-# @api.route('/friends', methods = ['GET'])
-# @jwt_required()
-# def handle_get_friends():
-#     current_user_id = get_jwt_identity()
-#     user = User.query.get(current_user_id)
-#     if user is not None:
-#         friend_list = []
-#         for x in user.friends:
-#             friend_list.append(x.serialize())
-#         response_body = {
-#             "message": "Here is the friend information!",
-#             "user": friend_list
-#         }
-#         return jsonify(response_body), 200
-#     else:
-#         return jsonify({'msg': 'You must be logged in'}), 401
+@api.route('/friends', methods = ['GET'])
+@jwt_required()
+def handle_get_friends():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if user is not None:
+        friend_list = []
+        for x in user.friends:
+            friend_list.append(x.serialize())
+        response_body = {
+            "message": "Here is the friend information!",
+            "user": friend_list
+        }
+        return jsonify(response_body), 200
+    else:
+        return jsonify({'msg': 'You must be logged in'}), 401
 
 
 #Route to add or delete user friends  
@@ -131,34 +133,49 @@ def handle_home():
 @jwt_required()
 def manage_friends():
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
-
+    user = User.query.filter_by(id = current_user_id).first()
+    print(user.friends)
     data = request.get_json()
-    friend_id = data.get('friendID')
-    friend = User.query.get(friend_id)
-
+    friend_email = data.get('friendEmail')
+    friend = User.query.filter_by(email=friend_email).first()
+    print(friend.friends)
     if user and friend:
         if request.method == 'POST':
-            user.add_friend(friend)
-            message = 'Friend added successfully'
+            if user.friends is None:
+                user.friends = []
+            if friend.friends is None:
+                friend.friends = []
+            if friend in user.friends or user in friend.friends:
+                message = 'This user is already a friend'
+                return jsonify({'message' : message}), 409
+            friend.friends.append(user)
+            user.friends.append(friend)
+            db.session.commit()
+            user = User.query.filter_by(id = current_user_id).first()
+            serialized_friends = [] 
+            for x in user.friends: 
+                serialized_friends.append(x.serialize())
+            user = user.serialize()
+            user["friends"] = serialized_friends
+            message = "Friend sucessfully added"
+            return jsonify({'message': message, "user":user}), 200
         elif request.method == 'DELETE':
             if friend in user.friends and user in friend.friends:
                 user.friends.remove(friend)
                 friend.friends.remove(user)
                 db.session.commit()
+                user = User.query.filter_by(id = current_user_id).first()
+                serialized_friends = [] 
+                for x in user.friends: 
+                    serialized_friends.append(x.serialize())
+                user = user.serialize()
+                user["friends"] = serialized_friends
                 message = 'Friend removed successfully'
+                return jsonify({'message': message, "user":user}), 200
             else:
                 return jsonify({'error': 'Friendship not found'}), 404
         else:
             return jsonify({'error': 'Invalid action'}), 400
-
-        friends_list = []
-        for x in user.friends:
-            friends_list.append(x.serialize())
-        user = user.serialize()
-        user["friends"] = friends_list
-
-        return jsonify({'message': message, "user":user}), 200
     else:
         return jsonify({'error': 'User or friend not found'}), 404
 
