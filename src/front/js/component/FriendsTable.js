@@ -26,7 +26,7 @@ const FriendsTable = ({ friends }) => {
           </tr>
         </thead>
         <tbody>
-          {friends.length == 0?(<div>No Friends</div>):friends?.map((friend) => (
+          {friends.length == 0?(<div><h2>You have no friends</h2><h2>Click on add friends to add one</h2></div>):friends?.map((friend) => (
             <tr key={friend.id}>
               <td>{friend.first_name}</td>
               <td>{friend.email}</td>

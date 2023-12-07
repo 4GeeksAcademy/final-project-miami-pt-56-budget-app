@@ -41,7 +41,7 @@ const Friends = () => {
 
   return (
     <>
-      <Container fluid>
+      <Container >
         <Row>
           <Col xl={10}>
             <Row>
