@@ -19,6 +19,7 @@ cloudinary = "*"
 flask-admin = "*"
 typing-extensions = "*"
 flask-jwt-extended = "*"
+plaid-python = "*"
 
 [requires]
 python_version = "3.10"
