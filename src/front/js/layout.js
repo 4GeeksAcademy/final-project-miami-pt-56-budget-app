@@ -3,7 +3,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 import Splashpage from "./pages/Splashpage";
-import Piggybank from "./pages/piggybankpage";
 import SignIn from "./pages/SignIn"
 import SignUp from "./pages/SignUp";
 import { Home } from "./pages/home";
@@ -11,7 +10,12 @@ import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
 import Piggybank from "./pages/piggybankpage";
-
+import Expenses from "./component/Expenses";
+import ExpensesModal from "./component/ExpensesModal";
+import ExpensesTable from "./component/ExpensesTable";
+import DeleteExpenseModal from "./component/DeleteExpenseModal";
+import Groups from "./pages/Groups";
+import GroupInfo from "./component/GroupInfo";
 import { NavBar } from "./component/navbar";
 import { Footer } from "./component/footer";
 import { EditAccount } from "./pages/Account";
@@ -47,6 +51,8 @@ const Layout = () => {
                         <Route element={<Splashpage  />} path="/" />
                         <Route element={<Home />} path="/home" />
                         <Route element={<SignIn />} path="/signin" />
+                        <Route element={<Expenses />} path="/expenses" />
+                        <Route element={<Groups />} path="/groups" />
                         <Route element={<SignUp />} path="/signup" />
                         <Route element={<EditAccount />} path="/account" />
                         <Route element={<Piggybank />} path="/piggybankpage" />

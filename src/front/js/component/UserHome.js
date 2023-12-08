@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const userInfo= [
     {
         title:"Expenses",
-        Link:"piggybankpage", 
+        Link:"Expenses", 
         data: [
             {title:"House", catagory:"Rent", Amount:"$2500"},
             {title:"Disney+", catagory:"Payment", Amount:"$14"},
@@ -24,7 +24,7 @@ const userInfo= [
     },
     {
         title:"Groups",
-        Link:"piggybankpage", 
+        Link:"Groups", 
         data: [
             {title:"Bowling", catagory:"Shoes", Amount:"$12"},
             {title:"Hawaii", catagory:"AirBNB", Amount:"$500"},
@@ -54,15 +54,11 @@ export default function UserHome() {
 							<td>{item.Amount}</td>
                             <td>
                 </td>
-                            <td>
-								<span><i class="fa-solid fa-pen-to-square"></i></span>
-								<span><i class="fa-solid fa-trash"></i></span>
-							</td>
 						</tr>
 					))}
 				</tbody>
                 <Link to={section["Link"]}>
-                <button class="button-56" role="button">View more...</button>
+                <button class="button-56" role="button">View more</button>
                 </Link>
 			</Table>)
         })}
