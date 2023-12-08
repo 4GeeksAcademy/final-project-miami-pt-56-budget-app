@@ -2,6 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
+from flask_bcrypt import Bcrypt
 from api.models import db, User, Group, PiggyBank, Expenses
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
@@ -11,6 +12,9 @@ api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
 CORS(api, origins='*')
+
+#Bcrypt to hash passwords stored in DB
+bcrypt = Bcrypt()
 
 # Routes
 
@@ -44,8 +48,11 @@ def handle_signup():
     email = request.json.get('email', None)
     first_name = request.json.get('first_name', None)
     last_name = request.json.get('last_name', None)
+
+    #hashing password being passed by user
     password = request.json.get('password', None)
-    new_user = User(email = email, password = password, first_name = first_name, last_name = last_name)
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    new_user = User(email = email, password = hashed_password, first_name = first_name, last_name = last_name)
     if User.query.filter_by(email = email).first() == None:
         db.session.add(new_user)
         db.session.commit()
@@ -58,14 +65,17 @@ def handle_signup():
 def handle_signin():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
-    user = User.query.filter_by(email = email, password=password).first()
-    if user is None:
+    # user = User.query.filter_by(email = email, password=password).first()
+    # checking for hashed password match
+    user = User.query.filter_by(email = email).first()
+    if  user and bcrypt.check_password_hash(user.password, password):
+        access_token = create_access_token(identity=user.id)
+        return jsonify({"token": access_token, "name": user.first_name}), 200
+    elif user is None:
         return jsonify({"msg" : "Bad username or password"}), 401
-    friends = []
-    for friend in user.friends:
-        friends.append(friend.serialize())
-    access_token = create_access_token(identity=user.id)
-    return jsonify({"token": access_token, "name": user.first_name, "friends": friends}), 200
+    elif email is None or password is None:
+        return jsonify({"msg" : "Email and Password required"}), 400
+
 
 #Route for user to change password
 @api.route('/user/<int:user_id>', methods = ['POST'])
@@ -354,7 +364,10 @@ def get_user_details():
         groups = [group.name for group in user.groups]
         friends = [friend.email for friend in user.friends]
 
-        return jsonify({'groups': groups, 'friends': friends}), 200
+        serialized_relationships = [group.serialize() for group in user.groups]
+        serialized_relationships += [friend.serialize() for friend in user.friends]
+
+        return jsonify({'groups': groups, 'friends': friends, "relationships": serialized_relationships}), 200
     else:
         return jsonify({'msg': 'User not found'}), 404
 
@@ -370,20 +383,28 @@ def add_expenses():
     amount = request.json.get("amount")
     date = request.json.get("date")
     type = request.json.get("type")
-    print('expenses post', request.json)
+    # print('expenses post', request.json)
 
     if user and (group is None and friend is None):
         new_expenses = Expenses(name = name, user_id = current_user_id, amount = amount, date = date, type = type)
         db.session.add(new_expenses)
         db.session.commit()
-        return jsonify('Added expenses'), 200
+        expenses = Expenses.query.all()
+        serialized_expenses = []
+        for expense in expenses:
+            serialized_expenses.append(expense.serialize())
+        return jsonify({'message': 'Expense Added', 'expenses' : serialized_expenses}), 200
     if user and group:
         group_id = Group.query.filter_by(name = group).first()
         print('group_id', group_id)
         new_expenses = Expenses(name = name, group_id = group_id.id, user_id = current_user_id, amount = amount, date = date, type = type )
         db.session.add(new_expenses)
         db.session.commit()
-        return jsonify('Added expenses'), 200
+        expenses = Expenses.query.all()
+        serialized_expenses = []
+        for expense in expenses:
+            serialized_expenses.append(expense.serialize())
+        return jsonify({'message': 'Expense Added', 'expenses' : serialized_expenses}), 200
     if user and friend:
         friend_id = User.query.filter_by(email = friend).first()
         print('friend_id', friend_id)

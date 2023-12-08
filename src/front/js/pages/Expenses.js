@@ -9,43 +9,17 @@ import '../../styles/expenses.css'
 const Expenses = () => {
     const { store, actions } = useContext(Context);
     const [typeOfModal, setTypeOfModal] = useState('');
-    // const [showModal, setShowModal] = useState(false);
-    // const [sortOrder, setSortOrder] = useState('asc');
-    // const [expenses, setExpenses] = useState([
-    //     { id: 1, description: 'Groceries', amount: '100', date: '2023-04-10', type: 'Alone' },
-    //     { id: 2, description: 'Dinner', amount: '130', date: '2023-04-11', type: 'Alone' },
-    //     { id: 3, description: 'Gym', amount: '250', date: '2023-04-10', type: 'Alone' },
-    //     { id: 4, description: 'Lunch', amount: '25', date: '2023-04-10', type: 'Alone' },
-    //     { id: 5, description: 'Rent', amount: '2300', date: '2023-04-11', type: 'Alone' },
-    // ])
 
     useEffect(()=> {
         actions.fetchUserExpenses();
         actions.fetchUserRelationships();
     }, [])
 
-    useEffect(()=> {
-        actions.fetchUserExpenses();
-    }, [])
 
     const handleAddExpense = () => {
         setTypeOfModal('Add Expense')
         actions.showExpensesModal(true);
     }
-
-/* 
-    const handleSortByAmount = () => {
-        const sortedExpenses = [...store.userExpenses].sort((a, b) => {
-            const amountA = parseFloat(a.amount.slice(1));
-            const amountB = parseFloat(b.amount.slice(1));
-            return sortOrder === 'asc' ? amountA - amountB : amountB - amountA;
-        });
-
-        // setExpenses(sortedExpenses);
-        setStore({userExpenses: sortedExpenses})
-        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } */
-
 
     return (
         <>
