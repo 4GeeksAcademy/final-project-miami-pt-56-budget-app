@@ -1,12 +1,9 @@
-import React, { useContext } from "react";
-import { Context } from "../store/appContext";
+import React from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import "../../styles/account.css"
 
 export const EditAccount = () => {
-  const { store, actions } = useContext(Context);
-
   return (
     <Form className="m-3">
       <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -21,7 +18,6 @@ export const EditAccount = () => {
       <Button variant="link" type="submit" className="edit-account-link">
         Save
       </Button>
-      <Link/>
     </Form>
   );
 };

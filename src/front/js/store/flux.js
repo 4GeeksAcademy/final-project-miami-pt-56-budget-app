@@ -1,4 +1,3 @@
-import { NormalModule } from "webpack";
 
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
@@ -17,20 +16,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 			userFriends: [],
 			userGroups: [],
 			userPiggybanks: [],
-			userID: [],
-			linkToken: '',
-			linkTokenError: ''
+			userID:[]
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
 			handleLogin: async (email, password) => {
 				const store = getStore();
-
+				
 				const opts = {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
-						'Access-Control-Allow-Origin': '*'
+						'Access-Control-Allow-Origin':'*'
 					},
 					body: JSON.stringify({
 						"email": email,
@@ -45,7 +42,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						console.log('response token:', data.token);
 						sessionStorage.setItem('token', data.token);
 						setStore({ token: data.token });
-						setStore({ userName: data.name })
+						setStore({userName: data.name})
 						console.log(store.userName)
 						console.log('token in store:', store.token)
 						return true;
@@ -68,7 +65,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
-						'Access-Control-Allow-Origin': '*'
+						'Access-Control-Allow-Origin':'*'
 					},
 					body: JSON.stringify({
 						"first_name": firstName,
@@ -104,13 +101,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ token: null });
 			},
 			showExpensesModal: (expenseToEdit) => {
-				setStore({ showExpensesModal: true });
-				setStore({ expenseToUpdate: expenseToEdit });
+				setStore({showExpensesModal: true});
+				setStore({expenseToUpdate: expenseToEdit});
 			},
 			hideExpensesModal: () => {
-				setStore({ showExpensesModal: false });
-			},
-			handleGetUser: async () => {
+				setStore({showExpensesModal: false});
+      		},
+			handleGetUser: async() => {
 				const opts = {
 					method: 'GET',
 					headers: {
@@ -124,13 +121,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const userData = data.user;
 					if (resp.status === 200) {
 						const savedInfo = userData[0]
-						setStore({ userID: savedInfo.id })
-						setStore({ userInfo: userData[0] })
-						setStore({ userExpenses: savedInfo.expenses })
-						setStore({ userFriends: savedInfo.friends })
-						setStore({ userGroups: savedInfo.groups })
-						setStore({ userPiggybanks: savedInfo.piggybanks })
-						setStore({ userName: savedInfo.first_name })
+						setStore({userID: savedInfo.id})
+						setStore({userInfo: userData[0]})
+						setStore({userExpenses: savedInfo.expenses})
+						setStore({userFriends: savedInfo.friends})
+						setStore({userGroups: savedInfo.groups})
+						setStore({userPiggybanks: savedInfo.piggybanks})
+						setStore({userName: savedInfo.first_name})
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);
@@ -142,7 +139,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			handleAddGroups: async (groupName) => {
+			handleAddGroups: async(groupName) => {
 				const opts = {
 					method: 'POST',
 					headers: {
@@ -158,7 +155,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
-						setStore({ userGroups: data.groups })
+						setStore({userGroups: data.groups})
 						alert("Group information");
 						return true;
 					} else if (resp.status === 401) {
@@ -171,13 +168,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			showDeleteFriendsModal: () => {
-				setStore({ showDeleteFriendsModal: true });
+			showDeleteFriendsModal: () =>{
+				setStore({showDeleteFriendsModal: true});
 			},
 			hideDeleteFriendsModal: () => {
-				setStore({ showDeleteFriendsModal: false })
-			},
-			handleAddMembers: async (memberID, groupID) => {
+				setStore({showDeleteFriendsModal: false})
+      		},
+			handleAddMembers: async(memberID, groupID) => {
 				const opts = {
 					method: 'PUT',
 					headers: {
@@ -205,7 +202,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			handleDeleteMembers: async (memberID, groupID) => {
+			handleDeleteMembers: async(memberID, groupID) => {
 				const opts = {
 					method: 'PUT',
 					headers: {
@@ -233,7 +230,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			handleDeleteGroups: async (groupID) => {
+			handleDeleteGroups: async(groupID) => {
 				const opts = {
 					method: 'DELETE',
 					headers: {
@@ -259,50 +256,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			showGroupModal: () => {
-				setStore({ showGroupModal: true })
+				setStore({showGroupModal: true})
 			},
 			hideGroupModal: () => {
-				setStore({ showGroupModal: false })
+				setStore({showGroupModal: false})
 			},
 			showEditMemberModal: () => {
-				setStore({ showAddMemberModal: true })
+				setStore({showAddMemberModal: true})
 			},
 			hideEditMemberModal: () => {
-				setStore({ showAddMemberModal: false })
+				setStore({showAddMemberModal: false})
 			},
 			showDeleteGroupModal: () => {
-				setStore({ showDeleteGroup: true })
+				setStore({showDeleteGroup: true})
 			},
 			hideDeleteGroupModal: () => {
-				setStore({ showDeleteGroup: false })
-			},
-			handlePlaidLinkTokenCreate: async () => {
-				const opts = {
-					method: 'POST'
-				}
-				try {
-					const resp = await fetch(`${process.env.BACKEND_URL}/api/create_link_token`, opts)
-					const data = await resp.json();
-					if (!resp.ok) {
-						setStore({ linkToken: null });
-						return;
-					}
-					if (data.error != null) {
-						setStore({ linkTokenError: data.error });
-						return;
-					}
-					if (resp.status === 200) {
-						setStore({ linkToken: data.link_token })
-						sessionStorage.setItem("link_token", data.link_token);
-					}
-
-				} catch (error) {
-					console.error(`There was a problem with the fetch operation ${error}`)
-				}
+				setStore({showDeleteGroup: false})
 			}
 		}
 	}
 }
-
+			
 
 export default getState;

@@ -17,7 +17,6 @@ class User(db.Model):
     first_name = db.Column(db.String(120), nullable=False, unique=False)
     last_name = db.Column(db.String(120), nullable=False, unique=False)
     password = db.Column(db.String(80), nullable=False, unique=False)
-    access_token = db.Column(db.String(120), nullable=True, unique=True)
     friends = db.relationship("User", secondary=user_friend, 
                               primaryjoin=id == user_friend.c.user_1 ,
                               secondaryjoin=id == user_friend.c.user_2, 

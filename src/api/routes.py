@@ -7,73 +7,10 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
-import os
-import time
-import json
-from dotenv import load_dotenv
-import plaid
-from plaid.model.products import Products
-from plaid.model.country_code import CountryCode
-from plaid.model.item_public_token_exchange_request import ItemPublicTokenExchangeRequest
-from plaid.model.link_token_create_request import LinkTokenCreateRequest
-from plaid.model.link_token_create_request_user import LinkTokenCreateRequestUser
-from plaid.model.auth_get_request import AuthGetRequest
-from plaid.model.transactions_sync_request import TransactionsSyncRequest
-from plaid.api import plaid_api
-
-load_dotenv()
-
 api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
 CORS(api, origins='*')
-
-#Plaid variables
-PLAID_CLIENT_ID = os.getenv('PLAID_CLIENT_ID')
-PLAID_SECRET = os.getenv('PLAID_SECRET')
-PLAID_ENV = os.getenv('PLAID_ENV', 'sandbox')
-PLAID_PRODUCTS = os.getenv('PLAID_PRODUCTS', 'transactions').split(',')
-PLAID_COUNTRY_CODES = os.getenv('PLAID_COUNTRY_CODES', 'US').split(',')
-
-
-
-#getting variables from .env file
-def empty_to_none(field):
-    value = os.getenv(field)
-    if value is None or len(value) == 0:
-        return None
-    return value
-
-#setting host
-if PLAID_ENV == 'sandbox':
-    host = plaid.Environment.Sandbox
-
-if PLAID_ENV == 'development':
-    host = plaid.Environment.Development
-
-# if PLAID_ENV == 'production':
-#     host = plaid.Environment.Production
-
-#OAuth redirect URI
-PLAID_REDIRECT_URI = empty_to_none('PLAID_REDIRECT_URI')
-
-#Plaid API configurations
-configuration = plaid.Configuration(
-    host=host,
-    api_key={
-        'clientId': PLAID_CLIENT_ID,
-        'secret': PLAID_SECRET,
-        'plaidVersion': '2020-09-14'
-    }
-)
-
-#setting up Plaid client and Plaid API client
-api_client = plaid.ApiClient(configuration)
-client = plaid_api.PlaidApi(api_client)
-
-products = []
-for product in PLAID_PRODUCTS:
-    products.append(Products(product))
 
 # Routes
 
@@ -427,27 +364,3 @@ def delete_expenses(expenses_id):
 # @jwt_required()
 # def change_expenses(expenses_id):
 #     expense = Expenses.query.get(expenses_id)
-
-#Plaid routes begin here
-#Plaid create link token, initiated when user clicks on Link Account
-@api.route('/api/create_link_token', methods=['POST'])
-@jwt_required
-def create_link_token():
-    user = get_jwt_identity()
-    try:
-        request = LinkTokenCreateRequest(
-            products=products,
-            client_name="Better Budget",
-            country_codes=list(map(lambda x: CountryCode(x), PLAID_COUNTRY_CODES)),
-            language='en',
-            user=LinkTokenCreateRequestUser(
-                client_user_id=str(time.time())
-            )
-        )
-        if PLAID_REDIRECT_URI!=None:
-            request['redirect_uri']=PLAID_REDIRECT_URI
-    # create link token
-        response = client.link_token_create(request)
-        return jsonify(response.to_dict())
-    except plaid.ApiException as e:
-        return json.loads(e.body)
