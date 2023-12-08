@@ -356,7 +356,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 						setStore({ userName: savedInfo.first_name })
 						setStore({ userEmail: savedInfo.email })
 						setStore({ userFullName: savedInfo.first_name + ' ' + savedInfo.last_name })
-
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);
@@ -525,7 +524,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			hideDeleteGroupModal: () => {
 				setStore({ showDeleteGroup: false })
 			},
-			addFriends: (friendEmail) => {
+			addFriends: async (friendEmail) => {
 				console.log(friendEmail)
 				let opt = {
 					method: "POST",
@@ -535,9 +534,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 					},
 					body: JSON.stringify({ friendEmail: friendEmail }),
 				};
-				fetch(`${process.env.BACKEND_URL}/api/friends`, opt)
-					.then((resp) => resp.json())
-					.then((data) => setStore({ userFriends: data }));
+				try {
+					let response = await fetch(`${process.env.BACKEND_URL}/api/friends`, opt)
+					let data = await response.json()
+					if (data) {
+
+						setStore({ userFriends: data.user.friends })
+						return true
+					}
+				}
+				catch (error) { console.log(error) }
 			},
 			deleteFriends: (friendEmail) => {
 				let opt = {
@@ -550,7 +556,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 				fetch(`${process.env.BACKEND_URL}/api/friends`, opt)
 					.then((resp) => resp.json())
-					.then((data) => setStore({ userFriends: data }));
+					.then((data) => setStore({ userFriends: data.user.friends }));
 			},
 			fetchFriends: async () => {
 				const opts = {
