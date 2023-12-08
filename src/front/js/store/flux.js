@@ -19,9 +19,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			userExpenses: [],
 			userFriends: [],
 			userGroups: [],
+			userRelationships: {},
 			userPiggybanks: [],
 			userID: null,
-			userEmail:[]
+			userEmail: []
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -52,7 +53,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 						console.log('token in store:', store.token)
 						return true;
 					} else if (resp.status === 404) {
-						//user not found
 						alert('User not found - create account?');
 					} else if (resp.status === 401) {
 						alert('Incorrect email or password');
@@ -106,7 +106,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ token: null });
 			},
 			fetchUserExpenses: async () => {
-				// const store = getStore();
 				const opts = {
 					method: 'GET',
 					headers: {
@@ -173,11 +172,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 					console.log('fetch user rel ' + JSON.stringify(data));
 					if (resp.status === 200) {
-						const { groups, friends } = data;
-
-						setStore({ userGroups: groups });
-						setStore({ userFriends: friends });
-						// console.log(store.userGroups, store.userFriends);
+						setStore({ userGroups: data.groups });
+						setStore({ userFriends: data.friends });
+						setStore({ userRelationships: data.relationships })
+						console.log(store.userGroups, store.userFriends);
 					}
 				} catch (error) {
 					console.error(`There was a problem with the fetch operation ${error}`);
@@ -192,7 +190,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"date": expenseDate,
 						"type": expenseType
 					};
-					console.log('handle add', splitWith);
+					// console.log('handle add', splitWith);
 					if (expenseType === 'Split') {
 						const hasEmailSymbol = /@/.test(splitWith);
 
@@ -212,7 +210,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						}
 					}
 
-					console.log('bodydata', bodyData);
+					// console.log('bodydata', bodyData);
 
 					const opts = {
 						method: 'POST',
@@ -228,18 +226,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 						const data = await resp.json();
 						console.log('add expense ', data);
 						if (resp.status === 200) {
-							setStore({userExpenses: data.expenses})
+							setStore({ userExpenses: data.expenses });
 							console.log('Expense added successfully')
 						} else if (resp.status === 401) {
 							alert('You must be logged in');
 						} else {
-							console.error(`Unexpected error: ${data.message}`)
+							console.error(`Unexpected error: ${data.message}`);
 						}
 					} catch (error) {
 						console.error(`There was a problem with the fetch operation ${error}`);
 					}
 				} else {
-					alert('You need to enter')
+					alert('Missing Description, Amount or Date');
 				}
 			},
 			handleUpdateExpenses: async (expenseID, expenseName, expenseAmount, expenseDate, expenseType, splitWith) => {
@@ -281,9 +279,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const resp = await fetch(`${process.env.BACKEND_URL}/api/expenses/${expenseID}`, opts);
 					const data = await resp.json();
-					console.log('add expense ', data);
+					console.log('Update expense ', data);
 					if (resp.status === 200) {
-						setStore({userExpenses: data.expenses})
+						setStore({ userExpenses: data.expenses })
 						console.log('Expense Updated successfully')
 					} else if (resp.status === 401) {
 						alert('You must be logged in');
@@ -311,7 +309,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 					console.log('add expense ', data);
 					if (resp.status === 200) {
-						setStore({userExpenses: data.expenses})
+						setStore({ userExpenses: data.expenses })
 						console.log('Expense Updated successfully')
 					} else if (resp.status === 401) {
 						alert('You must be logged in');
@@ -335,7 +333,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ showExpensesModal: false });
 				setStore({ showDeleteExpenseModal: false });
 			},
-			handleGetUser: async() => {
+			handleGetUser: async () => {
 				const opts = {
 					method: 'GET',
 					headers: {
@@ -349,15 +347,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const userData = data.user;
 					if (resp.status === 200) {
 						const savedInfo = userData[0]
-						setStore({userID: savedInfo.id})
-						setStore({userInfo: userData[0]})
-						setStore({userExpenses: savedInfo.expenses})
-						setStore({userFriends: savedInfo.friends})
-						setStore({userGroups: savedInfo.groups})
-						setStore({userPiggybanks: savedInfo.piggybanks})
-						setStore({userName: savedInfo.first_name})
-						setStore({userEmail: savedInfo.email})
-						setStore({userFullName: savedInfo.first_name +' '+ savedInfo.last_name})
+						setStore({ userID: savedInfo.id })
+						setStore({ userInfo: userData[0] })
+						setStore({ userExpenses: savedInfo.expenses })
+						setStore({ userFriends: savedInfo.friends })
+						setStore({ userGroups: savedInfo.groups })
+						setStore({ userPiggybanks: savedInfo.piggybanks })
+						setStore({ userName: savedInfo.first_name })
+						setStore({ userEmail: savedInfo.email })
+						setStore({ userFullName: savedInfo.first_name + ' ' + savedInfo.last_name })
 
 						return true;
 					} else if (resp.status === 401) {
@@ -386,7 +384,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
-						setStore({userGroups: data.groups})
+						setStore({ userGroups: data.groups })
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);
@@ -404,7 +402,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			hideDeleteFriendsModal: () => {
 				setStore({ showDeleteFriendsModal: false })
 			},
-			handleAddMembers: async(memberID, groupID) => {
+			handleAddMembers: async (memberID, groupID) => {
 				const opts = {
 					method: 'PUT',
 					headers: {
@@ -431,7 +429,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			handleDeleteMembers: async(memberID, groupID) => {
+			handleDeleteMembers: async (memberID, groupID) => {
 				const opts = {
 					method: 'PUT',
 					headers: {
@@ -482,7 +480,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			handleChangePassword: async(newPassword) => {
+			handleChangePassword: async (newPassword) => {
 				const opts = {
 					method: 'POST',
 					headers: {
@@ -519,69 +517,69 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ showAddMemberModal: true })
 			},
 			hideEditMemberModal: () => {
-				setStore({showAddMemberModal: false})
+				setStore({ showAddMemberModal: false })
 			},
 			showDeleteGroupModal: () => {
-				setStore({showDeleteGroup: true})
+				setStore({ showDeleteGroup: true })
 			},
 			hideDeleteGroupModal: () => {
-				setStore({showDeleteGroup: false})
+				setStore({ showDeleteGroup: false })
 			},
 			addFriends: (friendEmail) => {
 				console.log(friendEmail)
 				let opt = {
-				  method: "POST",
-				  headers: {
-					"Content-Type": "application/json",
-					Authorization: "Bearer " + sessionStorage.getItem("token"),
-				  },
-				  body: JSON.stringify({ friendEmail: friendEmail }),
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + sessionStorage.getItem("token"),
+					},
+					body: JSON.stringify({ friendEmail: friendEmail }),
 				};
 				fetch(`${process.env.BACKEND_URL}/api/friends`, opt)
-				  .then((resp) => resp.json())
-				  .then((data) => setStore({ userFriends: data }));
-			  },
-			  deleteFriends: (friendEmail) => {
+					.then((resp) => resp.json())
+					.then((data) => setStore({ userFriends: data }));
+			},
+			deleteFriends: (friendEmail) => {
 				let opt = {
-				  method: "DELETE",
-				  headers: {
-					"Content-Type": "application/json",
-					Authorization: "Bearer " + sessionStorage.getItem("token"),
-				  },
-				  body: JSON.stringify({ friendEmail: friendEmail }),
+					method: "DELETE",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + sessionStorage.getItem("token"),
+					},
+					body: JSON.stringify({ friendEmail: friendEmail }),
 				};
 				fetch(`${process.env.BACKEND_URL}/api/friends`, opt)
-				  .then((resp) => resp.json())
-				  .then((data) => setStore({ userFriends: data }));
-			  },
-			  fetchFriends: async () => {
+					.then((resp) => resp.json())
+					.then((data) => setStore({ userFriends: data }));
+			},
+			fetchFriends: async () => {
 				const opts = {
-				  method: "GET",
-				  headers: {
-					Authorization: "Bearer " + sessionStorage.getItem("token"),
-					"Content-Type": "application/json",
-				  },
+					method: "GET",
+					headers: {
+						Authorization: "Bearer " + sessionStorage.getItem("token"),
+						"Content-Type": "application/json",
+					},
 				};
 				try {
-				  const resp = await fetch(
-					`${process.env.BACKEND_URL}/api/friends`,
-					opts
-				  );
-				  const data = await resp.json();
-		
-				  if (resp.status == 200) {
-					setStore({ userFriends: data });
-					return true;
-				  } else if (resp.status === 401) {
-					alert(`You must be logged in`);
-					return false;
-				  } else {
-					console.error(`Unexpected error: ${data.message}`);
-				  }
+					const resp = await fetch(
+						`${process.env.BACKEND_URL}/api/friends`,
+						opts
+					);
+					const data = await resp.json();
+
+					if (resp.status == 200) {
+						setStore({ userFriends: data });
+						return true;
+					} else if (resp.status === 401) {
+						alert(`You must be logged in`);
+						return false;
+					} else {
+						console.error(`Unexpected error: ${data.message}`);
+					}
 				} catch (error) {
-				  console.error("There has been an error fetching friends:", error);
+					console.error("There has been an error fetching friends:", error);
 				}
-			  }
+			}
 		}
 	}
 }
