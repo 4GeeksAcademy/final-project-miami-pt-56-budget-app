@@ -20,8 +20,13 @@ const Friends = () => {
   const { store, actions } = useContext(Context);
   const [showAddFriendsModal, setAddFriendsModal] = useState(false);
   const [friendEmail, setFriendEmail] = useState("");
-  
-  const friends = store.userFriends;
+
+  const userEmail = store.userEmail
+  // const friends = store.userFriends;
+  const [friends, setFriends] = useState([])
+  useEffect(() => {
+    setFriends(store.userFriends)
+  }, [store.userFriends])
   console.log(friends)
 
   const handleAddFriends = () => {
@@ -33,11 +38,17 @@ const Friends = () => {
   };
 
   const addFriendEmail = async () => {
+    if (userEmail === friendEmail) {
+      alert("You cannot add your own email address as a friend.");
+      return;
+    }
     let result = await actions.addFriends(friendEmail);
     if (result) {
-      alert("Friend added sucessfully");
+      alert("Friend added successfully");
       setAddFriendsModal(false);
-    }}
+    }
+  };
+
 
   return (
     <>

@@ -18,18 +18,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 			userGroups: [],
 			userPiggybanks: [],
 			userID: null,
-			userEmail:[]
+			userEmail: []
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
 			handleLogin: async (email, password) => {
 				const store = getStore();
-				
+
 				const opts = {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
-						'Access-Control-Allow-Origin':'*'
+						'Access-Control-Allow-Origin': '*'
 					},
 					body: JSON.stringify({
 						"email": email,
@@ -44,7 +44,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						console.log('response token:', data.token);
 						sessionStorage.setItem('token', data.token);
 						setStore({ token: data.token });
-						setStore({userName: data.name})
+						setStore({ userName: data.name })
 						console.log(store.userName)
 						console.log('token in store:', store.token)
 						return true;
@@ -67,7 +67,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
-						'Access-Control-Allow-Origin':'*'
+						'Access-Control-Allow-Origin': '*'
 					},
 					body: JSON.stringify({
 						"first_name": firstName,
@@ -103,13 +103,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ token: null });
 			},
 			showExpensesModal: (expenseToEdit) => {
-				setStore({showExpensesModal: true});
-				setStore({expenseToUpdate: expenseToEdit});
+				setStore({ showExpensesModal: true });
+				setStore({ expenseToUpdate: expenseToEdit });
 			},
 			hideExpensesModal: () => {
-				setStore({showExpensesModal: false});
-      		},
-			handleGetUser: async() => {
+				setStore({ showExpensesModal: false });
+			},
+			handleGetUser: async () => {
 				const opts = {
 					method: 'GET',
 					headers: {
@@ -123,15 +123,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const userData = data.user;
 					if (resp.status === 200) {
 						const savedInfo = userData[0]
-						setStore({userID: savedInfo.id})
-						setStore({userInfo: userData[0]})
-						setStore({userExpenses: savedInfo.expenses})
-						setStore({userFriends: savedInfo.friends})
-						setStore({userGroups: savedInfo.groups})
-						setStore({userPiggybanks: savedInfo.piggybanks})
-						setStore({userName: savedInfo.first_name})
-						setStore({userEmail: savedInfo.email})
-						setStore({userFullName: savedInfo.first_name +' '+ savedInfo.last_name})
+						setStore({ userID: savedInfo.id })
+						setStore({ userInfo: userData[0] })
+						setStore({ userExpenses: savedInfo.expenses })
+						setStore({ userFriends: savedInfo.friends })
+						setStore({ userGroups: savedInfo.groups })
+						setStore({ userPiggybanks: savedInfo.piggybanks })
+						setStore({ userName: savedInfo.first_name })
+						setStore({ userEmail: savedInfo.email })
+						setStore({ userFullName: savedInfo.first_name + ' ' + savedInfo.last_name })
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);
@@ -143,7 +143,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			handleAddGroups: async(groupName) => {
+			handleAddGroups: async (groupName) => {
 				const opts = {
 					method: 'POST',
 					headers: {
@@ -159,7 +159,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
-						setStore({userGroups: data.groups})
+						setStore({ userGroups: data.groups })
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);
@@ -171,13 +171,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			showDeleteFriendsModal: () =>{
-				setStore({showDeleteFriendsModal: true});
+			showDeleteFriendsModal: () => {
+				setStore({ showDeleteFriendsModal: true });
 			},
 			hideDeleteFriendsModal: () => {
-				setStore({showDeleteFriendsModal: false})
-      		},
-			handleAddMembers: async(memberID, groupID) => {
+				setStore({ showDeleteFriendsModal: false })
+			},
+			handleAddMembers: async (memberID, groupID) => {
 				const opts = {
 					method: 'PUT',
 					headers: {
@@ -204,7 +204,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			handleDeleteMembers: async(memberID, groupID) => {
+			handleDeleteMembers: async (memberID, groupID) => {
 				const opts = {
 					method: 'PUT',
 					headers: {
@@ -231,7 +231,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			handleDeleteGroups: async(groupID) => {
+			handleDeleteGroups: async (groupID) => {
 				const opts = {
 					method: 'DELETE',
 					headers: {
@@ -255,7 +255,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			handleChangePassword: async(newPassword) => {
+			handleChangePassword: async (newPassword) => {
 				const opts = {
 					method: 'POST',
 					headers: {
@@ -283,81 +283,90 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			showGroupModal: () => {
-				setStore({showGroupModal: true})
+				setStore({ showGroupModal: true })
 			},
 			hideGroupModal: () => {
-				setStore({showGroupModal: false})
+				setStore({ showGroupModal: false })
 			},
 			showEditMemberModal: () => {
-				setStore({showAddMemberModal: true})
+				setStore({ showAddMemberModal: true })
 			},
 			hideEditMemberModal: () => {
-				setStore({showAddMemberModal: false})
+				setStore({ showAddMemberModal: false })
 			},
 			showDeleteGroupModal: () => {
-				setStore({showDeleteGroup: true})
+				setStore({ showDeleteGroup: true })
 			},
 			hideDeleteGroupModal: () => {
-				setStore({showDeleteGroup: false})
+				setStore({ showDeleteGroup: false })
 			},
-			addFriends: (friendEmail) => {
+			addFriends: async (friendEmail) => {
 				console.log(friendEmail)
 				let opt = {
-				  method: "POST",
-				  headers: {
-					"Content-Type": "application/json",
-					Authorization: "Bearer " + sessionStorage.getItem("token"),
-				  },
-				  body: JSON.stringify({ friendEmail: friendEmail }),
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + sessionStorage.getItem("token"),
+					},
+					body: JSON.stringify({ friendEmail: friendEmail }),
 				};
-				fetch(`${process.env.BACKEND_URL}/api/friends`, opt)
-				  .then((resp) => resp.json())
-				  .then((data) => setStore({ userFriends: data }));
-			  },
-			  deleteFriends: (friendEmail) => {
+
+				try {
+					let response = await fetch(`${process.env.BACKEND_URL}/api/friends`, opt)
+					let data = await response.json()
+					if (data) {
+
+						setStore({ userFriends: data.user.friends })
+						return true
+					}
+				}
+				catch (error) { console.log(error) }
+
+			},
+			deleteFriends: (friendEmail) => {
 				let opt = {
-				  method: "DELETE",
-				  headers: {
-					"Content-Type": "application/json",
-					Authorization: "Bearer " + sessionStorage.getItem("token"),
-				  },
-				  body: JSON.stringify({ friendEmail: friendEmail }),
+					method: "DELETE",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + sessionStorage.getItem("token"),
+					},
+					body: JSON.stringify({ friendEmail: friendEmail }),
 				};
 				fetch(`${process.env.BACKEND_URL}/api/friends`, opt)
-				  .then((resp) => resp.json())
-				  .then((data) => setStore({ userFriends: data }));
-			  },
-			  fetchFriends: async () => {
+					.then((resp) => resp.json())
+					.then((data) => setStore({ userFriends: data.user.friends }));
+			},
+			fetchFriends: async () => {
 				const opts = {
-				  method: "GET",
-				  headers: {
-					Authorization: "Bearer " + sessionStorage.getItem("token"),
-					"Content-Type": "application/json",
-				  },
+					method: "GET",
+					headers: {
+						Authorization: "Bearer " + sessionStorage.getItem("token"),
+						"Content-Type": "application/json",
+					},
 				};
 				try {
-				  const resp = await fetch(
-					`${process.env.BACKEND_URL}/api/friends`,
-					opts
-				  );
-				  const data = await resp.json();
-		
-				  if (resp.status == 200) {
-					setStore({ userFriends: data });
-					return true;
-				  } else if (resp.status === 401) {
-					alert(`You must be logged in`);
-					return false;
-				  } else {
-					console.error(`Unexpected error: ${data.message}`);
-				  }
+					const resp = await fetch(
+						`${process.env.BACKEND_URL}/api/friends`,
+						opts
+					);
+					const data = await resp.json();
+
+					if (resp.status == 200) {
+						setStore({ userFriends: data });
+						return true;
+					} else if (resp.status === 401) {
+						alert(`You must be logged in`);
+						return false;
+					} else {
+						console.error(`Unexpected error: ${data.message}`);
+					}
 				} catch (error) {
-				  console.error("There has been an error fetching friends:", error);
+					console.error("There has been an error fetching friends:", error);
 				}
-			  }
+			}
 		}
 	}
 }
-			
+
 
 export default getState;
