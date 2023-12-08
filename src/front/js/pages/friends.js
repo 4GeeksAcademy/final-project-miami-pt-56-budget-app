@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Container,
   Row,
@@ -10,16 +10,24 @@ import {
 } from "react-bootstrap";
 import "../../styles/friends.css";
 import FriendsTable from "../component/FriendsTable";
+import { Context } from "../store/appContext";
 
 const Friends = () => {
-  const [showAddFriendsModal, setAddFriendsModal] = useState(false);
-  const [newFriendName, setNewFriendName] = useState('');
+  // useEffect(() => {
+  //   actions.fetchFriends();
+  // }, []);
 
-  const friends = [
-    { id: 1, name: "Steve", sharedgroup: "Apartment" },
-    { id: 2, name: "Eric", sharedgroup: "Apartment" },
-    { id: 3, name: "Andrew", sharedgroup: "Apartment" },
-  ];
+  const { store, actions } = useContext(Context);
+  const [showAddFriendsModal, setAddFriendsModal] = useState(false);
+  const [friendEmail, setFriendEmail] = useState("");
+
+  const userEmail = store.userEmail
+  // const friends = store.userFriends;
+  const [friends, setFriends] = useState([])
+  useEffect(() => {
+    setFriends(store.userFriends)
+  }, [store.userFriends])
+  console.log(friends)
 
   const handleAddFriends = () => {
     setAddFriendsModal(true);
@@ -29,11 +37,23 @@ const Friends = () => {
     setAddFriendsModal(false);
   };
 
+  const addFriendEmail = async () => {
+    if (userEmail === friendEmail) {
+      alert("You cannot add your own email address as a friend.");
+      return;
+    }
+    let result = await actions.addFriends(friendEmail);
+    if (result) {
+      alert("Friend added successfully");
+      setAddFriendsModal(false);
+    }
+  };
+
+
   return (
     <>
-      <Container fluid>
+      <Container >
         <Row>
-          {/* Content */}
           <Col xl={10}>
             <Row>
               <Col xl={6}>
@@ -46,7 +66,7 @@ const Friends = () => {
               </Col>
             </Row>
             <Row>
-              <FriendsTable friends={friends} />
+                <FriendsTable friends={friends} />
             </Row>
           </Col>
         </Row>
@@ -57,21 +77,23 @@ const Friends = () => {
         <Modal.Header closeButton>
           <Modal.Title>Add friend</Modal.Title>
         </Modal.Header>
-        <Modal.Body><form>
+        <Modal.Body>
+          <form>
             <label>
               <input
                 type="text"
-                value={newFriendName}
-                onChange={() => setNewFriendName(e.target.value)}
+                value={friendEmail}
+                onChange={(e) => setFriendEmail(e.target.value)}
                 placeholder="Enter their email address"
               />
             </label>
-          </form></Modal.Body>
+          </form>
+        </Modal.Body>
         <Modal.Footer>
           <Button variant="danger" onClick={handleCloseAddModal}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleCloseAddModal}>
+          <Button variant="primary" onClick={() => addFriendEmail()}>
             Add
           </Button>
         </Modal.Footer>

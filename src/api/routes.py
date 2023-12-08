@@ -2,6 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
+from flask_bcrypt import Bcrypt
 from api.models import db, User, Group, PiggyBank, Expenses
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
@@ -11,6 +12,9 @@ api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
 CORS(api, origins='*')
+
+#Bcrypt to hash passwords stored in DB
+bcrypt = Bcrypt()
 
 # Routes
 
@@ -44,8 +48,11 @@ def handle_signup():
     email = request.json.get('email', None)
     first_name = request.json.get('first_name', None)
     last_name = request.json.get('last_name', None)
+
+    #hashing password being passed by user
     password = request.json.get('password', None)
-    new_user = User(email = email, password = password, first_name = first_name, last_name = last_name)
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    new_user = User(email = email, password = hashed_password, first_name = first_name, last_name = last_name)
     if User.query.filter_by(email = email).first() == None:
         db.session.add(new_user)
         db.session.commit()
@@ -58,12 +65,17 @@ def handle_signup():
 def handle_signin():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
-    user = User.query.filter_by(email = email, password=password).first()
-    if user is None:
-        return jsonify({"msg" : "Bad username or password"}), 401
-    else:
+    # user = User.query.filter_by(email = email, password=password).first()
+    # checking for hashed password match
+    user = User.query.filter_by(email = email).first()
+    if  user and bcrypt.check_password_hash(user.password, password):
         access_token = create_access_token(identity=user.id)
         return jsonify({"token": access_token, "name": user.first_name}), 200
+    elif user is None:
+        return jsonify({"msg" : "Bad username or password"}), 401
+    elif email is None or password is None:
+        return jsonify({"msg" : "Email and Password required"}), 400
+
 
 #Route for user to change password
 @api.route('/user/<int:user_id>', methods = ['POST'])
@@ -108,22 +120,22 @@ def handle_home():
         return jsonify({'msg': 'You must be logged in'}), 401
 
 # #Route to get user friends
-# @api.route('/friends', methods = ['GET'])
-# @jwt_required()
-# def handle_get_friends():
-#     current_user_id = get_jwt_identity()
-#     user = User.query.get(current_user_id)
-#     if user is not None:
-#         friend_list = []
-#         for x in user.friends:
-#             friend_list.append(x.serialize())
-#         response_body = {
-#             "message": "Here is the friend information!",
-#             "user": friend_list
-#         }
-#         return jsonify(response_body), 200
-#     else:
-#         return jsonify({'msg': 'You must be logged in'}), 401
+@api.route('/friends', methods = ['GET'])
+@jwt_required()
+def handle_get_friends():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if user is not None:
+        friend_list = []
+        for x in user.friends:
+            friend_list.append(x.serialize())
+        response_body = {
+            "message": "Here is the friend information!",
+            "user": friend_list
+        }
+        return jsonify(response_body), 200
+    else:
+        return jsonify({'msg': 'You must be logged in'}), 401
 
 
 #Route to add or delete user friends  
@@ -131,34 +143,49 @@ def handle_home():
 @jwt_required()
 def manage_friends():
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
-
+    user = User.query.filter_by(id = current_user_id).first()
+    print(user.friends)
     data = request.get_json()
-    friend_id = data.get('friendID')
-    friend = User.query.get(friend_id)
-
+    friend_email = data.get('friendEmail')
+    friend = User.query.filter_by(email=friend_email).first()
+    print(friend.friends)
     if user and friend:
         if request.method == 'POST':
-            user.add_friend(friend)
-            message = 'Friend added successfully'
+            if user.friends is None:
+                user.friends = []
+            if friend.friends is None:
+                friend.friends = []
+            if friend in user.friends or user in friend.friends:
+                message = 'This user is already a friend'
+                return jsonify({'message' : message}), 409
+            friend.friends.append(user)
+            user.friends.append(friend)
+            db.session.commit()
+            user = User.query.filter_by(id = current_user_id).first()
+            serialized_friends = [] 
+            for x in user.friends: 
+                serialized_friends.append(x.serialize())
+            user = user.serialize()
+            user["friends"] = serialized_friends
+            message = "Friend sucessfully added"
+            return jsonify({'message': message, "user":user}), 200
         elif request.method == 'DELETE':
             if friend in user.friends and user in friend.friends:
                 user.friends.remove(friend)
                 friend.friends.remove(user)
                 db.session.commit()
+                user = User.query.filter_by(id = current_user_id).first()
+                serialized_friends = [] 
+                for x in user.friends: 
+                    serialized_friends.append(x.serialize())
+                user = user.serialize()
+                user["friends"] = serialized_friends
                 message = 'Friend removed successfully'
+                return jsonify({'message': message, "user":user}), 200
             else:
                 return jsonify({'error': 'Friendship not found'}), 404
         else:
             return jsonify({'error': 'Invalid action'}), 400
-
-        friends_list = []
-        for x in user.friends:
-            friends_list.append(x.serialize())
-        user = user.serialize()
-        user["friends"] = friends_list
-
-        return jsonify({'message': message, "user":user}), 200
     else:
         return jsonify({'error': 'User or friend not found'}), 404
 
@@ -318,38 +345,120 @@ def handle_expenses():
             expenses.append(x.serialize())
         return jsonify(expenses), 200
 
+#Route to show user groups and friends on the expenses modal
+@api.route('/user-rel', methods=['GET'])
+@jwt_required()
+def get_user_details():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    if user:
+        groups = [group.name for group in user.groups]
+        friends = [friend.email for friend in user.friends]
+
+        serialized_relationships = [group.serialize() for group in user.groups]
+        serialized_relationships += [friend.serialize() for friend in user.friends]
+
+        return jsonify({'groups': groups, 'friends': friends, "relationships": serialized_relationships}), 200
+    else:
+        return jsonify({'msg': 'User not found'}), 404
+
 #Route to create expense
-@api.route('/expenses', methods = ['POST'])
+@api.route('/expense', methods = ['POST'])
 @jwt_required()
 def add_expenses():
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
-    group = request.json.get("groupID")
-    if user and group is None:
-        name = request.json.get('name', None)
-        new_expenses = Expenses(name = name, user_id = current_user_id)
+    name = request.json.get('name', None)
+    group = request.json.get("group")
+    friend = request.json.get("friend")
+    amount = request.json.get("amount")
+    date = request.json.get("date")
+    type = request.json.get("type")
+    # print('expenses post', request.json)
+
+    if user and (group is None and friend is None):
+        new_expenses = Expenses(name = name, user_id = current_user_id, amount = amount, date = date, type = type)
         db.session.add(new_expenses)
         db.session.commit()
-        return jsonify('Added expenses'), 200
+        expenses = Expenses.query.all()
+        serialized_expenses = []
+        for expense in expenses:
+            serialized_expenses.append(expense.serialize())
+        return jsonify({'message': 'Expense Added', 'expenses' : serialized_expenses}), 200
     if user and group:
-        name = request.json.get('name', None)
-        new_expenses = Expenses(name = name, group_id = group)
+        group_id = Group.query.filter_by(name = group).first()
+        print('group_id', group_id)
+        new_expenses = Expenses(name = name, group_id = group_id.id, user_id = current_user_id, amount = amount, date = date, type = type )
         db.session.add(new_expenses)
         db.session.commit()
-        return jsonify('Added expenses'), 200
+        expenses = Expenses.query.all()
+        serialized_expenses = []
+        for expense in expenses:
+            serialized_expenses.append(expense.serialize())
+        return jsonify({'message': 'Expense Added', 'expenses' : serialized_expenses}), 200
+    if user and friend:
+        friend_id = User.query.filter_by(email = friend).first()
+        print('friend_id', friend_id)
+        new_expenses = Expenses(name = name, friend_id = friend_id.id, user_id = current_user_id, amount = amount, date = date, type = type )
+        db.session.add(new_expenses)
+        db.session.commit()
+
+        expenses = Expenses.query.all()
+        serialized_expenses = []
+        for expense in expenses:
+            serialized_expenses.append(expense.serialize())
+        return jsonify({'message': 'Expense Added', 'expenses' : serialized_expenses}), 200
+    
     else:
         return jsonify({'msg': 'You must be logged in'}), 401
 
-#Route to delete expense
-@api.route('/expenses/<int:expenses_id>', methods = ['DELETE'])
+#Route to update and delete expense
+@api.route('/expenses/<int:expenses_id>', methods = ['PUT','DELETE'])
 @jwt_required()
-def delete_expenses(expenses_id):
-    expense_to_delete = Expenses.query.filter_by(id = expenses_id).first()
-    if expense_to_delete:
-        db.session.delete(expense_to_delete)
-        db.session.commit()
+def individual_expenses(expenses_id):
+    method = request.method
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
 
-        return jsonify("Expense deleted"), 200
+    if method == 'PUT':
+        expense_to_update = Expenses.query.filter_by(id = expenses_id, user_id = user.id).one()
+        
+        if expense_to_update:
+            new_name = request.json.get('name')
+            new_amount = request.json.get('amount')
+            new_date = request.json.get('date')
+            new_type = request.json.get('type')
+
+            if new_name:
+                expense_to_update.name = new_name
+            if new_amount:
+                expense_to_update.amount = new_amount
+            if new_date:
+                expense_to_update.date = new_date
+            if new_type:
+                expense_to_update.type = new_type
+
+            db.session.commit()
+            expenses = Expenses.query.all()
+            serialized_expenses = []
+            for expense in expenses:
+                serialized_expenses.append(expense.serialize())
+            return jsonify({'message': 'Expense updated', 'expenses' : serialized_expenses}), 200
+        
+    elif method == 'DELETE':
+        expense_to_delete = Expenses.query.filter_by(id = expenses_id, user_id = user.id).first()
+        
+        if expense_to_delete:
+            db.session.delete(expense_to_delete)
+            db.session.commit()
+            expenses = Expenses.query.all()
+            serialized_expenses = []
+            for expense in expenses:
+                serialized_expenses.append(expense.serialize())
+            return jsonify({'message': 'Expense deleted', 'expenses' : serialized_expenses}), 200
+    
+   
 
 #Route to modify expense
 # @api.route('/expenses/<int:expenses_id>', methods = ['PUT'])
