@@ -15,9 +15,7 @@ const PlaidLink = () => {
                         'Access-Control-Allow-Origin': '*',
                         'Authorization': `Bearer ${sessionStorage.token}`
                     },
-                    body: {
-                        'public_token': public_token
-                    }
+                    body: JSON.stringify({public_token})
                 }
                 try {
                     const resp = await fetch(`${process.env.BACKEND_URL}/api/set_access_token`, opts);
