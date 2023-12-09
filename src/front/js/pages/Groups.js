@@ -71,10 +71,10 @@ const Groups = () => {
                         <button className='expense-btn' onClick={handleAddGroup}>Create New Group</button>
                     </Col>
                 </Row>
-                {store.userGroups && store.userGroups.length > 0 && store.userGroups.map((group) =>{
-                    return <GroupInfo group={group} setSelectedGroup={setSelectedGroup}/>
+                {store.userGroup && store.userGroup.length > 0 && store.userGroup.map((group, key) =>{
+                    return <GroupInfo group={group} setSelectedGroup={setSelectedGroup} key={key}/>
                 })}
-                {store.userGroups.length == 0 && (
+                {store.userGroup.length == 0 && (
                     <>
                     <div className='border border-2 border-dark rounded px-3 py-2 mt-2'>
                         <h4 className="d-flex justify-content-center">{store.userName}, you have no groups.</h4>

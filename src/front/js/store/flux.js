@@ -22,6 +22,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			userExpenses: [],
 			userFriends: [],
 			userGroups: [],
+			userGroup: [],
 			userRelationships: {},
 			userPiggybanks: [],
 			userID: null,
@@ -354,7 +355,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						setStore({ userInfo: userData[0] })
 						setStore({ userExpenses: savedInfo.expenses })
 						setStore({ userFriends: savedInfo.friends })
-						setStore({ userGroups: savedInfo.groups })
+						setStore({ userGroup: savedInfo.groups })
 						setStore({ userPiggybanks: savedInfo.piggybanks })
 						setStore({ userName: savedInfo.first_name })
 						setStore({ userEmail: savedInfo.email })
@@ -623,6 +624,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
 						alert("PiggyBank information");
+						return true;
+					} else if (resp.status === 401) {
+						alert(`You must be logged in`);
+						return false;
+					} else {
+						console.error(`Unexpected error: ${data.message}`)
+					}
+				} catch (error) {
+					console.error(`There was a problem with the fetch operation ${error}`)
+				}	
 			},
 			addFriends: async (friendEmail) => {
 				console.log(friendEmail)
