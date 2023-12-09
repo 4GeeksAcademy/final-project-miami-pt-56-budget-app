@@ -288,7 +288,11 @@ def add_piggys():
     user = User.query.get(current_user_id)
     if user:
         name = request.json.get('name', None)
-        new_piggy = PiggyBank(name = name, user_id = current_user_id)
+        goal = request.json.get('goal', None)
+        saved = request.json.get('saved', None)
+        date = request.json.get('date', None)
+        notes = request.json.get('notes', None)
+        new_piggy = PiggyBank(name = name, goal = goal, saved = saved, target_date = date, notes = notes, user_id = current_user_id)
         db.session.add(new_piggy)
         db.session.commit()
         return jsonify('Added PiggyBank'), 200
@@ -312,32 +316,20 @@ def handle_delete_piggy(piggy_id):
 @jwt_required()
 def handle_change_piggy(piggy_id):
     piggy = PiggyBank.query.get(piggy_id)
-    new_name = request.json.get('newName')
-    new_goal = request.json.get('newGoal')
-    new_saved = request.json.get('newSaved')
-    new_note = request.json.get('newNote')
-    new_date = request.json.get('newDate')
+    name = request.json.get('name', None)
+    goal = request.json.get('goal', None)
+    saved = request.json.get('saved', None)
+    date = request.json.get('date', None)
+    notes = request.json.get('notes', None)
 
-    if new_name and piggy:
-        piggy.name = new_name
+    if piggy:
+        piggy.name = name
+        piggy.goal = goal
+        piggy.saved = saved
+        piggy.target_date = date
+        piggy.notes = notes
         db.session.commit()
-        return jsonify('Changed Name'), 200
-    if new_goal and piggy:
-        piggy.goal = new_goal
-        db.session.commit()
-        return jsonify('Changed goal'), 200
-    if new_saved and piggy:
-        piggy.saved = new_saved
-        db.session.commit()
-        return jsonify('Changed saved amount'), 200
-    if new_note and piggy:
-        piggy.notes = new_note
-        db.session.commit()
-        return jsonify('Changed Note'), 200
-    if new_date and piggy:
-        piggy.nametarget_date = new_date
-        db.session.commit()
-        return jsonify('Changed date'), 200
+        return jsonify('saved piggy'), 200
     else:
         return jsonify({'msg': 'You must be logged in'}), 401
 

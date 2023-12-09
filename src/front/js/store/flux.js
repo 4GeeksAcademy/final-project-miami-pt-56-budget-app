@@ -14,11 +14,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 			showGroupModal: false,
 			showAddMemberModal: false,
 			showDeleteGroup: false,
+			showAddPiggyBankModal: false,
+			showEditPiggyBankModal: false,
+			showDeletePiggyBankModal: false,
 			userName: 'User',
 			userFullName: '',
 			userExpenses: [],
 			userFriends: [],
 			userGroups: [],
+			userGroup: [],
 			userRelationships: {},
 			userPiggybanks: [],
 			userID: null,
@@ -351,7 +355,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						setStore({ userInfo: userData[0] })
 						setStore({ userExpenses: savedInfo.expenses })
 						setStore({ userFriends: savedInfo.friends })
-						setStore({ userGroups: savedInfo.groups })
+						setStore({ userGroup: savedInfo.groups })
 						setStore({ userPiggybanks: savedInfo.piggybanks })
 						setStore({ userName: savedInfo.first_name })
 						setStore({ userEmail: savedInfo.email })
@@ -522,7 +526,111 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ showDeleteGroup: true })
 			},
 			hideDeleteGroupModal: () => {
-				setStore({ showDeleteGroup: false })
+				setStore({showDeleteGroup: false})
+			},
+			showAddPiggyBank: () => {
+				setStore({showAddPiggyBankModal: true})
+			},
+			showEditPiggyBank: () => {
+				setStore({showEditPiggyBankModal: true})
+			},
+			showDeletePiggyBank: () => {
+				setStore({showDeletePiggyBankModal: true})
+			},
+			hideAddPiggyBank: () => {
+				setStore({showAddPiggyBankModal: false})
+			},
+			hideEditPiggyBank: () => {
+				setStore({showEditPiggyBankModal: false})
+			},
+			hideDeletePiggyBank: () => {
+				setStore({showDeletePiggyBankModal: false})
+			},
+			handleAddPiggyBanks: async(name, goal, saved, date, notes) => {
+				const opts = {
+					method: 'POST',
+					headers: {
+						Authorization: "Bearer " + sessionStorage.getItem("token"),
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						"name": name,
+						"goal": goal,
+    					"saved": saved,
+    					"date": date,
+    					"notes": notes
+					})
+				}
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/piggybank`, opts)
+					const data = await resp.json();
+					console.log('handle Get Groups func', data)
+					if (resp.status === 200) {
+						return true;
+					} else if (resp.status === 401) {
+						alert(`You must be logged in`);
+						return false;
+					} else {
+						console.error(`Unexpected error: ${data.message}`)
+					}
+				} catch (error) {
+					console.error(`There was a problem with the fetch operation ${error}`)
+				}
+			},
+			handleDeletePiggyBanks: async(bankID) => {
+				const opts = {
+					method: 'DELETE',
+					headers: {
+						Authorization: "Bearer " + sessionStorage.getItem("token"),
+						'Content-Type': 'application/json',
+					}
+				}
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/piggybank/${bankID}`, opts)
+					const data = await resp.json();
+					console.log('handle Get Groups func', data)
+					if (resp.status === 200) {
+						return true;
+					} else if (resp.status === 401) {
+						alert(`You must be logged in`);
+						return false;
+					} else {
+						console.error(`Unexpected error: ${data.message}`)
+					}
+				} catch (error) {
+					console.error(`There was a problem with the fetch operation ${error}`)
+				}
+			},
+			handleEditPiggyBanks: async(name, goal, saved, date, notes, bankID) => {
+				const opts = {
+					method: 'PUT',
+					headers: {
+						Authorization: "Bearer " + sessionStorage.getItem("token"),
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						"name": name,
+						"goal": goal,
+    					"saved": saved,
+    					"date": date,
+    					"notes": notes
+					})
+				}
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/piggybank/${bankID}`, opts)
+					const data = await resp.json();
+					console.log('handle Get Groups func', data)
+					if (resp.status === 200) {
+						return true;
+					} else if (resp.status === 401) {
+						alert(`You must be logged in`);
+						return false;
+					} else {
+						console.error(`Unexpected error: ${data.message}`)
+					}
+				} catch (error) {
+					console.error(`There was a problem with the fetch operation ${error}`)
+				}	
 			},
 			addFriends: async (friendEmail) => {
 				console.log(friendEmail)
@@ -584,6 +692,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				} catch (error) {
 					console.error("There has been an error fetching friends:", error);
+
 				}
 			}
 		}
