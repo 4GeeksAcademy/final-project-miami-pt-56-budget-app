@@ -566,7 +566,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
-						alert("PiggyBank information");
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);
@@ -591,7 +590,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
-						alert("Bank Deleted");
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);
@@ -623,7 +621,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
-						alert("PiggyBank information");
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);

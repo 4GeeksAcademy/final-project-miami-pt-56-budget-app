@@ -55,8 +55,6 @@ const Piggybank = ()=> {
     await actions.handleDeletePiggyBanks(selectedBank);
     handleClosePiggyBankModals();
   };
-  // console.log(editing)
-  // console.log(store.userPiggybanks.find((bank)=>bank.id == selectedBank).name)
 
   return (
     <>

@@ -97,7 +97,7 @@ class User(db.Model):
             "first_name": self.first_name,
             "last_name": self.last_name,
             # "expenses": list(map(lambda y: y.serialize(include_user=False), self.expenses))
-            # "piggybanks": list(map(lambda x: x.serialize(), self.piggybanks))
+            "piggybanks": list(map(lambda x: x.serialize(), self.piggybanks))
         }
 
 class Group(db.Model):
