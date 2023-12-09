@@ -46,7 +46,7 @@ PLAID_COUNTRY_CODES = os.getenv('PLAID_COUNTRY_CODES', 'US').split(',')
 PLAID_ENV = os.getenv('PLAID_ENV', 'sandbox')
 PLAID_REDIRECT_URI = empty_to_none('PLAID_REDIRECT_URI')
 
-print(PLAID_PRODUCTS, PLAID_COUNTRY_CODES)
+# print(PLAID_PRODUCTS, PLAID_COUNTRY_CODES)
 
 configuration = plaid.Configuration(
     host=host,
@@ -542,25 +542,26 @@ def create_link_token():
 @api.route('/set_access_token', methods=['POST'])
 @jwt_required()
 def get_access_token():
-    global access_token
-    global item_id
-    global transfer_id
+    access_token = None
+    item_id = None
 
     try:
         current_user_id = get_jwt_identity()
         user = User.query.get(current_user_id)
-    
         public_token = request.form['public_token']
+        print('public_token', public_token)
         exchange_request = ItemPublicTokenExchangeRequest(
             public_token=public_token)        
         exchange_response = client.item_public_token_exchange(exchange_request)
+        
         access_token = exchange_response['access_token']
         item_id = exchange_response['item_id']
         
         user.access_token = access_token
+        user.item_id = item_id
         db.session.commit()
         
-        print('exchange response', exchange_response, access_token )
+        print('exchange response', exchange_response, access_token, item_id )
         
         return jsonify(exchange_response.to_dict())
     
