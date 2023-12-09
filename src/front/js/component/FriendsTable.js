@@ -38,16 +38,14 @@ const FriendsTable = ({ friends }) => {
           ) : (
             friends?.map((friend) => (
               <tr key={friend.id}>
-                <td>{friend.first_name}</td>
+                <td>{friend.first_name + " " + friend.last_name}</td>
                 <td>{friend.email}</td>
                 <td>
-                  <button>
                     <FontAwesomeIcon
                       icon={faTrash}
                       className="icon-lnk"
                       onClick={() => handleDeleteFriends(friend.email)}
                     />
-                  </button>
                 </td>
               </tr>
             ))
