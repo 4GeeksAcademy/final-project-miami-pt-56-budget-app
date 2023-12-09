@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const userInfo= [
     {
         title:"Expenses",
-        Link:"Expenses", 
+        Link:"expenses", 
         data: [
             {title:"House", catagory:"Rent", Amount:"$2500"},
             {title:"Disney+", catagory:"Payment", Amount:"$14"},
@@ -24,7 +24,7 @@ const userInfo= [
     },
     {
         title:"Groups",
-        Link:"Groups", 
+        Link:"groups", 
         data: [
             {title:"Bowling", catagory:"Shoes", Amount:"$12"},
             {title:"Hawaii", catagory:"AirBNB", Amount:"$500"},
