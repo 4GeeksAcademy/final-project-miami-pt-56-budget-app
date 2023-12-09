@@ -7,7 +7,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 import logo from "../../img/BetterBudget-logos_green.jpg";
 import '../../styles/navbar.css'
-import { NavLink } from "react-bootstrap";
 
 export const NavBar = () => {
   const { store, actions } = useContext(Context);
@@ -31,12 +30,14 @@ export const NavBar = () => {
   return (
     <Navbar expand="md">
       <Container>
-        <Navbar.Brand href={loggedIn ? "/home" : "/"} className="navbar-brand">
-          <img
-            src={logo}
-            className="navbar-brand-img d-inline-block align-top"
-            alt="React Bootstrap logo"
-          />
+        <Navbar.Brand className="navbar-brand">
+          <Link to = {loggedIn ? "/home" : "/"}>
+            <img
+              src={logo}
+              className="navbar-brand-img d-inline-block align-top"
+              alt="React Bootstrap logo"
+            />
+          </Link>
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -45,8 +46,8 @@ export const NavBar = () => {
           {/* For Splash page */}
           {!loggedIn && (
             <Nav className="ms-auto">
-              <Nav.Link href="/signin">Login</Nav.Link>
-              <Nav.Link href="/signup">Sign up</Nav.Link>
+              <Link className="nav-link" to={"/signin"}>Login</Link>
+              <Link className="nav-link" to={"/signup"}>Sign up</Link>
             </Nav>
           )}
 
@@ -54,10 +55,10 @@ export const NavBar = () => {
           {loggedIn && (
             <>
               <Nav className="me-auto">
-                <NavLink href="/expenses">Expenses</NavLink>
-                <NavLink href="/piggybankpage">Piggy Bank</NavLink>
-                <NavLink href="/groups">Groups</NavLink>
-                <NavLink href="/friends">Friends</NavLink>
+                <Link className="nav-link" to={"/expenses"}>Expenses</Link>
+                <Link className="nav-link" to={"/piggybankpage"}>Piggy Bank</Link>
+                <Link className="nav-link" to={"/groups"}>Groups</Link>
+                <Link className="nav-link" to={"/friends"}>Friends</Link>
               </Nav>
               <NavDropdown
                 title={
@@ -66,8 +67,14 @@ export const NavBar = () => {
                 className="custom-dropdown"
                 id="navbarScrollingDropdown">
 
-                <NavDropdown.Item href="/account" className="dropdown m-0">Account Settings</NavDropdown.Item>
-                <NavDropdown.Item onClick={handleLogoutClick} className="logout dropdown m-0">Logout</NavDropdown.Item>
+                <NavDropdown.Item className="dropdown m-0">
+                  <Link className="dropdown-item" to={"/account"}>
+                    Account Settings
+                  </Link>
+                </NavDropdown.Item>
+                <NavDropdown.Item onClick={handleLogoutClick} className="dropdown m-0">
+                  <span className="dropdown-item logout">Logout</span>
+                </NavDropdown.Item>
               </NavDropdown>
             </>
           )}

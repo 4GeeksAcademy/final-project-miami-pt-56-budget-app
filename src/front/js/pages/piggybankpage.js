@@ -1,50 +1,154 @@
-import React, {useState} from 'react'
-import '../../styles/piggybankpage.css'
-import { PiggybankModal } from '../component/Piggybankmodal'
-export default function Piggybank() {
-    const[action, setAction] = useState(null)
+import React, { useContext, useEffect, useState } from "react";
+import { Container, Row, Col, Button, Modal, Form, Dropdown } from 'react-bootstrap';
+import { Context } from "../store/appContext"
+import { Link , useNavigate} from "react-router-dom";
+import { Hint } from 'react-autocomplete-hint';
+import PiggyBank from "../component/PiggyBankInfo";
+
+const Piggybank = ()=> {
+  const { store, actions } = useContext(Context);
+  const [name, setName] = useState('');
+  const [goal, setGoal] = useState(null);
+  const [saved, setSaved] = useState(null);
+  const [date, setDate] = useState("");
+  const [notes, setNotes] = useState('');
+  const [selectedBank, setSelectedBank] = useState(null);
+  const [editing, setEditing] = useState(false);
+
+  useEffect(() => {
+		actions.handleGetUser()
+	}, []);
+
+  // useEffect(()=> {
+  //   if(editing == true){
+  //     setName(store.userPiggybanks.find((bank)=>bank.id == selectedBank).name)
+  //     console.log(name)
+  //   }
+  // }, [])
+
+  const handleClosePiggyBankModals = () => {
+    actions.hideAddPiggyBank(false);
+    actions.hideEditPiggyBank(false);
+    actions.hideDeletePiggyBank(false);
+    setName('');
+    setGoal(undefined);
+    setSaved(undefined);
+    setDate('');
+    setNotes('');
+    setSelectedBank(null);
+    setEditing(false);
+    actions.handleGetUser();
+  };
+  const addPiggyBank = () => {
+    actions.showAddPiggyBank(true);
+  }
+  const handleSavePiggyBank = async() => {
+    await actions.handleAddPiggyBanks(name, goal, saved, date, notes);
+    handleClosePiggyBankModals();
+  };
+  const handleEditPiggyBank = async() => {
+    console.log(name, goal, saved, date, notes)
+    await actions.handleEditPiggyBanks(name, goal, saved, date, notes, selectedBank);
+    handleClosePiggyBankModals();
+  };
+  const handleDeletePiggyBank = async() => {
+    await actions.handleDeletePiggyBanks(selectedBank);
+    handleClosePiggyBankModals();
+  };
+
   return (
-    <div>
-        <div className='row1 mx-5 d-flex justify-content-center'>
-            <div className='col-1 mx-5 d-flex justify-content-center'>
-                <h1>Piggy Bank</h1>
+    <>
+      <Container>
+        <Row className="mt-3">
+          <Col md={6} xs={12}>
+            <h2 className='text-center'>Piggy Banks</h2>
+          </Col>
+          <Col md={6} xs={12}>
+            <Button className='expense-btn' onClick={addPiggyBank}>
+              Add Piggy Bank
+            </Button>
+          </Col>
+        </Row>
+        {store.userPiggybanks.length == 0 && (
+          <>
+            <div className='border border-2 border-dark rounded px-3 py-2 mt-2'>
+                <h4 className="d-flex justify-content-center">{store.userName}, you have no piggy banks.</h4>
+                <h6 className="d-flex justify-content-center">What would you like to start saving for?</h6>
             </div>
-            <div className='col 2 mx-5 d-flex justify-content-center'>
-                <button type="button" className="" data-bs-toggle="modal" data-bs-target="#addEditModal" onClick={()=>setAction("Add")}>Add piggy bank</button>
-            </div>
-            <div className='col 3'>
-                <button type="button" className="" data-bs-toggle="modal" data-bs-target="#addEditModal" onClick={()=>setAction("Sort")}>Sort by:</button>
-            </div>
-        </div>
-        <div className='row2 row mx-5 d-flex justify-content-center'>
-            <div className='col mx-5 d-flex justify-content-center'>
-                <h3>Total Amount Saved</h3>
-            </div>
-            <div className='col 2 mx-5 d-flex justify-content-auto'>$2000</div>
-        </div>
-        <div className='row3 row'>
-            <div className='col-3 mx-5 d-flex justify-content-center p-3 w-50 m-auto'>
-                <p>Name</p>
-            </div>
-            <div className='col-3'>
-                <a>Amount Saved</a>
-            </div>
-            <div className='col'>
-                <p>Target Amount </p>
-            </div>
-            <div className='col'>
-            <a type="button" className=""data-bs-toggle="modal" data-bs-target="#addEditModal" onClick={()=>setAction("Edit")}>            
-            <i class="fa-regular fa-pen-to-square"></i></a>
-            <a type="button" className=""data-bs-toggle="modal" data-bs-target="#addEditModal" onClick={()=>setAction("Delete")}>            
-            <i class="fa-regular fa-trash-can"></i></a>
-            </div>
-            <div className='col-4'>
+          </>
+        )}
+        {store.userPiggybanks && store.userPiggybanks.length > 0 && store.userPiggybanks.map((bank) =>{
+          return <PiggyBank bank={bank} setSelectedBank={setSelectedBank} setEditing={setEditing}/>
+        })}
+      </Container>
 
+      {/* Add/Edit piggy bank modal */}
+      <Modal show={editing ? store.showEditPiggyBankModal : store.showAddPiggyBankModal} onHide={handleClosePiggyBankModals}>
+      {/* {useEffect(()=> {
+        if(editing == true){
+          setName(store.userPiggybanks.find((bank)=>bank.id == selectedBank).name)
+          console.log(name)
+        }
+      },[])} */}
+        <Modal.Header closeButton>
+          {editing ? <Modal.Title>Edit your Piggy Bank</Modal.Title> : <Modal.Title>Create a New Piggy Bank</Modal.Title>}
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group controlId="bankName">
+            <Form.Label>Piggy Bank Name</Form.Label>
+            <Form.Control type="text" className="mb-2" placeholder="What are you saving for?" value={name} onChange={(e) => setName(e.target.value)} />
+          </Form.Group>
+          <Form.Group controlId="goalAmount">
+            <Form.Label>Savings Goal</Form.Label>
+            <div className="input-group mb-2">
+              <span className="input-group-text">$</span>
+              <input type="number" step='.01' className="form-control" aria-label="Savings Goal" placeholder="0.00" value={goal} onChange={(e) => setGoal(e.target.value)}></input>
             </div>
+          </Form.Group>
+          <Form.Group controlId="savedAmount">
+            <Form.Label>Amount Saved</Form.Label>
+            <div className="input-group mb-2">
+              <span className="input-group-text">$</span>
+              <input type="number" step='.01' className="form-control" aria-label="Amount Saved" placeholder="0.00" value={saved} onChange={(e) => setSaved(e.target.value)}></input>
+            </div>
+          </Form.Group>
+          <Form.Group controlId="targetDate">
+            <Form.Label>Target Date</Form.Label>
+            <Form.Control type="date" className="mb-2" value={date} onChange={(e) => setDate(e.target.value)} />
+          </Form.Group>
+          <Form.Group controlId="bankName">
+            <Form.Label>Notes</Form.Label>
+            <textarea className="form-control mb-2" placeholder="Any notes about your piggy bank? (optional)" value={notes} onChange={(e) => setNotes(e.target.value)} />
+          </Form.Group>
+          {editing?
+          <Button className="mt-2" variant="primary" type="button" onClick={handleEditPiggyBank}>
+            Save Piggy Bank
+          </Button>
+        : <Button className="mt-2" variant="primary" type="button" onClick={handleSavePiggyBank}>
+            Create Piggy Bank
+          </Button>}
+        </Modal.Body>
+      </Modal>
 
-        </div>
-        < PiggybankModal action={action}/>
-    </div>
-
+      {/* Delete piggybank modal */}
+      <Modal show={store.showDeletePiggyBankModal} onHide={handleClosePiggyBankModals}>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Piggy Bank</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h6 className="text-center">Are you sure you want to delete this piggy bank?</h6>
+          <div className="d-flex justify-content-evenly">
+            <Button className="mt-2" variant="primary" type="button" onClick={handleDeletePiggyBank}>
+              Delete
+            </Button>
+            <Button className="mt-2" variant="danger" type="button" onClick={handleClosePiggyBankModals}>
+              Cancel
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
+    </>
   )
 }
+
+export default Piggybank

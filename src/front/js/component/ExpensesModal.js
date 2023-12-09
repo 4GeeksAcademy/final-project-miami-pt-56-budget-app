@@ -1,7 +1,10 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Modal, Form, Dropdown, Button, InputGroup, Container } from "react-bootstrap";
-import { Hint } from "react-autocomplete-hint";
+// import { Hint } from "react-autocomplete-hint";
 import { Context } from "../store/appContext";
+import Turnstone from "turnstone";
+import "../../styles/expenses.css"
+
 
 
 const ExpensesModal = ({ show, typeOfModal, setTypeOfModal }) => {
@@ -48,7 +51,6 @@ const ExpensesModal = ({ show, typeOfModal, setTypeOfModal }) => {
 
     }, [store.expenseToUpdate]);
 
-    //not working as expected, HELP!
     const handleSaveExpense = () => {
 
         if (splitOption === 'Split' && typeOfModal === 'Edit Expense') {
@@ -71,11 +73,11 @@ const ExpensesModal = ({ show, typeOfModal, setTypeOfModal }) => {
         setExpenseDate('');
         setSplitPercentage(0);
         setSplitCustomAmount(0);
-    
+
         actions.hideExpensesModal();
     };
 
-    
+
     const userFriends = store.userFriends
     const friends = []
     userFriends.map((friend) => {
@@ -84,7 +86,7 @@ const ExpensesModal = ({ show, typeOfModal, setTypeOfModal }) => {
         newObj['label'] = friend.first_name + " " + friend.last_name;
         friends.push(newObj);
     });
-    
+
     const userGroups = store.userGroups
     const groups = []
     userFriends.map((group) => {
@@ -94,7 +96,14 @@ const ExpensesModal = ({ show, typeOfModal, setTypeOfModal }) => {
         groups.push(newObj);
     });
 
-    const allOptions = [...userFriends, ...userGroups];
+    const allOptions = { data: [...userFriends, ...userGroups] };
+    // console.log(allOptions);
+
+    const styles = {
+        input: 'w-full border p-2 bg-white',
+        listbox: 'w-full border p-2 bg-white sm:drop-shadow-xl'
+    }
+
 
     const renderSplitOptions = () => {
         switch (splitOption) {
@@ -116,13 +125,15 @@ const ExpensesModal = ({ show, typeOfModal, setTypeOfModal }) => {
                             <Form.Label>{`Split With ${splitWith}`}</Form.Label>
                             {/* Need to find a way to either list or autocomplete user relations (groups and friends) */}
                             {/* <Form.Control type="text" placeholder={`Enter Group or Friend name`} value={splitWith} onChange={(e) => setSplitWith(e.target.value)} /> */}
-                            <Hint options={allOptions} allowTabFill>
+                            {/* <Hint options={allOptions} allowTabFill>
                                 <input
+                                    className="search-input"
                                     value={splitWith}
                                     onChange={e => setSplitWith(e.target.value)}
                                     placeholder="Enter Group or Friend name"
                                 />
-                            </Hint>
+                            </Hint> */}
+                            <Turnstone placeholder="Select Group or Friend" styles={styles} listbox={allOptions} typeahead={true} onChange={(e)=> setSplitWith(e)}/>
                         </Form.Group>
                         <Container className=" my-3 d-flex justify-content-center">
                             <Button className="m-1" variant="secondary" onClick={() => setSelectedSplitOptions('Equally')}>

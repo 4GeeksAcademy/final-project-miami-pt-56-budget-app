@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { Context } from "../store/appContext";
-import Expenses from "./Expenses";
+import Expenses from "../pages/Expenses";
 
 const DeleteExpenseModal = ({ show }) => {
     const { store, actions } = useContext(Context);

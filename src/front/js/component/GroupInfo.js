@@ -14,6 +14,8 @@ const GroupInfo = (props) => {
         actions.showDeleteGroupModal(true)
     }
     const group = props.group
+    console.log(group)
+    console.log(group.members[0].first_name)
 
 	return (
         <div className='border border-2 border-dark rounded px-3 py-2 mt-2'>
@@ -29,9 +31,9 @@ const GroupInfo = (props) => {
             </Row>
             <Row>
                 <h6>
-                    {group.members.map((person)=>{
+                    {group.members.map((person,key)=>{
                         return(
-                            <span>{person.first_name + " " +person.last_name + " "}</span>
+                            <span key={person.id}>{person.first_name + " " +person.last_name + " "}</span>
                         )
                     })}
                 </h6>
@@ -45,19 +47,7 @@ const GroupInfo = (props) => {
                 </Col>
             </Row>
             <Row>
-                {group.expenses.length > 0 && group.expenses.map((expense) =>{
-                    return(
-                        <Row>
-                            <Col className="ms-2">{expense.name}</Col>
-                            <Col className='d-flex flex-row-reverse'>{expense.amount}</Col>
-                        </Row>
-                    )
-                })}
-                {group.expenses.length == 0 && (
-                    <>
-                    <h6 className="d-flex justify-content-center">There are no shared expenses yet. Would you like to add some?</h6>
-                    </>
-                )}
+                
             </Row>
             <Row>
                 <Col>

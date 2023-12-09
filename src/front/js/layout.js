@@ -5,17 +5,13 @@ import { BackendURL } from "./component/backendURL";
 import Splashpage from "./pages/Splashpage";
 import SignIn from "./pages/SignIn"
 import SignUp from "./pages/SignUp";
+import Groups from "./pages/Groups";
 import { Home } from "./pages/home";
-import { Demo } from "./pages/demo";
+import Expenses from "./pages/Expenses";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
 import Piggybank from "./pages/piggybankpage";
-import Expenses from "./component/Expenses";
-import ExpensesModal from "./component/ExpensesModal";
-import ExpensesTable from "./component/ExpensesTable";
-import DeleteExpenseModal from "./component/DeleteExpenseModal";
-import Groups from "./pages/Groups";
-import GroupInfo from "./component/GroupInfo";
+import Friends from "./pages/friends"
 import { NavBar } from "./component/navbar";
 import { Footer } from "./component/footer";
 import { EditAccount } from "./pages/Account";
@@ -29,6 +25,7 @@ const Layout = () => {
 
  /*    This was used to hide the NavBar on the signin and signup pages,
         However it was decided to not be used and always show the NavBar.
+
 
         const [showNavbar, setShowNavbar] = useState(true);
         const [currentURL, setCurrentURL] = useState(true)
@@ -56,7 +53,9 @@ const Layout = () => {
                         <Route element={<SignUp />} path="/signup" />
                         <Route element={<EditAccount />} path="/account" />
                         <Route element={<Piggybank />} path="/piggybankpage" />
-                        <Route element={<Demo />} path="/demo" />
+                        <Route element={<Expenses />} path="/expenses" />
+                        <Route element={<Groups />} path="/groups" />
+                        <Route element={<Friends />} path="/friends" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
