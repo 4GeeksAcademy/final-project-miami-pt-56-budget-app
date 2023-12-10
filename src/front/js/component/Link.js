@@ -15,12 +15,13 @@ const PlaidLink = () => {
                         'Access-Control-Allow-Origin': '*',
                         'Authorization': `Bearer ${sessionStorage.token}`
                     },
-                    body: JSON.stringify({public_token})
+                    body: JSON.stringify({
+                        'public_token': public_token})
                 }
                 try {
                     const resp = await fetch(`${process.env.BACKEND_URL}/api/set_access_token`, opts);
                     const data = await resp.json();
-                    console.log('add expense ', data);
+                    console.log('Exchange token func ', data);
                     if (resp.status === 200) {
                         console.log('Access Token created!')
                     } else if (resp.status === 401) {

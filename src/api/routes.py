@@ -548,7 +548,7 @@ def get_access_token():
     try:
         current_user_id = get_jwt_identity()
         user = User.query.get(current_user_id)
-        public_token = request.form['public_token']
+        public_token = request.json.get('public_token')
         print('public_token', public_token)
         exchange_request = ItemPublicTokenExchangeRequest(
             public_token=public_token)        
@@ -567,3 +567,5 @@ def get_access_token():
     
     except plaid.ApiException as e:
         return json.loads(e.body)                 
+
+#Plaid Get Transactions
