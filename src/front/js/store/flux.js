@@ -26,7 +26,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			userRelationships: {},
 			userPiggybanks: [],
 			userID: null,
-			userEmail: []
+			userEmail: [],
+			linkToken: ''
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -526,27 +527,27 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ showDeleteGroup: true })
 			},
 			hideDeleteGroupModal: () => {
-				setStore({showDeleteGroup: false})
+				setStore({ showDeleteGroup: false })
 			},
 			showAddPiggyBank: () => {
-				setStore({showAddPiggyBankModal: true})
+				setStore({ showAddPiggyBankModal: true })
 			},
 			showEditPiggyBank: () => {
-				setStore({showEditPiggyBankModal: true})
+				setStore({ showEditPiggyBankModal: true })
 			},
 			showDeletePiggyBank: () => {
-				setStore({showDeletePiggyBankModal: true})
+				setStore({ showDeletePiggyBankModal: true })
 			},
 			hideAddPiggyBank: () => {
-				setStore({showAddPiggyBankModal: false})
+				setStore({ showAddPiggyBankModal: false })
 			},
 			hideEditPiggyBank: () => {
-				setStore({showEditPiggyBankModal: false})
+				setStore({ showEditPiggyBankModal: false })
 			},
 			hideDeletePiggyBank: () => {
-				setStore({showDeletePiggyBankModal: false})
+				setStore({ showDeletePiggyBankModal: false })
 			},
-			handleAddPiggyBanks: async(name, goal, saved, date, notes) => {
+			handleAddPiggyBanks: async (name, goal, saved, date, notes) => {
 				const opts = {
 					method: 'POST',
 					headers: {
@@ -556,9 +557,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					body: JSON.stringify({
 						"name": name,
 						"goal": goal,
-    					"saved": saved,
-    					"date": date,
-    					"notes": notes
+						"saved": saved,
+						"date": date,
+						"notes": notes
 					})
 				}
 				try {
@@ -577,7 +578,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			handleDeletePiggyBanks: async(bankID) => {
+			handleDeletePiggyBanks: async (bankID) => {
 				const opts = {
 					method: 'DELETE',
 					headers: {
@@ -601,7 +602,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(`There was a problem with the fetch operation ${error}`)
 				}
 			},
-			handleEditPiggyBanks: async(name, goal, saved, date, notes, bankID) => {
+			handleEditPiggyBanks: async (name, goal, saved, date, notes, bankID) => {
 				const opts = {
 					method: 'PUT',
 					headers: {
@@ -611,9 +612,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					body: JSON.stringify({
 						"name": name,
 						"goal": goal,
-    					"saved": saved,
-    					"date": date,
-    					"notes": notes
+						"saved": saved,
+						"date": date,
+						"notes": notes
 					})
 				}
 				try {
@@ -630,7 +631,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				} catch (error) {
 					console.error(`There was a problem with the fetch operation ${error}`)
-				}	
+				}
 			},
 			addFriends: async (friendEmail) => {
 				console.log(friendEmail)
@@ -694,10 +695,36 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error("There has been an error fetching friends:", error);
 
 				}
+			},
+			fetchLinkToken: async () => {
+				const opts = {
+					method: "POST",
+					headers: {
+						'Content-Type': 'application/json',
+						'Access-Control-Allow-Origin': '*',
+						'Authorization': `Bearer ${sessionStorage.token}`
+					}
+				}
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/create_link_token`, opts);
+					const data = await resp.json();
+					console.log('add expense ', data);
+					if (resp.status === 200) {
+						setStore({ linkToken: data.link_token })
+						console.log('Link Token created!')
+					} else if (resp.status === 401) {
+						alert('You must be logged in');
+					} else {
+						console.error(`Unexpected error: ${data.message}`)
+					}
+				} catch (error) {
+					console.error(`There was a problem with the fetch operation ${error}`);
+				}
 			}
 		}
 	}
 }
+
 
 
 export default getState;

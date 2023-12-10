@@ -62,6 +62,7 @@ class User(db.Model):
     last_name = db.Column(db.String(120), nullable=False, unique=False)
     password = db.Column(db.String(80), nullable=False, unique=False)
     access_token = db.Column(db.String(120), nullable=True, unique=True)
+    item_id = db.Column(db.String(120), nullable=True, unique=True)
     
     friends = db.relationship(
         "User",
