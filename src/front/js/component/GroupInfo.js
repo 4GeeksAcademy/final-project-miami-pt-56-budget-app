@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Container, Row, Col, Button, Modal, Form, Dropdown } from 'react-bootstrap';
+import { Container, Row, Col, Button, Modal, Form, Dropdown, Table } from 'react-bootstrap';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
 import { Context } from '../store/appContext'
 import { useNavigate } from "react-router-dom";
 
@@ -45,7 +47,32 @@ const GroupInfo = (props) => {
                 </Col>
             </Row>
             <Row>
-                
+                {group.expenses.length == 0 && (
+                    <>
+                        <h6 className="text-center">There are no shared expenses for this group. Would you like to add one?</h6>
+                    </>
+                )}
+                {group.expenses.length > 0 && group.expenses.map((expense, key)=>{
+                    return(
+                        <>
+                            <Row key={key} className="ms-2 mt-2">
+                                <Col className="col-md-3 col-12">
+                                Expense: {expense.name}
+                                </Col>
+                                <Col className="col-md-3 col-12">
+                                Amount: ${expense.amount}
+                                </Col>
+                                <Col className="col-md-4 col-12">
+                                Date: {actions.formatDate(expense.date, false)}
+                                </Col>
+                                <Col className="col-md-2 col-12">
+                                    <FontAwesomeIcon icon={faEdit} className="me-2 icon-lnk" />
+								    <FontAwesomeIcon icon={faTrash} className="icon-lnk" />
+                                </Col>
+                            </Row>
+                        </>
+                    )
+                })}
             </Row>
             <Row>
                 <Col>
