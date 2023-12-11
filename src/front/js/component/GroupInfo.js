@@ -14,8 +14,6 @@ const GroupInfo = (props) => {
         actions.showDeleteGroupModal(true)
     }
     const group = props.group
-    console.log(group)
-    console.log(group.members[0].first_name)
 
 	return (
         <div className='border border-2 border-dark rounded px-3 py-2 mt-2'>
@@ -33,7 +31,7 @@ const GroupInfo = (props) => {
                 <h6>
                     {group.members.map((person,key)=>{
                         return(
-                            <span key={person.id}>{person.first_name + " " +person.last_name + " "}</span>
+                            <span key={key}>{person.first_name + " " +person.last_name + " "}</span>
                         )
                     })}
                 </h6>

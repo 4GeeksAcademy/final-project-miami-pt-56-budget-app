@@ -104,8 +104,13 @@ def handle_home():
         group_list = []
         for x in user.friends:
             friends_list.append(x.serialize())
-        for x in user.groups:
-            group_list.append(x.serialize())
+        for group in user.groups:
+            expense_list = []
+            for expense in group.expenses:
+                expense_list.append(expense.serialize())
+            group = group.serialize()
+            group["expenses"] = expense_list
+            group_list.append(group)
         user = user.serialize()
         user['groups'] = group_list
         user["friends"] = friends_list

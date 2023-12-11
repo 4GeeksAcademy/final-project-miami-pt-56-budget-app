@@ -114,8 +114,8 @@ class Group(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "members": list(map(lambda x: x.serialize(), self.members)),
-            # "expenses": list(map(lambda y: y.serialize(), self.expenses))
+            "members": list(map(lambda x: x.serialize(), self.members))
+          
         }
 
 class PiggyBank(db.Model):
