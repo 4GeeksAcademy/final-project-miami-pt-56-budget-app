@@ -29,7 +29,7 @@ const Groups = () => {
     };
     const handleSaveGroup = async()=>{
        await actions.handleAddGroups(groupName)
-       actions.hideGroupModal(false)
+       handleCloseModal()
     };
     const handleAddMember = async()=>{
         let newMember = friends.find((member)=> member.label == name)

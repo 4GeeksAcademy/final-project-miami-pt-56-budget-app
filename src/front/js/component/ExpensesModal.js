@@ -50,7 +50,7 @@ const ExpensesModal = ({ show, typeOfModal, setTypeOfModal }) => {
 
 
     }, [store.expenseToUpdate]);
-
+    console.log(store.expenseToUpdate)
     const handleSaveExpense = () => {
 
         if (splitOption === 'Split' && typeOfModal === 'Edit Expense') {
