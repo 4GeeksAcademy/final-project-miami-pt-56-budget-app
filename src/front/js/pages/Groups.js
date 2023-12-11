@@ -60,8 +60,6 @@ const Groups = () => {
         friends.push(newObj)
     })
 
-    console.log(store.userGroup)
-
     return (
         <>
             <Container>

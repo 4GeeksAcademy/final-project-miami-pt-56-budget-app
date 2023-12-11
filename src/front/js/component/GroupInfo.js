@@ -3,11 +3,14 @@ import { Container, Row, Col, Button, Modal, Form, Dropdown, Table } from 'react
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
 import { Context } from '../store/appContext'
+import ExpensesModal from '../component/ExpensesModal';
+import DeleteExpenseModal from "./DeleteExpenseModal";
 import { useNavigate } from "react-router-dom";
 
 const GroupInfo = (props) => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
+    const [typeOfModal, setTypeOfModal] = useState('');
 
     const handleEditMember = () => {
         actions.showEditMemberModal(true)
@@ -15,9 +18,23 @@ const GroupInfo = (props) => {
     const handleDeleteGroup = () => {
         actions.showDeleteGroupModal(true)
     }
+    const handleAddExpense = () => {
+        setTypeOfModal('Add Expense')
+        actions.showExpensesModal(true)
+    }
+    const handleEditExpense = (expense) => {
+		setTypeOfModal('Edit Expense');
+		actions.showExpensesModal(expense);
+        console.log(expense)
+	};
+	const handleDeleteExpense = (expense) => {
+		console.log('clicking delete button');
+		actions.showDeleteExpenseModal(expense);
+	}
     const group = props.group
 
 	return (
+        <>
         <div className='border border-2 border-dark rounded px-3 py-2 mt-2'>
             <Row>
                 <Col>
@@ -43,7 +60,9 @@ const GroupInfo = (props) => {
                     <h5>Shared Expenses</h5>
                 </Col>
                 <Col className='d-flex flex-row-reverse align-items-center'>
-                    <button className='expense-btn'>Add Expense</button>
+                    <Button className='expense-btn' onClick={handleAddExpense}>
+                        Add Expense
+                    </Button>
                 </Col>
             </Row>
             <Row>
@@ -66,8 +85,8 @@ const GroupInfo = (props) => {
                                 Date: {actions.formatDate(expense.date, false)}
                                 </Col>
                                 <Col className="col-md-2 col-12">
-                                    <FontAwesomeIcon icon={faEdit} className="me-2 icon-lnk" />
-								    <FontAwesomeIcon icon={faTrash} className="icon-lnk" />
+                                    <FontAwesomeIcon icon={faEdit} className="me-2 icon-lnk" onClick={() => handleEditExpense(expense)}/>
+								    <FontAwesomeIcon icon={faTrash} className="icon-lnk" onClick={() => handleDeleteExpense(expense)}/>
                                 </Col>
                             </Row>
                         </>
@@ -88,6 +107,12 @@ const GroupInfo = (props) => {
                 >Delete Group</button> 
             </div>                    
         </div>
+
+        {/* Expenses modals */}
+        <ExpensesModal typeOfModal={typeOfModal} setTypeOfModal={setTypeOfModal} show={store.showExpensesModal}></ExpensesModal>
+        {/* Delete expense modal */}
+			<DeleteExpenseModal show={store.showDeleteExpenseModal}></DeleteExpenseModal>
+        </>
     )
 };
 
