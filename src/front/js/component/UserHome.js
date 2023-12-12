@@ -1,57 +1,53 @@
-import React, { useState } from 'react'
+import React, { useState, useContext, useEffect, createContext} from 'react'
+import { Context } from '../store/appContext';
 import { Table } from 'react-bootstrap'
+import context from 'react-bootstrap/esm/AccordionContext';
 import { Link } from "react-router-dom";
-const userInfo= [
-    {
-        title:"Expenses",
-        Link:"expenses", 
-        data: [
-            {title:"House", catagory:"Rent", Amount:"$2500"},
-            {title:"Disney+", catagory:"Payment", Amount:"$14"},
-            {title:"Netflix", catagory:"Payment", Amount:"$16"}
+
+    const UserHome = () => {
+        const { store, actions} = useContext(Context);      
+        useEffect(() => {
+          actions.handleGetUser();
+          actions.fetchUserExpenses();
+        }, []);
+        const userInfo= [
+            {
+                title:"Expenses",
+                Link:"expenses", 
+                data: store.userExpenses
+        
+            },
+            {
+                title:"Piggy Bank",
+                Link:"piggybankpage", 
+                data: store.userPiggybanks
+        
+            },
+            {
+                title:"Groups",
+                Link:"groups", 
+                data: store.userGroups
+            },
         ]
 
-    },
-    {
-        title:"Piggy Bank",
-        Link:"piggybankpage", 
-        data: [
-            {title:"Maui", catagory:"Vacation", Amount:"$6000"},
-            {title:"Jordans", catagory:"Shoes", Amount:"$1000"},
-            {title:"Tuition", catagory:"UCF", Amount:"25,000"}
-        ]
-
-    },
-    {
-        title:"Groups",
-        Link:"groups", 
-        data: [
-            {title:"Bowling", catagory:"Shoes", Amount:"$12"},
-            {title:"Hawaii", catagory:"AirBNB", Amount:"$500"},
-            {title:"Bar Lou", catagory:"Drinks", Amount:"$40"}
-        ]
-
-    },
-]
-export default function UserHome() {
     return (
        <div className='container '>
-        {userInfo.map((section)=>{
+        {userInfo?.map((section)=>{
             return(<Table striped bordered hover>
 				<thead>
                     <h1>{section.title}</h1>
 					<tr>
-						<th>Title</th>
-						<th>Catagoty</th>
-						<th>Amount</th>
+
 					</tr>
 				</thead>
 				<tbody>
-					{section.data.map((item, index) => (
+					{section.data?.map((item, index) => (
 						<tr key={index}>
-							<td>{item.title}</td>
-							<td>{item.catagory}</td>
-							<td>{item.Amount}</td>
+							<td>{item.name}</td>
+							<td>{item.amount||item.goal||item.members.map(member=>(
+                                <div>{member.first_name} {member.last_name}</div>
+                            ))}</td>
+							<td>{item.date||item.saved||""}</td>
                             <td>
                 </td>
 						</tr>
@@ -65,5 +61,30 @@ export default function UserHome() {
 			
         </div>
     )}
+export default UserHome;
+
+
+//   return (
+//     <div className='container '>
+//       {/* Display user information from store */}
+//       <Table striped bordered hover>
+//         {/* Display user expenses */}
+//         {/* ...table structure for userExpenses from store */}
+//       </Table>
+
+//       <Table striped bordered hover>
+//         {/* Display user groups */}
+//         {/* ...table structure for userGroups from store */}
+//       </Table>
+
+//       <Table striped bordered hover>
+//         {/* Display user piggy bank page */}
+//         {/* ...table structure for userPiggybankpage from store */}
+//       </Table>
+//     </div>
+//   );
+// };
+
+// export default UserHome;
 
      

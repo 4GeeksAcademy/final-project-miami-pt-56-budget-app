@@ -48,14 +48,19 @@ const Layout = () => {
                         <Route element={<Splashpage  />} path="/" />
                         <Route element={<Home />} path="/home" />
                         <Route element={<SignIn />} path="/signin" />
-                        <Route element={<Expenses />} path="home/expenses" />
-                        <Route element={<Groups />} path="home/groups" />
+                        <Route element={<Expenses />} path="/expenses" />
+                        <Route element={<Groups />} path="/groups" />
                         <Route element={<SignUp />} path="/signup" />
                         <Route element={<EditAccount />} path="/account" />
-                        <Route element={<Piggybank />} path="home/piggybankpage" />
+                        <Route element={<Piggybank />} path="/piggybankpage" />
                         <Route element={<Friends />} path="/friends" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
+                        <Route path="/home">
+                        <Route element={<Expenses />} path="expenses" />
+                        <Route element={<Groups />} path="groups" />
+                       
+                        </Route>
                     </Routes>
                     <Footer />
                 </ScrollToTop>
