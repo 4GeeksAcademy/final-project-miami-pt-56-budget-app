@@ -56,6 +56,11 @@ const Layout = () => {
                         <Route element={<Friends />} path="/friends" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
+                        <Route path="/home">
+                        <Route element={<Expenses />} path="expenses" />
+                        <Route element={<Groups />} path="groups" />
+                       
+                        </Route>
                     </Routes>
                     <Footer />
                 </ScrollToTop>
