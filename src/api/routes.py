@@ -12,6 +12,7 @@ import plaid
 from plaid.api import plaid_api
 from plaid.model.products import Products
 from plaid.model.country_code import CountryCode
+from plaid.model.transactions_sync_request import TransactionsSyncRequest
 from plaid.model.link_token_create_request import LinkTokenCreateRequest
 from plaid.model.link_token_create_request_user import LinkTokenCreateRequestUser
 from plaid.model.item_public_token_exchange_request import ItemPublicTokenExchangeRequest
@@ -568,4 +569,29 @@ def get_access_token():
     except plaid.ApiException as e:
         return json.loads(e.body)                 
 
-#Plaid Get Transactions
+#Plaid Sync Transactions
+@api.route('/transactions', methods=['POST'])
+@jwt_required()
+def transactions_sync():
+    access_token = None
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    print('access_token', user.access_token)
+
+    request = TransactionsSyncRequest(
+    access_token=user.access_token,
+    )
+    response = client.transactions_sync(request)
+    transactions = response['added']
+
+# the transactions in the response are paginated, so make multiple calls while incrementing the cursor to
+# retrieve all transactions
+
+    while (response['has_more']):
+        request = TransactionsSyncRequest(
+            access_token=user.access_token,
+            cursor=response['next_cursor']
+        )
+        response = client.transactions_sync(request)
+        transactions += response['added']
+

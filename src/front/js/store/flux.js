@@ -27,7 +27,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			userPiggybanks: [],
 			userID: null,
 			userEmail: [],
-			linkToken: ''
+			linkToken: '',
+			transactions:[]
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -719,6 +720,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				} catch (error) {
 					console.error(`There was a problem with the fetch operation ${error}`);
+				}
+			},
+			fetchTransactions: async () => {
+				const opts = {
+					method: "POST",
+					headers: {
+						'Content-Type': 'application/json',
+						'Access-Control-Allow-Origin': '*',
+						'Authorization': `Bearer ${sessionStorage.token}`
+					}
 				}
 			}
 		}
