@@ -354,7 +354,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						const savedInfo = userData[0]
 						setStore({ userID: savedInfo.id })
 						setStore({ userInfo: userData[0] })
-						setStore({ userExpenses: savedInfo.expenses })
+						// setStore({ userExpenses: savedInfo.expenses })
 						setStore({ userFriends: savedInfo.friends })
 						setStore({ userGroup: savedInfo.groups })
 						setStore({ userPiggybanks: savedInfo.piggybanks })

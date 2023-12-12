@@ -1,105 +1,19 @@
 .splash-banner{
-    margin: 1.5rem;
-    border: 1px solid #ebebe4;
-    border-radius: 0.356rem;
-    padding: 0.7rem;
-    letter-spacing: 1px;
-    font-weight: 500;
-    border: 1px;
-    border-radius: 17px;
-    color: #333333;
-    image-rendering: crisp-edges;
-    background-color: #E3C8D1;
+    background-color: #fff;
+    border-radius: 1px;
+    box-shadow: 10px 10px;
 }
 
-.splash-panels{
-    padding: 0.7rem;
+.form-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
 
-}
-.panels-top{
-    display:flex;
-    gap: 2rem;
-    justify-content: space-around;
-    margin-top: 2rem;
-    color: #333333;
-    
-
-}
-.panels-bottom{
-    display:flex;
-    gap: 2rem;
-    justify-content: space-around;
-    margin-top: 2rem;
-    color: #333333;
-    
-}
-.panel{
-    width: 500px;
-    text-align: center;
-    border: 1px;
-    border-radius: 0.356rem;
-    padding: 0.7rem;
-    letter-spacing: 1px;
-    font-weight: 500;
-    border: 1px;
-    color: #333333;
-    image-rendering: crisp-edges;
-    border-image: auto;
-
-}
-.pane2{
-    width: 500px;
-    text-align: center;
-    border: 1px;
-    border-radius: 0.356rem;
-    padding: 0.7rem;
-    letter-spacing: 1px;
-    font-weight: 500;
-    border: 1px;
-    color: #333333;
-    image-rendering: crisp-edges;
-    border-image: auto;
-
-
-}
-.pane3{
-    width: 500px;
-    text-align: center;
-    border: 1px;
-    border-radius: 0.356rem;
-    padding: 0.7rem;
-    letter-spacing: 1px;
-    font-weight: 500;
-    border: 1px;
-    color: #333333;
-    image-rendering: crisp-edges;
-    border-image: auto;
-
-}
-.pane4{
-    width: 500px;
-    text-align: center;
-    border: 1px;
-    border-radius: 0.356rem;
-    padding: 0.7rem;
-    letter-spacing: 1px;
-    font-weight: 500;
-    border: 1px;
-    color: #333333;
-    image-rendering: crisp-edges;
-    border-image: auto;
-}
-.footer{
-    display: flex;
-    flex-direction: column;
-}
-.imageContainerfriend{
-    width: auto;
-}
-.splashcard{
-    background-color: #E3C8D1;
-}
-.splashcardheader{
-    margin-bottom: 0rem;
-    padding-bottom: 0.5rem;
+.feature{
+    box-shadow: 10px 10px;  
 }
