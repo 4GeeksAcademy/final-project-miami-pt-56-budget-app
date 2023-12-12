@@ -5,7 +5,7 @@ import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
 import { Context } from "../store/appContext";
 import { Table, Container } from "react-bootstrap";
 import DeleteExpenseModal from "./DeleteExpenseModal";
-import '../../styles/expenses.css'
+import '../../styles/styles.css'
 
 const ExpensesTable = ({ expenses, setTypeOfModal }) => {
 	const { store, actions } = useContext(Context);
