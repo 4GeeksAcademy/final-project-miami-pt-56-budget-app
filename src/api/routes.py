@@ -576,22 +576,23 @@ def transactions_sync():
     access_token = None
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
-    print('access_token', user.access_token)
+    # cursor = user.get_latest_cursor_or_none(item_id)
+    access_token = user.access_token
+    print('access_token', access_token)
+    print('item_id', user.item_id)
 
-    request = TransactionsSyncRequest(
-    access_token=user.access_token,
-    )
-    response = client.transactions_sync(request)
-    transactions = response['added']
+    added = []
+    modified = []
+    removed = []  # Removed transaction ids
+    has_more = True
 
-# the transactions in the response are paginated, so make multiple calls while incrementing the cursor to
-# retrieve all transactions
-
-    while (response['has_more']):
+    while has_more:
         request = TransactionsSyncRequest(
-            access_token=user.access_token,
-            cursor=response['next_cursor']
+            access_token=access_token,
+            # cursor=cursor,
         )
         response = client.transactions_sync(request)
-        transactions += response['added']
+        print('transaction sync response', response)
+        
+    return jsonify(response.to_dict())
 
