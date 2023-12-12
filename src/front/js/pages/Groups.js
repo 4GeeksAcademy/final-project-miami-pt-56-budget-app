@@ -4,6 +4,7 @@ import { Context } from "../store/appContext"
 import { Link , useNavigate} from "react-router-dom";
 import { Hint } from 'react-autocomplete-hint';
 import GroupInfo from "../component/GroupInfo";
+import "../../styles/styles.css";
 
 const Groups = () => {
     const navigate=useNavigate();
@@ -63,12 +64,12 @@ const Groups = () => {
     return (
         <>
             <Container>
-                <Row className="mt-3">
-                    <Col className="d-flex align-items-center">
-                        <h2>Groups</h2>
+                <Row>
+                    <Col xl={6} xs={12}>
+                        <h2 className="text-center mt-sm-3">Groups</h2>
                     </Col>
-                    <Col className='d-flex flex-row-reverse align-items-center'>
-                        <button className='expense-btn' onClick={handleAddGroup}>Create New Group</button>
+                    <Col xl={3} xs={12} sm={6} className="my-3 mb-sm-3">
+                        <Button className='expense-btn' onClick={handleAddGroup}>Create New Group</Button>
                     </Col>
                 </Row>
                 {store.userGroup && store.userGroup.length > 0 && store.userGroup.map((group, key) =>{

@@ -1,6 +1,8 @@
 import React, { useContext, useEffect } from "react";
 import { usePlaidLink } from "react-plaid-link";
 import { Context } from "../store/appContext";
+import {Button} from 'react-bootstrap';
+import "../../styles/styles.css";
 
 const PlaidLink = () => {
     const { store, actions } = useContext(Context);
@@ -44,9 +46,9 @@ const PlaidLink = () => {
 
     return (
         <>
-            <button onClick={() => open()} disabled={!ready} >
+            <Button className='expense-btn' onClick={() => open()} disabled={!ready} >
                 Connect with Plaid
-            </button>
+            </Button>
         </>
     );
 };

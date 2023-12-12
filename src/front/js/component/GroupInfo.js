@@ -41,14 +41,14 @@ const GroupInfo = (props) => {
                     <h3>{group.name}</h3>
                 </Col>
                 <Col className='d-flex flex-row-reverse align-items-center'>
-                    <button className='expense-btn' onClick={()=>{
+                    <Button className='expense-btn' onClick={()=>{
                         handleEditMember(props.setSelectedGroup(group.id))
-                    }}>Edit Group Members</button>
+                    }}>Edit Group Members</Button>
                 </Col>
             </Row>
             <Row>
                 <h6>
-                    {group.members.map((person,key)=>{
+                    {group.members && group.members.map((person,key)=>{
                         return(
                             <span key={key}>{person.first_name + " " +person.last_name + " "}</span>
                         )
@@ -66,12 +66,12 @@ const GroupInfo = (props) => {
                 </Col>
             </Row>
             <Row>
-                {group.expenses.length == 0 && (
+                {group.expenses && group.expenses.length == 0 && (
                     <>
                         <h6 className="text-center">There are no shared expenses for this group. Would you like to add one?</h6>
                     </>
                 )}
-                {group.expenses.length > 0 && group.expenses.map((expense, key)=>{
+                {group.expenses && group.expenses.length > 0 && group.expenses.map((expense, key)=>{
                     return(
                         <>
                             <Row key={key} className="ms-2 mt-2">
@@ -102,9 +102,9 @@ const GroupInfo = (props) => {
                 </Col>
             </Row>
             <div className="d-flex justify-content-evenly mb-2">
-                <button className='expense-btn' onClick={()=>{
+                <Button className='expense-btn' onClick={()=>{
                     handleDeleteGroup(props.setSelectedGroup(group.id))}}
-                >Delete Group</button> 
+                >Delete Group</Button> 
             </div>                    
         </div>
 

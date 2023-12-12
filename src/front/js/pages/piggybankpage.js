@@ -4,6 +4,7 @@ import { Context } from "../store/appContext"
 import { Link , useNavigate} from "react-router-dom";
 import { Hint } from 'react-autocomplete-hint';
 import PiggyBank from "../component/PiggyBankInfo";
+import "../../styles/styles.css";
 
 const Piggybank = ()=> {
   const { store, actions } = useContext(Context);
@@ -49,11 +50,11 @@ const Piggybank = ()=> {
   return (
     <>
       <Container>
-        <Row className="mt-3">
-          <Col md={6} xs={12}>
-            <h2 className='text-center'>Piggy Banks</h2>
+        <Row>
+        <Col xl={6} xs={12}>
+            <h2 className='text-center mt-sm-3'>Piggy Banks</h2>
           </Col>
-          <Col md={6} xs={12}>
+          <Col xl={3} xs={12} sm={6} className="my-3 mb-sm-3">
             <Button className='expense-btn' onClick={addPiggyBank}>
               Add Piggy Bank
             </Button>
