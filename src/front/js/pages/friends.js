@@ -8,7 +8,7 @@ import {
   Form,
   Dropdown,
 } from "react-bootstrap";
-import "../../styles/friends.css";
+import "../../styles/styles.css";
 import FriendsTable from "../component/FriendsTable";
 import { Context } from "../store/appContext";
 
@@ -54,21 +54,17 @@ const Friends = () => {
     <>
       <Container >
         <Row>
-          <Col xl={10}>
-            <Row>
-              <Col xl={6}>
-                <h2 className="text-center mt-5">Friends</h2>
-              </Col>
-              <Col xl={3}>
-                <button className="friends-btn my-5" onClick={handleAddFriends}>
-                  Add Friends
-                </button>
-              </Col>
-            </Row>
-            <Row>
-                <FriendsTable friends={friends} />
-            </Row>
+          <Col xl={6} xs={12}>
+            <h2 className="text-center mt-sm-3">Friends</h2>
           </Col>
+          <Col xl={3} xs={12} sm={6} className="my-3 mb-sm-3">
+            <Button className='expense-btn' onClick={handleAddFriends}>
+              Add Friends
+            </Button>
+          </Col>
+        </Row>
+        <Row>
+          <FriendsTable friends={friends} />
         </Row>
       </Container>
 

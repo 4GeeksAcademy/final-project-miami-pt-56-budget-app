@@ -355,13 +355,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 						const savedInfo = userData[0]
 						setStore({ userID: savedInfo.id })
 						setStore({ userInfo: userData[0] })
-						setStore({ userExpenses: savedInfo.expenses })
+						// setStore({ userExpenses: savedInfo.expenses })
 						setStore({ userFriends: savedInfo.friends })
 						setStore({ userGroup: savedInfo.groups })
 						setStore({ userPiggybanks: savedInfo.piggybanks })
 						setStore({ userName: savedInfo.first_name })
 						setStore({ userEmail: savedInfo.email })
 						setStore({ userFullName: savedInfo.first_name + ' ' + savedInfo.last_name })
+						console.log(getStore().userGroup)
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);
@@ -389,7 +390,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 					console.log('handle Get Groups func', data)
 					if (resp.status === 200) {
-						setStore({ userGroups: data.groups })
+						setStore({ userGroup: data.groups })
 						return true;
 					} else if (resp.status === 401) {
 						alert(`You must be logged in`);

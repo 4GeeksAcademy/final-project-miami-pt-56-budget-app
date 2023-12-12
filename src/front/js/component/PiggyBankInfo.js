@@ -25,12 +25,15 @@ const PiggyBank = (props) => {
                     <h3>{bank.name}</h3>
                     <div>
                         <button className="btn" onClick={()=>{
-                            editPiggyBank(props.setSelectedBank(bank.id), props.setEditing(true))
+                            editPiggyBank()
+                            props.setSelectedBank(bank)
+                            props.setEditing(true)
                         }}>
                             <FontAwesomeIcon icon={faEdit} className="icon-lnk" />
                         </button>
                         <button className="btn" onClick={()=>{
-                            deletePiggyBank(props.setSelectedBank(bank.id))
+                            deletePiggyBank()
+                            props.setSelectedBank(bank)
                         }}>
                             <FontAwesomeIcon icon={faTrash} className="icon-lnk" />
                         </button>
