@@ -4,7 +4,7 @@ import { Container, Row, Col, Button, Modal, Form, Dropdown } from 'react-bootst
 import ExpensesTable from '../component/ExpensesTable';
 // import SideNavBar from '../component/sidenavbar';
 import ExpensesModal from '../component/ExpensesModal';
-import '../../styles/expenses.css'
+import '../../styles/styles.css'
 
 const Expenses = () => {
     const { store, actions } = useContext(Context);

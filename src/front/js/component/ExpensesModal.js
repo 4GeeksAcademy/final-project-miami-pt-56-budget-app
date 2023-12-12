@@ -3,7 +3,7 @@ import { Modal, Form, Dropdown, Button, InputGroup, Container } from "react-boot
 // import { Hint } from "react-autocomplete-hint";
 import { Context } from "../store/appContext";
 import Turnstone from "turnstone";
-import "../../styles/expenses.css"
+import "../../styles/styles.css"
 
 
 
@@ -50,7 +50,7 @@ const ExpensesModal = ({ show, typeOfModal, setTypeOfModal }) => {
 
 
     }, [store.expenseToUpdate]);
-
+    console.log(store.expenseToUpdate)
     const handleSaveExpense = () => {
 
         if (splitOption === 'Split' && typeOfModal === 'Edit Expense') {

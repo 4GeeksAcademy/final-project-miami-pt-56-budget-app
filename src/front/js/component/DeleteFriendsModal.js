@@ -10,6 +10,7 @@ const DeleteFriendsModal = ({friendEmail}) => {
     }
     const handleDeleteFriends = () =>{
       actions.deleteFriends(friendEmail)
+      handleCloseModal()
     }
     return (
       <>
