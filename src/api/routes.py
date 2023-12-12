@@ -586,13 +586,12 @@ def transactions_sync():
     removed = []  # Removed transaction ids
     has_more = True
 
-    while has_more:
-        request = TransactionsSyncRequest(
-            access_token=access_token,
-            # cursor=cursor,
-        )
-        response = client.transactions_sync(request)
-        print('transaction sync response', response)
+    request = TransactionsSyncRequest(
+        access_token=access_token,
+        # cursor=cursor,
+    )
+    response = client.transactions_sync(request)
+    print('transaction sync response', response)
         
     return jsonify(response.to_dict())
 
