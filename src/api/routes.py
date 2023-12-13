@@ -119,7 +119,19 @@ def handle_signin():
     user = User.query.filter_by(email = email).first()
     if  user and bcrypt.check_password_hash(user.password, password):
         access_token = create_access_token(identity=user.id)
-        return jsonify({"token": access_token, "name": user.first_name}), 200
+        expenses = user.expenses
+        serialized_expenses=[]
+        for expense in expenses:
+            serialized_expenses.append(expense.serialize())
+        user_serialized = user.serialize()
+        groups = user.groups
+        serialized_groups=[]
+        for group in groups:
+            serialized_groups.append(group.serialize())
+        user_serialized = user.serialize()
+        user_serialized["expenses"]=serialized_expenses
+        user_serialized["groups"]=serialized_groups
+        return jsonify({"token": access_token, "name": user.first_name, "user":user_serialized}), 200
     elif user is None:
         return jsonify({"msg" : "Bad username or password"}), 401
     elif email is None or password is None:
@@ -140,7 +152,25 @@ def handle_account(user_id):
         return jsonify('New password'), 200
     else:
         return jsonify('Error'), 401
-
+    
+@api.route('/get-user', methods = ['GET'])
+@jwt_required()
+def fetch_user():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    expenses = user.expenses
+    serialized_expenses=[]
+    for expense in expenses:
+        serialized_expenses.append(expense.serialize())
+    user_serialized = user.serialize()
+    groups = user.groups
+    serialized_groups=[]
+    for group in groups:
+        serialized_groups.append(group.serialize())
+    user_serialized = user.serialize()
+    user_serialized["expenses"]=serialized_expenses
+    user_serialized["groups"]=serialized_groups
+    return jsonify({user:user_serialized})
 
 #Route for user home page, gets all user information  
 @api.route('/home', methods = ['GET'])

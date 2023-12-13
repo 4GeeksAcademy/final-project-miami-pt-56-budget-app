@@ -27,7 +27,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			userPiggybanks: [],
 			userID: null,
 			userEmail: [],
-			linkToken: ''
+			linkToken: '',
+			user: null
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -54,6 +55,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						sessionStorage.setItem('token', data.token);
 						setStore({ token: data.token });
 						setStore({ userName: data.name })
+						setStore({ user: data.user })
 						console.log(store.userName)
 						console.log('token in store:', store.token)
 						return true;
@@ -161,6 +163,33 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ userExpenses: sortedExpenses });
 				setStore({ sortOrder: store.sortOrder === 'asc' ? 'desc' : 'asc' });
 
+			},
+			fetchUser: async () => {
+				const opts = {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+						'Access-Control-Allow-Origin': '*',
+						'Authorization': `Bearer ${sessionStorage.token}`
+					}
+				};
+			
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/get-user`, opts);
+					const data = await response.json();
+					if (data){
+						setStore({ user: data.user });
+					return true;
+					}
+					else{
+					
+						return false
+					}
+					
+				} catch (error) {
+					console.log(error);
+					return false;
+				}
 			},
 			fetchUserRelationships: async () => {
 				const store = getStore();
