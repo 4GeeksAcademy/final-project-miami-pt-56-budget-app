@@ -18,7 +18,7 @@ class Expenses(db.Model):
     name = db.Column(db.String(120), nullable=False)
     amount = db.Column(db.Numeric(scale = 2), nullable=False)
     date = db.Column(db.Date, nullable=False)
-    type = db.Column(db.String(150), nullable=False)
+    type = db.Column(db.String(150), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     friend_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))

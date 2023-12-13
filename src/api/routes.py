@@ -586,17 +586,38 @@ def transactions_sync():
     print('access_token', access_token)
     print('item_id', user.item_id)
 
-    added = []
-    modified = []
-    removed = []  # Removed transaction ids
-    has_more = True
+    count = 5
 
     request = TransactionsSyncRequest(
-        access_token=access_token,
-        # cursor=cursor,
-    )
-    response = client.transactions_sync(request)
-    print('transaction sync response', response)
+            access_token=access_token,
+            count=count,
+        )
+
+    try:
+        response = client.transactions_sync(request)
+        transaction_added = response.get('added')
+        modified = response.get('modified')
+        removed = response.get('removed')
+        has_more = response.get('has_more', False)
+
+        for transaction in transaction_added:
+            name = transaction['name']
+            merchant_name = transaction['merchant_name']
+            amount = transaction['amount']
+            date = transaction['date']
         
-    return jsonify(response.to_dict())
+            print('added transactions', response)
+            upcoming_expenses = Expenses(name = name, user_id = current_user_id, amount = amount, date = date)
+            db.session.add(upcoming_expenses)
+            db.session.commit()
+            expenses = Expenses.query.all()
+            serialized_expenses = []
+            for expense in expenses:
+                serialized_expenses.append(expense.serialize())
+        
+        return jsonify({'message': 'Expense Added', 'expenses' : serialized_expenses}), 200   
+
+        # return jsonify(response.to_dict())
+    except plaid.ApiException as e:
+        return jsonify({'error': str(e)})
 

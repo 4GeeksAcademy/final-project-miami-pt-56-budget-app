@@ -730,7 +730,25 @@ const getState = ({ getStore, getActions, setStore }) => {
 						'Content-Type': 'application/json',
 						'Access-Control-Allow-Origin': '*',
 						'Authorization': `Bearer ${sessionStorage.token}`
+					},
+					body: JSON.stringify({
+						access_token: user.access_token,
+					})
+				};
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/transactions`, opts);
+					const data = await resp.json();
+					console.log("transactions", data);
+			
+					if (resp.status === 200) {
+						console.log('Transactions added!');
+					} else if (resp.status === 401) {
+						alert('You must be logged in');
+					} else {
+						console.error(`Unexpected error: ${data.message}`);
 					}
+				} catch (error) {
+					console.error(`There was a problem with the fetch operation ${error}`);
 				}
 			}
 		}
