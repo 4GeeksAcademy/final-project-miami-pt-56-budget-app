@@ -12,6 +12,7 @@ import plaid
 from plaid.api import plaid_api
 from plaid.model.products import Products
 from plaid.model.country_code import CountryCode
+from plaid.model.transactions_sync_request import TransactionsSyncRequest
 from plaid.model.link_token_create_request import LinkTokenCreateRequest
 from plaid.model.link_token_create_request_user import LinkTokenCreateRequestUser
 from plaid.model.item_public_token_exchange_request import ItemPublicTokenExchangeRequest
@@ -573,4 +574,50 @@ def get_access_token():
     except plaid.ApiException as e:
         return json.loads(e.body)                 
 
-#Plaid Get Transactions
+#Plaid Sync Transactions
+@api.route('/transactions', methods=['POST'])
+@jwt_required()
+def transactions_sync():
+    access_token = None
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    # cursor = user.get_latest_cursor_or_none(item_id)
+    access_token = user.access_token
+    print('access_token', access_token)
+    print('item_id', user.item_id)
+
+    count = 5
+
+    request = TransactionsSyncRequest(
+            access_token=access_token,
+            count=count,
+        )
+
+    try:
+        response = client.transactions_sync(request)
+        transaction_added = response.get('added')
+        modified = response.get('modified')
+        removed = response.get('removed')
+        has_more = response.get('has_more', False)
+
+        for transaction in transaction_added:
+            name = transaction['name']
+            merchant_name = transaction['merchant_name']
+            amount = transaction['amount']
+            date = transaction['date']
+        
+            print('added transactions', response)
+            upcoming_expenses = Expenses(name = name, user_id = current_user_id, amount = amount, date = date)
+            db.session.add(upcoming_expenses)
+            db.session.commit()
+            expenses = Expenses.query.all()
+            serialized_expenses = []
+            for expense in expenses:
+                serialized_expenses.append(expense.serialize())
+        
+        return jsonify({'message': 'Expense Added', 'expenses' : serialized_expenses}), 200   
+
+        # return jsonify(response.to_dict())
+    except plaid.ApiException as e:
+        return jsonify({'error': str(e)})
+

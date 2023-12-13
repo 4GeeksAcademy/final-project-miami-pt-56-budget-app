@@ -721,7 +721,33 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch (error) {
 					console.error(`There was a problem with the fetch operation ${error}`);
 				}
-			}
+			},
+			fetchTransactions: async () => {
+                const opts = {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${sessionStorage.token}`
+                    }
+                };
+            
+                try {
+                    const resp = await fetch(`${process.env.BACKEND_URL}/api/transactions`, opts);
+                    const data = await resp.json();
+            
+                    console.log("transactions", data);
+            
+                    if (resp.ok) {
+                        console.log('Transactions added!');
+                    } else if (resp.status === 401) {
+                        alert('You must be logged in');
+                    } else {
+                        console.error(`Unexpected error: ${data.message}`);
+                    }
+                } catch (error) {
+                    console.error(`There was a problem with the fetch operation: ${error}`);
+                }
+            }	
 		}
 	}
 }

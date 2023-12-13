@@ -19,37 +19,37 @@ const Expenses = () => {
     //     { id: 5, description: 'Rent', amount: '2300', date: '2023-04-11', type: 'Alone' },
     // ])
 
-    useEffect(()=> {
+    useEffect(() => {
         actions.fetchUserExpenses();
         actions.fetchUserRelationships();
     }, [])
 
-    useEffect(()=> {
-        actions.fetchUserExpenses();
-    }, [])
+    // useEffect(() => {
+    //     actions.fetchUserExpenses();
+    // }, [])
 
     const handleAddExpense = () => {
         setTypeOfModal('Add Expense')
         actions.showExpensesModal(true);
     }
-
-/* 
-    const handleSortByAmount = () => {
-        const sortedExpenses = [...store.userExpenses].sort((a, b) => {
-            const amountA = parseFloat(a.amount.slice(1));
-            const amountB = parseFloat(b.amount.slice(1));
-            return sortOrder === 'asc' ? amountA - amountB : amountB - amountA;
-        });
-
-        // setExpenses(sortedExpenses);
-        setStore({userExpenses: sortedExpenses})
-        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } */
+    /* 
+        const handleSortByAmount = () => {
+            const sortedExpenses = [...store.userExpenses].sort((a, b) => {
+                const amountA = parseFloat(a.amount.slice(1));
+                const amountB = parseFloat(b.amount.slice(1));
+                return sortOrder === 'asc' ? amountA - amountB : amountB - amountA;
+            });
+    
+            // setExpenses(sortedExpenses);
+            setStore({userExpenses: sortedExpenses})
+            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+        } */
 
 
     return (
         <>
             <Container>
+
                 {/* <Row> */}
                 {/* Sidebar */}
                 {/*  <Col xl={2}>
@@ -68,7 +68,7 @@ const Expenses = () => {
                     </Col>
                     <Col xl={3} xs={12} sm={6}>
                         <Button className='my-3 sort-btn text-break' onClick={actions.handleSortByAmount}>
-                            Sort by Amount: <br/> {store.sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+                            Sort by Amount: <br /> {store.sortOrder === 'asc' ? 'Ascending' : 'Descending'}
                         </Button>
                     </Col>
                 </Row>
@@ -79,11 +79,12 @@ const Expenses = () => {
                 </Row>
                 {/* </Col> */}
                 {/* </Row> */}
+
             </Container>
 
-                {/* Expenses modals */}
-                <ExpensesModal typeOfModal={typeOfModal} setTypeOfModal={setTypeOfModal} show={store.showExpensesModal}></ExpensesModal>
-                    
+            {/* Expenses modals */}
+            <ExpensesModal typeOfModal={typeOfModal} setTypeOfModal={setTypeOfModal} show={store.showExpensesModal}></ExpensesModal>
+
         </>
 
     );

@@ -36,21 +36,18 @@ const PlaidLink = () => {
                 }
             };
             fetchExchangeToken();
+            actions.fetchTransactions()
         }
     });
-
-
     useEffect(() => {
         actions.fetchLinkToken();
     }, []);
-
     return (
         <>
-            <Button className='expense-btn' onClick={() => open()} disabled={!ready} >
+            <button className='expense-btn' onClick={() => open()} disabled={!ready} >
                 Connect with Plaid
-            </Button>
+            </button>
         </>
     );
 };
-
 export default PlaidLink;
