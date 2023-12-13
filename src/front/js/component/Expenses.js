@@ -57,7 +57,6 @@ const Expenses = () => {
                     </Col> */}
                 {/* Content */}
                 {/* <Col xl={10}> */}
-
                 <Row>
                     <Col xl={6} xs={12}>
                         <h2 className='text-center mt-sm-3'>Expenses</h2>
@@ -80,12 +79,12 @@ const Expenses = () => {
                 </Row>
                 {/* </Col> */}
                 {/* </Row> */}
-                
+
             </Container>
 
             {/* Expenses modals */}
             <ExpensesModal typeOfModal={typeOfModal} setTypeOfModal={setTypeOfModal} show={store.showExpensesModal}></ExpensesModal>
-            
+
         </>
 
     );
