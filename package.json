@@ -87,6 +87,5 @@
 		"react-polyfills": "0.0.1",
 		"react-router-dom": "^6.3.0",
 		"turnstone": "^2.2.0"
-	
 	}
 }

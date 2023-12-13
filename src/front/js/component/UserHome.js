@@ -1,63 +1,105 @@
 import React, { useState, useContext, useEffect, createContext} from 'react'
 import { Context } from '../store/appContext';
-import { Table } from 'react-bootstrap'
+import { Table, Button } from 'react-bootstrap'
 import context from 'react-bootstrap/esm/AccordionContext';
 import { Link } from "react-router-dom";
+import PlaidLink from 'react-plaid-link';
+import "../../styles/styles.css"
+import "../../styles/home.css"
 
-    const UserHome = () => {
-        const { store, actions} = useContext(Context);      
+const UserHome = () => {
+        const { store, actions} = useContext(Context);   
+        const [user,setUser] =useState(store.user) 
         useEffect(() => {
-          actions.handleGetUser();
-          actions.fetchUserExpenses();
-        }, []);
-        const userInfo= [
-            {
-                title:"Expenses",
-                Link:"expenses", 
-                data: store.userExpenses
-        
-            },
-            {
-                title:"Piggy Bank",
-                Link:"piggybankpage", 
-                data: store.userPiggybanks
-        
-            },
-            {
-                title:"Groups",
-                Link:"groups", 
-                data: store.userGroups
-            },
-        ]
+            actions.handleGetUser();
+            actions.fetchUserExpenses();
+        }, [])
+        // useEffect(() => {
+        //     const getUser = async ()=>{
+        //         let response = await store.fetchUser
+        //         if (response){
+        //             setUser(store.user)
+        //         }
+        //         else{
+        //             alert("an error occured")
+        //         }
+        //     }
+        // }, []);
+       
 
     return (
        <div className='container '>
-        {userInfo?.map((section)=>{
-            return(<Table striped bordered hover>
+                            <h1>Expenses</h1>
+       
+          <Table striped bordered hover >
+            
 				<thead>
-                    <h1>{section.title}</h1>
-					<tr>
 
+					<tr>
+                        <th>Name</th>
+						<th>Amount</th>
+						<th>Date</th>
 					</tr>
 				</thead>
-				<tbody>
-					{section.data?.map((item, index) => (
-						<tr key={index}>
-							<td>{item.name}</td>
-							<td>{item.amount||item.goal||item.members.map(member=>(
-                                <div>{member.first_name} {member.last_name}</div>
-                            ))}</td>
-							<td>{item.date||item.saved||""}</td>
-                            <td>
-                </td>
-						</tr>
-					))}
-				</tbody>
-                <Link to={section["Link"]}>
-                <button class="button-56" role="button">View more</button>
+                <tbody>
+                    {store.userExpenses && store.userExpenses.map((item,index)=>(
+                        <tr key={index}>
+                          <td>{item.name}</td>
+                          <td>{item.amount}</td>
+                          <td>{item.date}</td>
+
+                        </tr>
+                    ))}
+                </tbody>
+                
+			</Table>
+            <Link to={"/expenses"}>
+                <Button className="expense-btn">View more</Button>
                 </Link>
-			</Table>)
-        })}
+            <h1>Piggy Bank</h1>
+          <Table striped bordered hover>
+				<thead>
+					<tr>
+                        <th>Name</th>
+						<th>Saving Goal</th>
+						<th>Amount Saved</th>
+					</tr>
+				</thead>
+                <tbody>
+                    {store.userPiggybanks && store.userPiggybanks.map((item,index)=>(
+                        <tr key={index}>
+                          <td>{item.name}</td>
+                          <td>{item.goal}</td>
+                          <td>{item.saved}</td>
+                        </tr>
+                    ))}
+                </tbody>
+
+			</Table>
+            <Link to="/piggybank">
+                <Button className="expense-btn">View more</Button>
+                </Link>
+          <Table striped bordered hover>
+				<thead>
+                    <h1>Groups</h1>
+					<tr>
+                        <th>Name</th>
+					</tr>
+				</thead>
+                <tbody>
+                    {store.userGroup && store.userGroup.map((item,index)=>(
+                        <tr key={index}>
+                          <td>{item.name}</td>
+
+                        </tr>
+                    ))}
+                </tbody>
+                
+			</Table>
+            <Link to="/groups">
+                <Button className="expense-btn">View more</Button>
+                </Link>
+      
 			
         </div>
     )}
