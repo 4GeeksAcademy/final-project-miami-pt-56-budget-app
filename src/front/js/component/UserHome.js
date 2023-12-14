@@ -32,8 +32,8 @@ const UserHome = () => {
             <h1>Expenses</h1>
             {store.userExpenses.length == 0 &&(
                 <>
-                    <h4 className="d-flex justify-content-center">{store.userName}, you have no piggy banks.</h4>
-                    <h6 className="d-flex justify-content-center mb-3">What would you like to start saving for?</h6>
+                    <h4 className="d-flex justify-content-center">{store.userName}, you have no expenses.</h4>
+                    <h6 className="d-flex justify-content-center mb-3">What expenses would you like to track?</h6>                
                 </>
             )}
             {store.userExpenses.length > 0 &&(
@@ -62,8 +62,8 @@ const UserHome = () => {
             <h1 className='mt-4'>Piggy Bank</h1>
             {store.userPiggybanks.length == 0 &&(
                 <>
-                    <h4 className="d-flex justify-content-center">{store.userName}, you have no expenses.</h4>
-                    <h6 className="d-flex justify-content-center mb-3">What expenses would you like to track?</h6>
+                    <h4 className="d-flex justify-content-center">{store.userName}, you have no piggy banks.</h4>
+                    <h6 className="d-flex justify-content-center mb-3">What would you like to start saving for?</h6>
                 </>
             )}
             {store. userPiggybanks.length > 0 &&(
