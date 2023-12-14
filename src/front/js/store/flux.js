@@ -91,7 +91,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 					console.log('handle Sign Up func', data)
 					if (resp.status === 200) {
-						alert("User Created! Redirecting to signin page");
+						// alert("User Created! Redirecting to signin page");
 						// navigate('/signin');
 						return true;
 					} else if (resp.status === 406) {

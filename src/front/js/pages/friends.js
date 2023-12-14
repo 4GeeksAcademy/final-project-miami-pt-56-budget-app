@@ -44,7 +44,7 @@ const Friends = () => {
     }
     let result = await actions.addFriends(friendEmail);
     if (result) {
-      alert("Friend added successfully");
+      // alert("Friend added successfully");
       setAddFriendsModal(false);
     }
   };

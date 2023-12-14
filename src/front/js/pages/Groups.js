@@ -36,11 +36,13 @@ const Groups = () => {
         let newMember = friends.find((member)=> member.label == name)
         await actions.handleAddMembers(newMember.id, selectedGroup)
         setName('')
+        handleCloseModal()
     };
     const handleDeleteMember = async()=>{
         let oldMember = friends.find((member)=> member.label == remove)
         await actions.handleDeleteMembers(oldMember.id, selectedGroup)
         setRemove('')
+        handleCloseModal()
     };
     const handleDeleteUser = async()=>{
         let oldMember = store.userID

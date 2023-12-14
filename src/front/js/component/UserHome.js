@@ -28,13 +28,17 @@ const UserHome = () => {
        
 
     return (
-       <div className='container '>
-                            <h1>Expenses</h1>
-       
-          <Table striped bordered hover >
-            
+        <div className='container '>
+            <h1>Expenses</h1>
+            {store.userExpenses.length == 0 &&(
+                <>
+                    <h4 className="d-flex justify-content-center">{store.userName}, you have no piggy banks.</h4>
+                    <h6 className="d-flex justify-content-center mb-3">What would you like to start saving for?</h6>
+                </>
+            )}
+            {store.userExpenses.length > 0 &&(
+            <Table striped bordered hover >
 				<thead>
-
 					<tr>
                         <th>Name</th>
 						<th>Amount</th>
@@ -47,24 +51,30 @@ const UserHome = () => {
                           <td>{item.name}</td>
                           <td>{item.amount}</td>
                           <td>{item.date}</td>
-
                         </tr>
                     ))}
                 </tbody>
-                
 			</Table>
-            <Link to={"/expenses"}>
+            )}
+            <Link to={"/expenses"} className='d-flex justify-content-center'>
                 <Button className="expense-btn">View more</Button>
-                </Link>
-            <h1>Piggy Bank</h1>
-          <Table striped bordered hover>
-				<thead>
-					<tr>
+            </Link>
+            <h1 className='mt-4'>Piggy Bank</h1>
+            {store.userPiggybanks.length == 0 &&(
+                <>
+                    <h4 className="d-flex justify-content-center">{store.userName}, you have no expenses.</h4>
+                    <h6 className="d-flex justify-content-center mb-3">What expenses would you like to track?</h6>
+                </>
+            )}
+            {store. userPiggybanks.length > 0 &&(
+            <Table striped bordered hover>
+                <thead>
+                    <tr>
                         <th>Name</th>
-						<th>Saving Goal</th>
-						<th>Amount Saved</th>
-					</tr>
-				</thead>
+                        <th>Saving Goal</th>
+                        <th>Amount Saved</th>
+                    </tr>
+                </thead>
                 <tbody>
                     {store.userPiggybanks && store.userPiggybanks.map((item,index)=>(
                         <tr key={index}>
@@ -74,14 +84,22 @@ const UserHome = () => {
                         </tr>
                     ))}
                 </tbody>
-
-			</Table>
-            <Link to="/piggybank">
+            </Table>
+            )}
+            
+            <Link to="/piggybankpage" className='d-flex justify-content-center'>
                 <Button className="expense-btn">View more</Button>
-                </Link>
-          <Table striped bordered hover>
+            </Link>
+            <h1 className='mt-4'>Groups</h1>
+            {store.userGroup.length == 0 &&(
+                <>
+                    <h4 className="d-flex justify-content-center">{store.userName}, you have no groups.</h4>
+                    <h6 className="d-flex justify-content-center mb-3">Would you like to start one?</h6>
+                </>
+            )}
+            {store.userGroup.length > 0 && (
+            <Table striped bordered hover>
 				<thead>
-                    <h1>Groups</h1>
 					<tr>
                         <th>Name</th>
 					</tr>
@@ -94,13 +112,11 @@ const UserHome = () => {
                         </tr>
                     ))}
                 </tbody>
-                
 			</Table>
-            <Link to="/groups">
+            )}
+            <Link to="/groups" className='d-flex justify-content-center'>
                 <Button className="expense-btn">View more</Button>
-                </Link>
-      
-			
+            </Link>	
         </div>
     )}
 export default UserHome;
