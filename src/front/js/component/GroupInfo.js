@@ -60,9 +60,9 @@ const GroupInfo = (props) => {
                     <h5>Shared Expenses</h5>
                 </Col>
                 <Col className='d-flex flex-row-reverse align-items-center'>
-                    <Button className='expense-btn' onClick={handleAddExpense}>
+                    {/* <Button className='expense-btn' onClick={handleAddExpense}>
                         Add Expense
-                    </Button>
+                    </Button> */}
                 </Col>
             </Row>
             <Row>
@@ -85,7 +85,7 @@ const GroupInfo = (props) => {
                                 Date: {actions.formatDate(expense.date, false)}
                                 </Col>
                                 <Col className="col-md-2 col-12">
-                                    <FontAwesomeIcon icon={faEdit} className="me-2 icon-lnk" onClick={() => handleEditExpense(expense)}/>
+                                    {/* <FontAwesomeIcon icon={faEdit} className="me-2 icon-lnk" onClick={() => handleEditExpense(expense)}/> */}
 								    <FontAwesomeIcon icon={faTrash} className="icon-lnk" onClick={() => handleDeleteExpense(expense)}/>
                                 </Col>
                             </Row>
