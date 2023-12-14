@@ -93,14 +93,14 @@ const GroupInfo = (props) => {
                     )
                 })}
             </Row>
-            <Row>
+            {/* <Row>
                 <Col>
                     <h5>Balance to User</h5>
                 </Col>
                 <Col>
                     <h5 className='d-flex flex-row-reverse'>$0.00</h5>
                 </Col>
-            </Row>
+            </Row> */}
             <div className="d-flex justify-content-evenly mb-2">
                 <Button className='expense-btn' onClick={()=>{
                     handleDeleteGroup(props.setSelectedGroup(group.id))}}
